@@ -5,3 +5,5 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/schorfES/scrollr/badge.svg)](https://snyk.io/test/github/schorfES/scrollr)
 
 A lightweight dependency-free css scroller.
+
+_**CSS can scroll, why not use it?**_
