@@ -1,7 +1,7 @@
 {
-  "name": "scrollr",
+  "name": "caroucssel",
   "version": "0.0.1",
-  "description": "A lightweight dependency-free css scroller.",
+  "description": "A lightweight dependency-free css carousel.",
   "main": "src/index.js",
   "module": "src/index.js",
   "scripts": {

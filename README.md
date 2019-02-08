@@ -1,9 +1,9 @@
-# Scrollr
+# CarouCSSel
 
-[![Build Status](https://travis-ci.org/schorfES/scrollr.svg?branch=master)](https://travis-ci.org/schorfES/scrollr)
-[![Coverage Status on Codecov](https://codecov.io/gh/schorfES/scrollr/branch/master/graph/badge.svg)](https://codecov.io/gh/schorfES/scrollr)
-[![Known Vulnerabilities](https://snyk.io/test/github/schorfES/scrollr/badge.svg)](https://snyk.io/test/github/schorfES/scrollr)
+[![Build Status](https://travis-ci.org/schorfES/caroucssel.svg?branch=master)](https://travis-ci.org/schorfES/caroucssel)
+[![Coverage Status on Codecov](https://codecov.io/gh/schorfES/caroucssel/branch/master/graph/badge.svg)](https://codecov.io/gh/schorfES/caroucssel)
+[![Known Vulnerabilities](https://snyk.io/test/github/schorfES/caroucssel/badge.svg)](https://snyk.io/test/github/schorfES/caroucssel)
 
-A lightweight dependency-free css scroller.
+A lightweight dependency-free css carousel.
 
 _**CSS can scroll, why not use it?**_

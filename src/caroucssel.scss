@@ -1,4 +1,4 @@
-@mixin scrollr() {
+@mixin caroucssel() {
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: stretch;
@@ -29,7 +29,7 @@
 	}
 }
 
-@mixin scrollr-snap($at: 100%) {
+@mixin caroucssel-snap($at: 100%) {
 	// See: https://medium.com/@OneBitAhead/detecting-css-features-with-supports-1fb9c04c56c0
 	scroll-behavior: smooth;
 	scroll-snap-type: mandatory;
@@ -43,6 +43,6 @@
 }
 
 
-%scrollr {
-	@include scrollr();
+%caroucssel {
+	@include caroucssel();
 }

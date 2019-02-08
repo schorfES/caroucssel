@@ -1,4 +1,4 @@
-.scrollr {
+.caroucssel {
   display: flex;
   flex-wrap: nowrap;
   align-items: stretch;
@@ -11,17 +11,17 @@
   -webkit-overflow-scrolling: touch;
 }
 
-.scrollr > * {
+.caroucssel > * {
   display: flex;
   flex: 0 0 auto;
   outline: none;
   white-space: normal;
 }
 
-.scrollr.supports-scrolling::-webkit-scrollbar, .scrollr.supports-scrolling::-webkit-scrollbar-track {
+.caroucssel.supports-scrolling::-webkit-scrollbar, .caroucssel.supports-scrolling::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.scrollr.not-supports-scrolling {
+.caroucssel.not-supports-scrolling {
   overflow: hidden;
 }

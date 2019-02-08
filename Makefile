@@ -28,13 +28,13 @@ coverage:
 
 build:
 	node_modules/.bin/node-sass \
-		./src/scrollr.css.scss \
-		./dist/scrollr.css \
+		./src/caroucssel.css.scss \
+		./dist/caroucssel.css \
 		--indent-type space \
 		--output-style expanded
 
 	node_modules/.bin/node-sass \
-		./src/scrollr.css.scss \
-		./dist/scrollr.min.css \
+		./src/caroucssel.css.scss \
+		./dist/caroucssel.min.css \
 		--indent-type space \
 		--output-style compressed
