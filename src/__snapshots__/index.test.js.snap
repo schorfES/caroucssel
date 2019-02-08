@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Caroucssel buttons should add buttons 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div>
+		<button class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"custom-id\\">
+		<span>Previous</span>
+	</button><button class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"custom-id\\">
+		<span>Next</span>
+	</button></div>
+	"
+`;
+
+exports[`Caroucssel buttons should add buttons with custom options 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div>
+		<button class=\\"custom-button-class custom-previous-button-class\\" aria-label=\\"Custom previous label\\" title=\\"Custom previous title\\" aria-controls=\\"custom-id\\">
+		<span>Custom previous label</span>
+	</button><button class=\\"custom-button-class custom-next-button-class\\" aria-label=\\"Custom next label\\" title=\\"Custom next title\\" aria-controls=\\"custom-id\\">
+		<span>Custom next label</span>
+	</button></div>
+	"
+`;
+
+exports[`Caroucssel buttons should add buttons with custom template 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div>
+		<span class=\\"custom-button-class custom-previous-button-class\\" title=\\"Custom previous title\\">Custom previous label</span><span class=\\"custom-button-class custom-next-button-class\\" title=\\"Custom next title\\">Custom next label</span></div>
+	"
+`;
