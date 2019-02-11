@@ -110,7 +110,10 @@ describe('Caroucssel', () => {
 		it('should add buttons', () => {
 			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
 			const el = document.querySelector('.caroucssel');
-			new Carousel(el, {hasButtons: true});
+			const options = {
+				hasButtons: true
+			};
+			new Carousel(el, options);
 
 			expect(document.body.innerHTML).toMatchSnapshot();
 		});
@@ -172,6 +175,98 @@ describe('Caroucssel', () => {
 				label: 'Custom next label',
 				title: 'Custom next title'
 			});
+		});
+
+	});
+
+
+	describe('pagination', () => {
+
+		it('should add pagination', () => {
+			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasPagination: true
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+		});
+
+		it('should add pagination with custom options', () => {
+			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			const items = [...el.children];
+			const options = {
+				hasPagination: true,
+				paginationClassName: 'custom-pagination-class',
+				paginationLabel: jest.fn(({index}) => {
+					switch (index) {
+						case 0: return 'first';
+						case 1: return 'second';
+						case 2: return 'third';
+						default: return 'un-defined';
+					}
+				}),
+				paginationTitle: jest.fn(({index}) => {
+					let name;
+					switch (index) {
+						case 0: name = 'first'; break;
+						case 1: name = 'second'; break;
+						case 2: name = 'third'; break;
+						default: name = 'un-defined'; break;
+					}
+					return `Go to ${name} item`;
+				})
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+
+			expect(options.paginationLabel).toHaveBeenCalledTimes(3);
+			expect(options.paginationLabel).toHaveBeenNthCalledWith(1, {index: 0, item: items[0], items});
+
+			expect(options.paginationTitle).toHaveBeenCalledTimes(3);
+			expect(options.paginationTitle).toHaveBeenNthCalledWith(3, {index: 2, item: items[2], items});
+		});
+
+		it('should add pagination with custom template', () => {
+			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasPagination: true,
+				paginationClassName: 'custom-pagination-class',
+				paginationLabel: jest.fn(({index}) => {
+					switch (index) {
+						case 0: return 'first';
+						case 1: return 'second';
+						case 2: return 'third';
+						default: return 'un-defined';
+					}
+				}),
+				paginationTitle: jest.fn(({index}) => {
+					let name;
+					switch (index) {
+						case 0: name = 'first'; break;
+						case 1: name = 'second'; break;
+						case 2: name = 'third'; break;
+						default: name = 'un-defined'; break;
+					}
+					return `Go to ${name} item`;
+				}),
+				paginationTemplate: jest.fn(({className, controls, items, label, title}) =>
+					`<div class="${className}" aria-controls="${controls}">
+						${items.map((item, index) => `
+							<div class="item" aria-label="${title({index})}">
+								${label({index})}
+							</div>`
+						).join('')}
+					</div>`)
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(options.paginationTemplate).toHaveBeenCalledTimes(1);
 		});
 
 	});

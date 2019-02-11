@@ -18,9 +18,12 @@ function __templateButton({className, controls, label, title}) {
 function __templatePagination({className, controls, items, label, title}) {
 	return `<ul class="${className}">
 		${items.map((item, index) => {
+			const data = {index, item, items};
+			const labelStr = label(data);
+			const titleStr = title(data);
 			return `<li>
-				<button aria-controls="${controls}" aria-label="${label}: ${index + 1}" title="${title}: ${index + 1}">
-					<span>${index + 1}</span>
+				<button aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
+					<span>${labelStr}</span>
 				</button>
 			</li>`;
 		}).join('')}
@@ -46,7 +49,7 @@ const
 		hasPagination: false,
 		paginationClassName: 'pagination',
 		paginationLabel: ({index}) => `${index + 1}`,
-		paginationTitle: ({index}) => `Go to ${index + 1}. slide`,
+		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
 		paginationTemplate: __templatePagination
 	},
 	DEFAULTS_BUTTON_PREVIOUS = {
@@ -148,6 +151,10 @@ export class Carousel {
 		// @TODO: Use animation api with from/to objects...
 	}
 
+	get items() {
+		return [...this.el.children];
+	}
+
 	destroy() {
 		const {el} = this;
 		const {classList} = el;
@@ -161,6 +168,9 @@ export class Carousel {
 
 		// Remove buttons:
 		this._removeButtons();
+
+		// Remove pagination:
+		this._removePagination();
 	}
 
 	_update() {
@@ -207,11 +217,27 @@ export class Carousel {
 	}
 
 	_addPagination() {
+		const {el, id, items, _options} = this;
+		if (!_options.hasPagination) {
+			return;
+		}
 
+		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
+		const pagination = __render(paginationTemplate, {
+			items,
+			controls: id,
+			className: paginationClassName,
+			label: paginationLabel,
+			title: paginationTitle,
+		});
+
+		this._pagination = pagination;
+		el.parentNode.appendChild(pagination);
 	}
 
-	__removePagination() {
-
+	_removePagination() {
+		const {_pagination} = this;
+		_pagination && _pagination.parentNode.removeChild(_pagination);
 	}
 
 }

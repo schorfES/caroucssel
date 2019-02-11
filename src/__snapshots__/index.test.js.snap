@@ -55,3 +55,90 @@ exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 		<span class=\\"custom-button-class custom-previous-button-class\\" title=\\"Custom previous title\\">Custom previous label</span><span class=\\"custom-button-class custom-next-button-class\\" title=\\"Custom next title\\">Custom next label</span></div>
 	"
 `;
+
+exports[`Caroucssel pagination should add pagination 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div>
+		<ul class=\\"pagination\\">
+		<li>
+				<button aria-controls=\\"custom-id\\" aria-label=\\"Go to 1. item\\" title=\\"Go to 1. item\\">
+					<span>1</span>
+				</button>
+			</li><li>
+				<button aria-controls=\\"custom-id\\" aria-label=\\"Go to 2. item\\" title=\\"Go to 2. item\\">
+					<span>2</span>
+				</button>
+			</li><li>
+				<button aria-controls=\\"custom-id\\" aria-label=\\"Go to 3. item\\" title=\\"Go to 3. item\\">
+					<span>3</span>
+				</button>
+			</li>
+	</ul></div>
+	"
+`;
+
+exports[`Caroucssel pagination should add pagination with custom options 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div>
+		<ul class=\\"custom-pagination-class\\">
+		<li>
+				<button aria-controls=\\"custom-id\\" aria-label=\\"Go to first item\\" title=\\"Go to first item\\">
+					<span>first</span>
+				</button>
+			</li><li>
+				<button aria-controls=\\"custom-id\\" aria-label=\\"Go to second item\\" title=\\"Go to second item\\">
+					<span>second</span>
+				</button>
+			</li><li>
+				<button aria-controls=\\"custom-id\\" aria-label=\\"Go to third item\\" title=\\"Go to third item\\">
+					<span>third</span>
+				</button>
+			</li>
+	</ul></div>
+	"
+`;
+
+exports[`Caroucssel pagination should add pagination with custom template 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div>
+		<div class=\\"custom-pagination-class\\" aria-controls=\\"custom-id\\">
+						
+							<div class=\\"item\\" aria-label=\\"Go to first item\\">
+								first
+							</div>
+							<div class=\\"item\\" aria-label=\\"Go to second item\\">
+								second
+							</div>
+							<div class=\\"item\\" aria-label=\\"Go to third item\\">
+								third
+							</div>
+					</div></div>
+	"
+`;
