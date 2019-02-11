@@ -18,10 +18,10 @@
   white-space: normal;
 }
 
-.caroucssel.supports-scrolling::-webkit-scrollbar, .caroucssel.supports-scrolling::-webkit-scrollbar-track {
+.caroucssel.has-invisble-scrollbar::-webkit-scrollbar, .caroucssel.has-invisble-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.caroucssel.not-supports-scrolling {
+.caroucssel.has-visble-scrollbar {
   overflow: hidden;
 }
