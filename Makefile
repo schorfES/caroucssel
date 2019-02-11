@@ -27,6 +27,8 @@ coverage:
 
 
 build:
+	rm -rf dist/ && mkdir dist/
+
 	node_modules/.bin/node-sass \
 		./src/caroucssel.css.scss \
 		./dist/caroucssel.css \
@@ -38,3 +40,5 @@ build:
 		./dist/caroucssel.min.css \
 		--indent-type space \
 		--output-style compressed
+
+	node scripts/build.js

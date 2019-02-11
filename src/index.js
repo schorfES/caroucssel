@@ -1,4 +1,4 @@
-import {Scrollbar} from './utils';
+import {Scrollbar} from './utils/index';
 
 
 function __render(template, data) {
