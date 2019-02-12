@@ -12,7 +12,6 @@
 }
 
 .caroucssel > * {
-  display: flex;
   flex: 0 0 auto;
   outline: none;
   white-space: normal;
@@ -24,4 +23,17 @@
 
 .caroucssel.has-visble-scrollbar {
   overflow: hidden;
+}
+
+.caroucssel.use-snap {
+  scroll-behavior: smooth;
+  scroll-snap-type: mandatory;
+  scroll-snap-type: x mandatory;
+  scroll-snap-destination: 100% 100%;
+  scroll-snap-points-x: snapInterval(0, 100%);
+  scroll-snap-points-x: repeat(100%);
+}
+
+.caroucssel.use-snap > * {
+  scroll-snap-align: start;
 }

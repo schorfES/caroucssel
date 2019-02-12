@@ -2,4 +2,8 @@
 
 .caroucssel {
 	@include caroucssel();
+
+	&.use-snap {
+		@include caroucssel-snap(100%);
+	}
 }
