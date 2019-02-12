@@ -9,7 +9,7 @@ function __render(template, data) {
 
 
 function __templateButton({className, controls, label, title}) {
-	return `<button class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
+	return `<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
 		<span>${label}</span>
 	</button>`;
 }
@@ -22,7 +22,7 @@ function __templatePagination({className, controls, items, label, title}) {
 			const labelStr = label(data);
 			const titleStr = title(data);
 			return `<li>
-				<button aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
+				<button type="button" aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
 					<span>${labelStr}</span>
 				</button>
 			</li>`;
