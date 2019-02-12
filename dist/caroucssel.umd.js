@@ -18,14 +18,6 @@
   });
   _exports.Carousel = void 0;
 
-  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-  function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
   function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
   function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -33,6 +25,14 @@
   function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
   function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+  function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
   function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -45,6 +45,22 @@
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+  // See: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf
+  function debounce(func, delay) {
+    var inDebounce;
+    return function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var self = this;
+      window.clearTimeout(inDebounce);
+      inDebounce = setTimeout(function () {
+        return func.apply(self, args);
+      }, delay);
+    };
+  }
 
   var Scrollbar =
   /*#__PURE__*/
@@ -120,7 +136,7 @@
         controls = _ref.controls,
         label = _ref.label,
         title = _ref.title;
-    return "<button class=\"".concat(className, "\" aria-label=\"").concat(label, "\" title=\"").concat(title, "\" aria-controls=\"").concat(controls, "\">\n\t\t<span>").concat(label, "</span>\n\t</button>");
+    return "<button type=\"button\" class=\"".concat(className, "\" aria-label=\"").concat(label, "\" title=\"").concat(title, "\" aria-controls=\"").concat(controls, "\">\n\t\t<span>").concat(label, "</span>\n\t</button>");
   }
 
   function __templatePagination(_ref2) {
@@ -137,7 +153,7 @@
       };
       var labelStr = label(data);
       var titleStr = title(data);
-      return "<li>\n\t\t\t\t<button aria-controls=\"".concat(controls, "\" aria-label=\"").concat(titleStr, "\" title=\"").concat(titleStr, "\">\n\t\t\t\t\t<span>").concat(labelStr, "</span>\n\t\t\t\t</button>\n\t\t\t</li>");
+      return "<li>\n\t\t\t\t<button type=\"button\" aria-controls=\"".concat(controls, "\" aria-label=\"").concat(titleStr, "\" title=\"").concat(titleStr, "\">\n\t\t\t\t\t<span>").concat(labelStr, "</span>\n\t\t\t\t</button>\n\t\t\t</li>");
     }).join(''), "\n\t</ul>");
   }
 
@@ -147,6 +163,7 @@
       ID_MATCH = /^caroucssel-[0-9]*$/,
       CLASS_VISIBLE_SCROLLBAR = 'has-visible-scrollbar',
       CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
+      EVENT_SCROLL = 'scroll',
       DEFAULTS = {
     // Buttons:
     hasButtons: false,
@@ -165,7 +182,9 @@
       var index = _ref4.index;
       return "Go to ".concat(index + 1, ". item");
     },
-    paginationTemplate: __templatePagination
+    paginationTemplate: __templatePagination,
+    // Hooks:
+    onScroll: null
   },
       DEFAULTS_BUTTON_PREVIOUS = {
     className: 'is-previous',
@@ -204,13 +223,18 @@
 
       this._options = _objectSpread({}, DEFAULTS, options);
       this._options.buttonPrevious = _objectSpread({}, DEFAULTS_BUTTON_PREVIOUS, options.buttonPrevious);
-      this._options.buttonNext = _objectSpread({}, DEFAULTS_BUTTON_NEXT, options.buttonNext); // Render
+      this._options.buttonNext = _objectSpread({}, DEFAULTS_BUTTON_NEXT, options.buttonNext);
+      this._items = _toConsumableArray(this.el.children); // Render:
 
       this._update();
 
       this._addButtons();
 
-      this._addPagination();
+      this._addPagination(); // Events:
+
+
+      this._onScroll = debounce(this._onScroll.bind(this), 25);
+      el.addEventListener(EVENT_SCROLL, this._onScroll);
     }
 
     _createClass(Carousel, [{
@@ -227,7 +251,21 @@
         this._removeButtons(); // Remove pagination:
 
 
-        this._removePagination();
+        this._removePagination(); // Remove events:
+
+
+        el.removeEventListener(EVENT_SCROLL, this._onScroll);
+      }
+    }, {
+      key: "update",
+      value: function update() {
+        this._items = _toConsumableArray(this.el.children);
+
+        this._update();
+
+        this._updateButtons();
+
+        this._updatePagination();
       }
     }, {
       key: "_update",
@@ -247,6 +285,8 @@
     }, {
       key: "_addButtons",
       value: function _addButtons() {
+        var _this2 = this;
+
         var el = this.el,
             id = this.id,
             _options = this._options;
@@ -270,22 +310,57 @@
             previous = _map2[0],
             next = _map2[1];
 
-        this._previous = previous;
+        previous.onclick = function () {
+          return _this2.index--;
+        };
+
         el.parentNode.appendChild(previous);
-        this._next = next;
+        this._previous = previous;
+
+        next.onclick = function () {
+          return _this2.index++;
+        };
+
         el.parentNode.appendChild(next);
+        this._next = next;
+
+        this._updateButtons();
+      }
+    }, {
+      key: "_updateButtons",
+      value: function _updateButtons() {
+        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        var _options = this._options;
+
+        if (!_options.hasPagination) {
+          return;
+        }
+
+        var items = this.items,
+            _previous = this._previous,
+            _next = this._next;
+        _previous.disabled = index === 0;
+        _next.disabled = index === items.length - 1;
       }
     }, {
       key: "_removeButtons",
       value: function _removeButtons() {
         var _previous = this._previous,
             _next = this._next;
-        _previous && _previous.parentNode.removeChild(_previous);
-        _next && _next.parentNode.removeChild(_next);
+        [_previous, _next].forEach(function (button) {
+          if (!button) {
+            return;
+          }
+
+          button.onclick = null;
+          button.parentNode.removeChild(button);
+        });
       }
     }, {
       key: "_addPagination",
       value: function _addPagination() {
+        var _this3 = this;
+
         var el = this.el,
             id = this.id,
             items = this.items,
@@ -306,16 +381,69 @@
           className: paginationClassName,
           label: paginationLabel,
           title: paginationTitle
+        }); // @TODO: Add template for buttons:
+
+
+        var buttons = _toConsumableArray(pagination.querySelectorAll('button')).map(function (button, index) {
+          button.onclick = function () {
+            return _this3.index = index;
+          };
+
+          return button;
         });
 
-        this._pagination = pagination;
         el.parentNode.appendChild(pagination);
+        this._pagination = pagination;
+        this._paginationButtons = buttons;
+
+        this._updatePagination();
+      }
+    }, {
+      key: "_updatePagination",
+      value: function _updatePagination() {
+        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        var _options = this._options;
+
+        if (!_options.hasPagination) {
+          return;
+        }
+
+        var _paginationButtons = this._paginationButtons;
+
+        _paginationButtons.forEach(function (button, at) {
+          return button.disabled = at === index;
+        });
       }
     }, {
       key: "_removePagination",
       value: function _removePagination() {
-        var _pagination = this._pagination;
+        var _pagination = this._pagination,
+            _paginationButtons = this._paginationButtons;
+
+        (_paginationButtons || []).forEach(function (button) {
+          button.onclick = null;
+          button.parentNode.removeChild(button);
+        });
+
         _pagination && _pagination.parentNode.removeChild(_pagination);
+      }
+    }, {
+      key: "_onScroll",
+      value: function _onScroll(event) {
+        var index = this.index,
+            _options = this._options;
+
+        this._updateButtons(index);
+
+        this._updatePagination(index);
+
+        var onScroll = _options.onScroll;
+        onScroll && onScroll({
+          index: index,
+          type: EVENT_SCROLL,
+          target: this,
+          originalEvent: event
+        });
       }
     }, {
       key: "el",
@@ -330,17 +458,17 @@
     }, {
       key: "index",
       get: function get() {
-        var el = this.el;
-        var children = el.children,
-            clientWidth = el.clientWidth;
-        var length = children.length;
+        var el = this.el,
+            items = this.items;
+        var length = items.length;
+        var clientWidth = el.clientWidth;
         var outerLeft = el.getClientRects()[0].left;
         var offset = clientWidth / 2;
         var index = 0,
             left;
 
         for (; index < length; index++) {
-          left = el.children[index].getClientRects()[0].left - outerLeft + offset;
+          left = items[index].getClientRects()[0].left - outerLeft + offset;
 
           if (left >= 0 && left < clientWidth) {
             return index;
@@ -350,9 +478,10 @@
         return index - 1;
       },
       set: function set(value) {
-        var el = this.el;
-        var children = el.children,
-            scrollLeft = el.scrollLeft;
+        var el = this.el,
+            items = this.items;
+        var length = items.length;
+        var scrollLeft = el.scrollLeft;
         var from = {
           scrollLeft: scrollLeft
         };
@@ -361,23 +490,26 @@
           value = 0;
         }
 
-        if (value >= el.childElementCount) {
-          value = el.childElementCount - 1;
+        if (value >= length) {
+          value = length - 1;
         }
 
         var to = {
-          scrollLeft: children[value].offsetLeft
+          left: items[value].offsetLeft
         };
 
-        if (from.scrollLeft === to.scrollLeft) {
+        if (from.left === to.left) {
           return;
-        } // @TODO: Use animation api with from/to objects...
+        }
 
+        el.scrollTo(_objectSpread({}, to, {
+          behavior: 'smooth'
+        }));
       }
     }, {
       key: "items",
       get: function get() {
-        return _toConsumableArray(this.el.children);
+        return this._items;
       }
     }]);
 

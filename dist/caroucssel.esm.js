@@ -1,3 +1,14 @@
+// See: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf
+function debounce(func, delay) {
+	let inDebounce;
+	return function(...args) {
+		const self = this;
+		window.clearTimeout(inDebounce);
+		inDebounce = setTimeout(() => func.apply(self, args), delay);
+	};
+}
+
+
 class Scrollbar {
 
 	constructor() {
@@ -64,7 +75,7 @@ function __render(template, data) {
 
 
 function __templateButton({className, controls, label, title}) {
-	return `<button class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
+	return `<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
 		<span>${label}</span>
 	</button>`;
 }
@@ -77,7 +88,7 @@ function __templatePagination({className, controls, items, label, title}) {
 			const labelStr = label(data);
 			const titleStr = title(data);
 			return `<li>
-				<button aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
+				<button type="button" aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
 					<span>${labelStr}</span>
 				</button>
 			</li>`;
@@ -92,6 +103,8 @@ const
 	CLASS_VISIBLE_SCROLLBAR = 'has-visible-scrollbar',
 	CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
 
+	EVENT_SCROLL = 'scroll',
+
 	DEFAULTS = {
 		// Buttons:
 		hasButtons: false,
@@ -105,7 +118,10 @@ const
 		paginationClassName: 'pagination',
 		paginationLabel: ({index}) => `${index + 1}`,
 		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
-		paginationTemplate: __templatePagination
+		paginationTemplate: __templatePagination,
+
+		// Hooks:
+		onScroll: null
 	},
 	DEFAULTS_BUTTON_PREVIOUS = {
 		className: 'is-previous',
@@ -149,10 +165,16 @@ class Carousel {
 		this._options.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
 		this._options.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
 
-		// Render
+		this._items = [...this.el.children];
+
+		// Render:
 		this._update();
 		this._addButtons();
 		this._addPagination();
+
+		// Events:
+		this._onScroll = debounce(this._onScroll.bind(this), 25);
+		el.addEventListener(EVENT_SCROLL, this._onScroll);
 	}
 
 	get el() {
@@ -164,9 +186,9 @@ class Carousel {
 	}
 
 	get index() {
-		const {el} = this;
-		const {children, clientWidth} = el;
-		const {length} = children;
+		const {el, items} = this;
+		const {length} = items;
+		const {clientWidth} = el;
 		const outerLeft = el.getClientRects()[0].left;
 		const offset = clientWidth / 2;
 
@@ -176,7 +198,7 @@ class Carousel {
 		;
 
 		for (;index < length; index++) {
-			left = el.children[index].getClientRects()[0].left - outerLeft + offset;
+			left = items[index].getClientRects()[0].left - outerLeft + offset;
 			if (left >= 0 && left < clientWidth) {
 				return index;
 			}
@@ -186,28 +208,29 @@ class Carousel {
 	}
 
 	set index(value) {
-		const {el} = this;
-		const {children, scrollLeft} = el;
+		const {el, items} = this;
+		const {length} = items;
+		const {scrollLeft} = el;
 		const from = {scrollLeft};
 
 		if (-1 >= value) {
 			value = 0;
 		}
 
-		if (value >= el.childElementCount) {
-			value = el.childElementCount - 1;
+		if (value >= length) {
+			value = length - 1;
 		}
 
-		const to = {scrollLeft: children[value].offsetLeft};
-		if (from.scrollLeft === to.scrollLeft) {
+		const to = {left: items[value].offsetLeft};
+		if (from.left === to.left) {
 			return;
 		}
 
-		// @TODO: Use animation api with from/to objects...
+		el.scrollTo({...to, behavior: 'smooth'});
 	}
 
 	get items() {
-		return [...this.el.children];
+		return this._items;
 	}
 
 	destroy() {
@@ -226,6 +249,16 @@ class Carousel {
 
 		// Remove pagination:
 		this._removePagination();
+
+		// Remove events:
+		el.removeEventListener(EVENT_SCROLL, this._onScroll);
+	}
+
+	update() {
+		this._items = [...this.el.children];
+		this._update();
+		this._updateButtons();
+		this._updatePagination();
 	}
 
 	_update() {
@@ -258,17 +291,37 @@ class Carousel {
 				className: `${buttonClassName} ${data.className}`
 			}));
 
-		this._previous = previous;
+		previous.onclick = () => this.index--;
 		el.parentNode.appendChild(previous);
+		this._previous = previous;
 
-		this._next = next;
+		next.onclick = () => this.index++;
 		el.parentNode.appendChild(next);
+		this._next = next;
+
+		this._updateButtons();
+	}
+
+	_updateButtons(index = 0) {
+		const {_options} = this;
+		if (!_options.hasPagination) {
+			return;
+		}
+
+		const {items, _previous, _next} = this;
+		_previous.disabled = index === 0;
+		_next.disabled = index === items.length - 1;
 	}
 
 	_removeButtons() {
 		const {_previous, _next} = this;
-		_previous && _previous.parentNode.removeChild(_previous);
-		_next && _next.parentNode.removeChild(_next);
+		[_previous, _next].forEach((button) => {
+			if (!button) {
+				return;
+			}
+			button.onclick = null;
+			button.parentNode.removeChild(button);
+		});
 	}
 
 	_addPagination() {
@@ -286,13 +339,45 @@ class Carousel {
 			title: paginationTitle,
 		});
 
-		this._pagination = pagination;
+		// @TODO: Add template for buttons:
+		const buttons = [...pagination.querySelectorAll('button')]
+			.map((button, index) => {
+				button.onclick = () => this.index = index;
+				return button;
+			});
 		el.parentNode.appendChild(pagination);
+		this._pagination = pagination;
+		this._paginationButtons = buttons;
+
+		this._updatePagination();
+	}
+
+	_updatePagination(index = 0) {
+		const {_options} = this;
+		if (!_options.hasPagination) {
+			return;
+		}
+
+		const {_paginationButtons} = this;
+		_paginationButtons.forEach((button, at) => button.disabled = at === index);
 	}
 
 	_removePagination() {
-		const {_pagination} = this;
+		const {_pagination, _paginationButtons} = this;
+		(_paginationButtons || []).forEach((button) => {
+			button.onclick = null;
+			button.parentNode.removeChild(button);
+		});
 		_pagination && _pagination.parentNode.removeChild(_pagination);
+	}
+
+	_onScroll(event) {
+		const {index, _options} = this;
+		this._updateButtons(index);
+		this._updatePagination(index);
+
+		const {onScroll} = _options;
+		onScroll && onScroll({index, type: EVENT_SCROLL, target: this, originalEvent: event});
 	}
 
 }

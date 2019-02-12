@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css?family=Grand+Hotel|Vollkorn:400,600,700'); // sass-lint:disable-line no-url-protocols
+
+@font-face {
+	font-family: 'icons';
+	font-weight: normal;
+	font-style: normal;
+	src: url('./font/icons.woff2') format('woff2'),
+		url('./font/icons.woff') format('woff');
+}
+
+body {
+	background: #2F2F2F;
+	color: #FFFFFF;
+	font-family: 'Vollkorn', serif;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.3;
+	text-align: center;
+}
+
+h1 {
+	margin: 0 0 1rem;
+	font-size: 1.5rem;
+
+	em {
+		display: block;
+		font-family: 'Grand Hotel', cursive;
+		font-size: 2.5rem;
+	}
+
+	span {
+		color: #E91E63;
+	}
+
+	> span {
+		display: none;
+	}
+}
+
+h2 {
+	margin: 0 0 1rem;
+	font-family: 'Grand Hotel', cursive;
+	font-size: 1.75rem;
+}
+
+strong {
+	font-weight: 600;
+}
+
+button {
+	appearance: none;
+	cursor: pointer;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	color: inherit;
+	font: inherit;
+}
+
+.container {
+	height: 100vh;
+}
+
+.item {
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	width: 100vw;
+	height: 100vh;
+}
+
+.item-1 {
+	background: transparent;
+}
+
+.item-2 {
+	background-image: linear-gradient(to right, transparent, #00BCD4);
+}
+
+.item-3 {
+	background-image: linear-gradient(to right, #00BCD4, #E91E63);
+}
+
+.item-4 {
+	background-image: linear-gradient(to right, #E91E63, #CDDC39);
+}
+
+.item-5 {
+	background-image: linear-gradient(to right, #CDDC39, #FFFFFF);
+	color: #2F2F2F;
+}
+
+.item-6 {
+	background-color: #FFFFFF;
+	color: #2F2F2F;
+}
+
+.button,
+.pagination li {
+	transition: opacity 0.3s;
+	height: 2rem;
+	background-image: linear-gradient(to right, rgba(#FFFFFF, 0.5), rgba(#FFFFFF, 0.5));
+}
+
+.button {
+	opacity: 1;
+	position: fixed;
+	bottom: 0;
+	width: 2rem;
+	color: #2F2F2F;
+	font-family: 'icons';
+	font-weight: 400;
+
+	&:focus {
+		outline: none;
+		color: #E91E63;
+	}
+
+	span {
+		display: none;
+	}
+
+	&[disabled] {
+		opacity: 0;
+	}
+}
+
+.is-previous {
+	left: 0;
+
+	&::before {
+		content: '\e800';
+	}
+}
+
+.is-next {
+	right: 0;
+	background-image: linear-gradient(to right, rgba(#FFFFFF, 0), rgba(#FFFFFF, 0));
+	color: #FFFFFF;
+
+	&::before {
+		content: '\e801';
+	}
+}
+
+.pagination {
+	box-sizing: border-box;
+	display: flex;
+	position: fixed;
+	right: 2rem;
+	bottom: 0;
+	left: 2rem;
+
+	li {
+		flex: 1 0 auto;
+		opacity: 1;
+		color: #2F2F2F;
+
+		&:nth-child(1) {
+			&.is-active {
+				opacity: 0;
+			}
+		}
+
+		&:nth-child(2) {
+			background-image: linear-gradient(to right, rgba(#FFFFFF, 0.5), rgba(#00BCD4, 0.5));
+		}
+
+		&:nth-child(3) {
+			background-image: linear-gradient(to right, rgba(#00BCD4, 0.5), rgba(#E91E63, 0.5));
+		}
+
+		&:nth-child(4) {
+			background-image: linear-gradient(to right, rgba(#E91E63, 0.5), rgba(#CDDC39, 0.5));
+		}
+
+		&:nth-child(5) {
+			background-image: linear-gradient(to right, rgba(#CDDC39, 0.5), rgba(#FFFFFF, 0.5));
+		}
+
+		&:nth-child(6) {
+			background-image: linear-gradient(to right, rgba(#FFFFFF, 0.5), rgba(#FFFFFF, 0.5));
+		}
+	}
+
+	button {
+		display: block;
+		width: 100%;
+		height: 100%;
+
+		&:focus {
+			outline: none;
+			color: #E91E63;
+		}
+	}
+
+	.is-active ~ li {
+		opacity: 0;
+	}
+}

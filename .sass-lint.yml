@@ -116,7 +116,7 @@ rules:
   # Rule will disallow the use of color literals and basic color functions in any
   # declarations other than variables or maps/lists.
   no-color-literals:
-    - 2
+    - 0
     - allow-rgba: true
 
   # Rule will enforce the use of Sass single-line comments and disallow CSS comments.
@@ -456,10 +456,7 @@ rules:
   # - none
   # - currentColor
   variable-for-property:
-    - 2
-    - properties:
-        - color
-        - font-family
+    - 0
 
   # Rule will enforce a convention for variable names.
   variable-name-format:

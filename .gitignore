@@ -1,3 +1,6 @@
 .DS_Store
 coverage/
 node_modules/
+
+# GH Pages
+web/**/*.min.*
