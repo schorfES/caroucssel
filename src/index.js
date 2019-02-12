@@ -121,7 +121,7 @@ export class Carousel {
 		;
 
 		for (;index < length; index++) {
-			left = el.children[index].getClientRects()[0].left - outerLeft + offset;
+			left = children[index].getClientRects()[0].left - outerLeft + offset;
 			if (left >= 0 && left < clientWidth) {
 				return index;
 			}
@@ -143,12 +143,12 @@ export class Carousel {
 			value = el.childElementCount - 1;
 		}
 
-		const to = {scrollLeft: children[value].offsetLeft};
-		if (from.scrollLeft === to.scrollLeft) {
+		const to = {left: children[value].offsetLeft};
+		if (from.left === to.left) {
 			return;
 		}
 
-		// @TODO: Use animation api with from/to objects...
+		el.scrollTo({...to, behavior: 'smooth'});
 	}
 
 	get items() {
@@ -203,17 +203,24 @@ export class Carousel {
 				className: `${buttonClassName} ${data.className}`
 			}));
 
-		this._previous = previous;
+		previous.onclick = () => this.index--;
 		el.parentNode.appendChild(previous);
+		this._previous = previous;
 
-		this._next = next;
+		next.onclick = () => this.index++;
 		el.parentNode.appendChild(next);
+		this._next = next;
 	}
 
 	_removeButtons() {
 		const {_previous, _next} = this;
-		_previous && _previous.parentNode.removeChild(_previous);
-		_next && _next.parentNode.removeChild(_next);
+		[_previous, _next].forEach((button) => {
+			if (!button) {
+				return;
+			}
+			button.onclick = null;
+			button.parentNode.removeChild(button);
+		});
 	}
 
 	_addPagination() {
@@ -231,12 +238,22 @@ export class Carousel {
 			title: paginationTitle,
 		});
 
-		this._pagination = pagination;
+		const buttons = [...pagination.querySelectorAll('button')]
+			.map((button, index) => {
+				button.onclick = () => this.index = index;
+				return button;
+			});
 		el.parentNode.appendChild(pagination);
+		this._pagination = pagination;
+		this._paginationButtons = buttons;
 	}
 
 	_removePagination() {
-		const {_pagination} = this;
+		const {_pagination, _paginationButtons} = this;
+		(_paginationButtons || []).forEach((button) => {
+			button.onclick = null;
+			button.parentNode.removeChild(button);
+		});
 		_pagination && _pagination.parentNode.removeChild(_pagination);
 	}
 
