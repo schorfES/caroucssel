@@ -1,4 +1,4 @@
-.PHONY:  validate tests coverage build ghpages
+.PHONY:  validate tests coverage build web ghpages
 
 
 validate:
@@ -44,7 +44,7 @@ build:
 	node scripts/build.js
 
 
-ghpages: build
+web:
 	cp ./dist/caroucssel.min.css ./web/caroucssel.min.css
 	cp ./dist/caroucssel.min.js ./web/caroucssel.min.js
 
@@ -53,3 +53,7 @@ ghpages: build
 		./web/styles.min.css \
 		--indent-type space \
 		--output-style compressed
+
+
+ghpages: web
+	gh-pages -d web/
