@@ -7,3 +7,11 @@
 A lightweight dependency-free css carousel.
 
 _**CSS can scroll, why not use it?**_
+
+## Installation
+
+CarouCSSel is available on [NPM](https://www.npmjs.com/package/caroucssel):
+
+```bash
+npm install caroucssel --save
+```
