@@ -26,10 +26,12 @@ h1 {
 		display: block;
 		font-family: 'Grand Hotel', cursive;
 		font-size: 2.5rem;
-	}
 
-	span {
-		color: #E91E63;
+		span {
+			animation: skew 6s infinite;
+			display: inline-block;
+			color: #E91E63;
+		}
 	}
 
 	> span {
@@ -100,17 +102,12 @@ button {
 	color: #2F2F2F;
 }
 
-.button,
-.pagination li {
-	transition: opacity 0.3s;
-	height: 2rem;
-	background-image: linear-gradient(to right, rgba(#FFFFFF, 0.5), rgba(#FFFFFF, 0.5));
-}
-
 .button {
+	transition: opacity 0.3s;
 	opacity: 1;
 	position: fixed;
 	bottom: 0;
+	padding: 1.25rem 0;
 	width: 2rem;
 	color: #2F2F2F;
 	font-family: 'icons';
@@ -140,7 +137,6 @@ button {
 
 .is-next {
 	right: 0;
-	background-image: linear-gradient(to right, rgba(#FFFFFF, 0), rgba(#FFFFFF, 0));
 	color: #FFFFFF;
 
 	&::before {
@@ -160,46 +156,59 @@ button {
 		flex: 1 0 auto;
 		opacity: 1;
 		color: #2F2F2F;
+	}
 
-		&:nth-child(1) {
-			&.is-active {
-				opacity: 0;
-			}
-		}
-
-		&:nth-child(2) {
-			background-image: linear-gradient(to right, rgba(#FFFFFF, 0.5), rgba(#00BCD4, 0.5));
-		}
-
-		&:nth-child(3) {
-			background-image: linear-gradient(to right, rgba(#00BCD4, 0.5), rgba(#E91E63, 0.5));
-		}
-
-		&:nth-child(4) {
-			background-image: linear-gradient(to right, rgba(#E91E63, 0.5), rgba(#CDDC39, 0.5));
-		}
-
-		&:nth-child(5) {
-			background-image: linear-gradient(to right, rgba(#CDDC39, 0.5), rgba(#FFFFFF, 0.5));
-		}
-
-		&:nth-child(6) {
-			background-image: linear-gradient(to right, rgba(#FFFFFF, 0.5), rgba(#FFFFFF, 0.5));
-		}
+	span {
+		transition: opacity 0.3s;
+		opacity: 0;
 	}
 
 	button {
+		transition: border-bottom 0.3s, color 0.3s;
 		display: block;
 		width: 100%;
-		height: 100%;
+		height: 3rem;
+		border-bottom: 3px solid rgba(#2F2F2F, 0.5);
+		color: inherit;
 
+		&:hover,
 		&:focus {
+			border-bottom: 10px solid rgba(#FFFFFF, 0.85);
 			outline: none;
-			color: #E91E63;
+			color: #FFFFFF;
+		}
+
+		&[disabled] {
+			border-bottom: 10px solid rgba(#2F2F2F, 0.75);
+		}
+
+		&:hover,
+		&:disabled {
+			span {
+				opacity: 1;
+			}
 		}
 	}
+}
 
-	.is-active ~ li {
-		opacity: 0;
+@keyframes skew {
+	0% {
+		transform: scale(1) skewX(0);
+	}
+
+	5% {
+		transform: scale(1.5) skewX(-20deg);
+	}
+
+	10% {
+		transform: scale(1.5) skewX(-15deg);
+	}
+
+	15% {
+		transform: scale(1.5) skewX(-25deg);
+	}
+
+	20% {
+		transform: scale(1) skewX(0);
 	}
 }
