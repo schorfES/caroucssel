@@ -1,4 +1,5 @@
-import {Scrollbar} from './utils/index';
+import {Scrollbar} from './utils/Scrollbar';
+import {debounce} from './utils/debounce';
 
 
 function __render(template, data) {
@@ -37,6 +38,8 @@ const
 	CLASS_VISIBLE_SCROLLBAR = 'has-visible-scrollbar',
 	CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
 
+	EVENT_SCROLL = 'scroll',
+
 	DEFAULTS = {
 		// Buttons:
 		hasButtons: false,
@@ -50,7 +53,10 @@ const
 		paginationClassName: 'pagination',
 		paginationLabel: ({index}) => `${index + 1}`,
 		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
-		paginationTemplate: __templatePagination
+		paginationTemplate: __templatePagination,
+
+		// Hooks:
+		onScroll: null
 	},
 	DEFAULTS_BUTTON_PREVIOUS = {
 		className: 'is-previous',
@@ -94,10 +100,16 @@ export class Carousel {
 		this._options.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
 		this._options.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
 
-		// Render
+		this._items = [...this.el.children];
+
+		// Render:
 		this._update();
 		this._addButtons();
 		this._addPagination();
+
+		// Events:
+		this._onScroll = debounce(this._onScroll.bind(this), 25);
+		el.addEventListener(EVENT_SCROLL, this._onScroll);
 	}
 
 	get el() {
@@ -109,9 +121,9 @@ export class Carousel {
 	}
 
 	get index() {
-		const {el} = this;
-		const {children, clientWidth} = el;
-		const {length} = children;
+		const {el, items} = this;
+		const {length} = items;
+		const {clientWidth} = el;
 		const outerLeft = el.getClientRects()[0].left;
 		const offset = clientWidth / 2;
 
@@ -121,7 +133,7 @@ export class Carousel {
 		;
 
 		for (;index < length; index++) {
-			left = children[index].getClientRects()[0].left - outerLeft + offset;
+			left = items[index].getClientRects()[0].left - outerLeft + offset;
 			if (left >= 0 && left < clientWidth) {
 				return index;
 			}
@@ -131,19 +143,20 @@ export class Carousel {
 	}
 
 	set index(value) {
-		const {el} = this;
-		const {children, scrollLeft} = el;
+		const {el, items} = this;
+		const {length} = items;
+		const {scrollLeft} = el;
 		const from = {scrollLeft};
 
 		if (-1 >= value) {
 			value = 0;
 		}
 
-		if (value >= el.childElementCount) {
-			value = el.childElementCount - 1;
+		if (value >= length) {
+			value = length - 1;
 		}
 
-		const to = {left: children[value].offsetLeft};
+		const to = {left: items[value].offsetLeft};
 		if (from.left === to.left) {
 			return;
 		}
@@ -152,7 +165,7 @@ export class Carousel {
 	}
 
 	get items() {
-		return [...this.el.children];
+		return this._items;
 	}
 
 	destroy() {
@@ -171,6 +184,16 @@ export class Carousel {
 
 		// Remove pagination:
 		this._removePagination();
+
+		// Remove events:
+		el.removeEventListener(EVENT_SCROLL, this._onScroll);
+	}
+
+	update() {
+		this._items = [...this.el.children];
+		this._update();
+		this._updateButtons();
+		this._updatePagination();
 	}
 
 	_update() {
@@ -210,6 +233,19 @@ export class Carousel {
 		next.onclick = () => this.index++;
 		el.parentNode.appendChild(next);
 		this._next = next;
+
+		this._updateButtons();
+	}
+
+	_updateButtons(index = 0) {
+		const {_options} = this;
+		if (!_options.hasPagination) {
+			return;
+		}
+
+		const {items, _previous, _next} = this;
+		_previous.disabled = index === 0;
+		_next.disabled = index === items.length - 1;
 	}
 
 	_removeButtons() {
@@ -238,6 +274,7 @@ export class Carousel {
 			title: paginationTitle,
 		});
 
+		// @TODO: Add template for buttons:
 		const buttons = [...pagination.querySelectorAll('button')]
 			.map((button, index) => {
 				button.onclick = () => this.index = index;
@@ -246,6 +283,18 @@ export class Carousel {
 		el.parentNode.appendChild(pagination);
 		this._pagination = pagination;
 		this._paginationButtons = buttons;
+
+		this._updatePagination();
+	}
+
+	_updatePagination(index = 0) {
+		const {_options} = this;
+		if (!_options.hasPagination) {
+			return;
+		}
+
+		const {_paginationButtons} = this;
+		_paginationButtons.forEach((button, at) => button.disabled = at === index);
 	}
 
 	_removePagination() {
@@ -255,6 +304,15 @@ export class Carousel {
 			button.parentNode.removeChild(button);
 		});
 		_pagination && _pagination.parentNode.removeChild(_pagination);
+	}
+
+	_onScroll(event) {
+		const {index, _options} = this;
+		this._updateButtons(index);
+		this._updatePagination(index);
+
+		const {onScroll} = _options;
+		onScroll && onScroll({index, type: EVENT_SCROLL, target: this, originalEvent: event});
 	}
 
 }

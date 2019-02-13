@@ -3,7 +3,7 @@ import {Carousel} from './index';
 
 let mockScrollbarDimensions = null;
 
-jest.mock('./utils/index', () => {
+jest.mock('./utils/Scrollbar', () => {
 	return {
 		Scrollbar: class {
 			get dimensions() {

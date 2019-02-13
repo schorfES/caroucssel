@@ -70,7 +70,7 @@ exports[`Caroucssel pagination should add pagination 1`] = `
 			</div>
 		<ul class=\\"pagination\\">
 		<li>
-				<button type=\\"button\\" aria-controls=\\"custom-id\\" aria-label=\\"Go to 1. item\\" title=\\"Go to 1. item\\">
+				<button type=\\"button\\" aria-controls=\\"custom-id\\" aria-label=\\"Go to 1. item\\" title=\\"Go to 1. item\\" disabled=\\"\\">
 					<span>1</span>
 				</button>
 			</li><li>
@@ -100,7 +100,7 @@ exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 			</div>
 		<ul class=\\"custom-pagination-class\\">
 		<li>
-				<button type=\\"button\\" aria-controls=\\"custom-id\\" aria-label=\\"Go to first item\\" title=\\"Go to first item\\">
+				<button type=\\"button\\" aria-controls=\\"custom-id\\" aria-label=\\"Go to first item\\" title=\\"Go to first item\\" disabled=\\"\\">
 					<span>first</span>
 				</button>
 			</li><li>
