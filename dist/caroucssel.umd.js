@@ -46,22 +46,6 @@
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-  // See: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf
-  function debounce(func, delay) {
-    var inDebounce;
-    return function () {
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      var self = this;
-      window.clearTimeout(inDebounce);
-      inDebounce = setTimeout(function () {
-        return func.apply(self, args);
-      }, delay);
-    };
-  }
-
   var Scrollbar =
   /*#__PURE__*/
   function () {
@@ -123,7 +107,23 @@
     }]);
 
     return Scrollbar;
-  }();
+  }(); // See: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf
+
+
+  function debounce(func, delay) {
+    var inDebounce;
+    return function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var self = this;
+      window.clearTimeout(inDebounce);
+      inDebounce = setTimeout(function () {
+        return func.apply(self, args);
+      }, delay);
+    };
+  }
 
   function __render(template, data) {
     var el = document.createElement('div');
