@@ -35,25 +35,70 @@
 				<div class="item item-3">
 					<div>
 						<h2>Enable control buttons</h2>
-						<p>@TODO: add content here</p>
+						<div class="code">
+							<pre>import {Carousel} from 'caroucssel';
+
+const el = document.querySelector('.carousel');
+const carousel = new Carousel(el, {
+	hasButtons: true
+});</pre>
+						</div>
 					</div>
 				</div>
 				<div class="item item-4">
 					<div>
 						<h2>Enable pagination</h2>
-						<p>@TODO: add content here</p>
+						<div class="code">
+							<pre>
+import {Carousel} from 'caroucssel';
+
+const el = document.querySelector('.carousel');
+const carousel = new Carousel(el, {
+	hasPagination: true
+});</pre>
+
+						</div>
 					</div>
 				</div>
 				<div class="item item-5">
 					<div>
 						<h2>Use snap points</h2>
-						<p>@TODO: add content here</p>
+
+						<h3>SASS</h3>
+						<div class="code">
+							<pre>@import '~caroucssel/src/caroucssel';
+
+.selector { // Use sass extend
+	@extend %caroucssel;
+}
+
+.selector { // Use sass mixin
+	@include caroucssel();
+}
+</pre>
+						</div>
+						<h3>CSS</h3>
+						<div class="code">
+							<pre>&lt;link rel="stylesheet" href=href="./caroucssel.min.css"&gt;
+
+&lt;div class="caroucssel use-use-snap"&gt;
+	&lt;div&gt;Item 1&lt;/div&gt;
+	&lt;div&gt;Item 2&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+						</div>
 					</div>
 				</div>
 				<div class="item item-6">
 					<div>
 						<h2>Installation</h2>
-						<p>@TODO: add content here</p>
+
+						<h3>Via NPM</h3>
+						<div class="code">
+							<pre>npm i caroucssel</pre>
+						</div>
+
+						<h3>Via CDN</h3>
 					</div>
 				</div>
 			</div>

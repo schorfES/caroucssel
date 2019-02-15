@@ -8,6 +8,16 @@
 		url('./font/icons.woff') format('woff');
 }
 
+* {
+	box-sizing: border-box;
+
+	> *
+	&::before,
+	&::after {
+		box-sizing: inherit;
+	}
+}
+
 body {
 	background: #2F2F2F;
 	color: #FFFFFF;
@@ -52,7 +62,6 @@ strong {
 button {
 	appearance: none;
 	cursor: pointer;
-	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 	background: transparent;
@@ -62,12 +71,26 @@ button {
 	font: inherit;
 }
 
+.code {
+	display: block;
+	overflow: auto;
+	margin: 0 0 2rem;
+	padding: 1rem;
+	max-width: 95vw;
+	background: #2F2F2F;
+	background-color: rgba(#2F2F2F, 0.5);
+	border: 1px solid rgba(#FFFFFF, 0.5);
+	border-radius: 3px;
+	color: #FFFFFF;
+	font-family: 'Lucida Console', Monaco, 'Courier New', Courier, monospace;
+	text-align: left;
+}
+
 .container {
 	height: 100vh;
 }
 
 .item {
-	box-sizing: border-box;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -145,7 +168,6 @@ button {
 }
 
 .pagination {
-	box-sizing: border-box;
 	display: flex;
 	position: fixed;
 	right: 2rem;
