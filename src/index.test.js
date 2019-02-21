@@ -35,9 +35,11 @@ describe('Caroucssel', () => {
 		mockScrollbarDimensions = {width: 0, height: 0};
 	});
 
+
 	afterEach(() => {
 		document.body.innerHTML = '';
 	});
+
 
 	describe('core', () => {
 
@@ -74,32 +76,6 @@ describe('Caroucssel', () => {
 
 			new Carousel(el);
 			expect(el.id).toBe('custom-id');
-		});
-
-		it('should detect invisible scrollbar of OS by adding classname', () => {
-			mockScrollbarDimensions = {width: 1, height: 1};
-
-			document.body.innerHTML = __fixture(3);
-			const el = document.querySelector('.caroucssel');
-
-			new Carousel(el);
-			expect(Array.from(el.classList)).toEqual([
-				'caroucssel',
-				'has-invisible-scrollbar'
-			]);
-		});
-
-		it('should detect visible scrollbar of OS by adding classname', () => {
-			mockScrollbarDimensions = {width: 0, height: 0};
-
-			document.body.innerHTML = __fixture(3);
-			const el = document.querySelector('.caroucssel');
-
-			new Carousel(el);
-			expect(Array.from(el.classList)).toEqual([
-				'caroucssel',
-				'has-visible-scrollbar'
-			]);
 		});
 
 	});
@@ -267,6 +243,47 @@ describe('Caroucssel', () => {
 
 			expect(document.body.innerHTML).toMatchSnapshot();
 			expect(options.paginationTemplate).toHaveBeenCalledTimes(1);
+		});
+
+	});
+
+
+	describe('scrollbars', () => {
+
+		it('should detect invisible scrollbar of OS by adding classname', () => {
+			mockScrollbarDimensions = {width: 1, height: 1};
+
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+
+			new Carousel(el);
+			expect(Array.from(el.classList)).toEqual([
+				'caroucssel',
+				'has-invisible-scrollbar'
+			]);
+		});
+
+		it('should detect visible scrollbar of OS by adding classname', () => {
+			mockScrollbarDimensions = {width: 0, height: 0};
+
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+
+			new Carousel(el);
+			expect(Array.from(el.classList)).toEqual([
+				'caroucssel',
+				'has-visible-scrollbar'
+			]);
+		});
+
+		it('should use css defaults by don\'t adding any classname', () => {
+			mockScrollbarDimensions = {width: 1, height: 1};
+
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+
+			new Carousel(el, {hasScrollbars: true});
+			expect(Array.from(el.classList)).toEqual(['caroucssel']);
 		});
 
 	});

@@ -56,6 +56,9 @@ const
 		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
 		paginationTemplate: __templatePagination,
 
+		// Scrollbars, set to true when use default scrolling behaviour
+		hasScrollbars: false,
+
 		// Hooks:
 		onScroll: null
 	},
@@ -201,6 +204,12 @@ export class Carousel {
 	}
 
 	_update() {
+		const {hasScrollbars} = this._options;
+
+		if (hasScrollbars) {
+			return;
+		}
+
 		const {height} = scrollbar.dimensions;
 		const hasInvisbleScrollbar = (height === 0);
 
