@@ -330,6 +330,8 @@ export class Carousel {
 
 	_onResize() {
 		this._update();
+		this._updateButtons();
+		this._updatePagination();
 	}
 
 }
