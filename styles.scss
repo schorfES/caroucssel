@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Grand+Hotel|Vollkorn:400,600,700'); // sass-lint:disable-line no-url-protocols
+@import url('https://fonts.googleapis.com/css?family=Pacifico|Vollkorn:400,600,700'); // sass-lint:disable-line no-url-protocols
 
 @font-face {
 	font-family: 'icons';
@@ -34,7 +34,7 @@ h1 {
 
 	em {
 		display: block;
-		font-family: 'Grand Hotel', cursive;
+		font-family: 'Pacifico', cursive;
 		font-size: 2.5rem;
 
 		span {
@@ -51,7 +51,7 @@ h1 {
 
 h2 {
 	margin: 0 0 1rem;
-	font-family: 'Grand Hotel', cursive;
+	font-family: 'Pacifico', cursive;
 	font-size: 1.75rem;
 }
 
@@ -71,12 +71,17 @@ button {
 	font: inherit;
 }
 
+a {
+	color: inherit;
+	text-decoration: underline;
+}
+
 .code {
 	display: block;
 	overflow: auto;
 	margin: 0 0 2rem;
 	padding: 1rem;
-	max-width: 95vw;
+	max-width: 70vw;
 	background: #2F2F2F;
 	background-color: rgba(#2F2F2F, 0.5);
 	border: 1px solid rgba(#FFFFFF, 0.5);
@@ -94,59 +99,119 @@ button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 10px;
+	position: relative;
+	z-index: 1;
+	padding: 4rem 3rem 1rem;
 	width: 100vw;
 	height: 100vh;
 }
 
-.item-1 {
+.arrow {
+	transition: transform 0.3s, opacity 0.3s;
+	opacity: 0;
+	position: absolute;
+	z-index: -1;
+	width: 20vh;
+	height: 20vh;
+	fill: #2F2F2F;
+
+	.is-active & {
+		opacity: 1;
+	}
+}
+
+.item-1 { // Intro
 	background: transparent;
 }
 
-.item-2 {
+.item-2 { // Scrollbar
 	background-image: linear-gradient(to right, transparent, #00BCD4);
+
+	.arrow {
+		transform: rotate(-20deg) scale(0.5);
+		bottom: 3rem;
+		left: 35%;
+	}
+
+	&.is-active .arrow {
+		transform: rotate(10deg) scale(1);
+	}
 }
 
-.item-3 {
+.item-3 { // Buttons
 	background-image: linear-gradient(to right, #00BCD4, #E91E63);
+
+	.arrow {
+		transform: rotate(-20deg) scale(-0.5);
+		top: 50%;
+		right: 0;
+	}
+
+	&.is-active .arrow {
+		transform: rotate(10deg) scale(-1);
+	}
 }
 
-.item-4 {
+.item-4 { // Pagination
 	background-image: linear-gradient(to right, #E91E63, #CDDC39);
+
+	.arrow {
+		transform: translate(-5vh, 0) rotate(120deg) scale(0.5);
+		top: 4rem;
+		left: 50%;
+	}
+
+	&.is-active .arrow {
+		transform: translate(-5vh, 0) rotate(140deg) scale(1);
+	}
 }
 
-.item-5 {
+.item-5 { // CSS Snap
 	background-image: linear-gradient(to right, #CDDC39, #FFFFFF);
 	color: #2F2F2F;
 }
 
-.item-6 {
+.item-6 { // Installation
 	background-color: #FFFFFF;
 	color: #2F2F2F;
+
+	.arrow {
+		transform: rotate(-25deg) scale(1);
+		bottom: 50%;
+		left: 50%;
+		fill: #E91E63;
+	}
+
+	&.is-active .arrow {
+		transform: rotate(-5deg) scale(1);
+	}
 }
 
 .button {
-	transition: opacity 0.3s;
+	transition: opacity 0.3s, text-shadow 0.3s;
 	opacity: 1;
+	transform: translate(0, -50%);
 	position: fixed;
-	bottom: 0;
+	top: 50%;
 	padding: 1.25rem 0;
 	width: 2rem;
 	color: #2F2F2F;
 	font-family: 'icons';
+	font-size: 3rem;
 	font-weight: 400;
+	text-shadow: 0 0 0 rgba(#2F2F2F, 0);
 
 	&:focus {
 		outline: none;
-		color: #E91E63;
-	}
-
-	span {
-		display: none;
+		text-shadow: 0 0 12px rgba(#2F2F2F, 0.75);
 	}
 
 	&[disabled] {
 		opacity: 0;
+	}
+
+	span {
+		display: none;
 	}
 }
 
@@ -168,46 +233,48 @@ button {
 }
 
 .pagination {
-	display: flex;
 	position: fixed;
+	top: 2rem;
 	right: 2rem;
-	bottom: 0;
 	left: 2rem;
+	text-align: center;
 
 	li {
-		flex: 1 0 auto;
-		opacity: 1;
-		color: #2F2F2F;
+		display: inline-block;
+		margin: 0 0.25rem;
 	}
 
 	span {
-		transition: opacity 0.3s;
+		transition: opacity 0.3s, bottom 0.3s;
 		opacity: 0;
+		transform: translate(-50%, 0);
+		position: absolute;
+		bottom: 0;
+		left: 50%;
 	}
 
 	button {
-		transition: border-bottom 0.3s, color 0.3s;
+		transition: background 0.3s;
 		display: block;
-		width: 100%;
-		height: 3rem;
-		border-bottom: 3px solid rgba(#2F2F2F, 0.5);
-		color: inherit;
+		position: relative;
+		width: 1rem;
+		height: 1rem;
+		background: #2F2F2F;
+		border-radius: 50%;
+		color: #2F2F2F;
+		font-family: 'Pacifico', cursive;
 
 		&:hover,
 		&:focus {
-			border-bottom: 10px solid rgba(#FFFFFF, 0.85);
+			background: #FFFFFF;
 			outline: none;
-			color: #FFFFFF;
-		}
-
-		&[disabled] {
-			border-bottom: 10px solid rgba(#2F2F2F, 0.75);
 		}
 
 		&:hover,
-		&:disabled {
+		&[disabled] {
 			span {
 				opacity: 1;
+				bottom: 120%;
 			}
 		}
 	}
