@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/schorfES/scrollr/issues"
   },
-  "homepage": "https://github.com/schorfES/scrollr#readme",
+  "homepage": "https://schorfes.github.io/caroucssel/",
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.3.4",
