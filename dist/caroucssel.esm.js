@@ -103,6 +103,7 @@ const
 	CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
 
 	EVENT_SCROLL = 'scroll',
+	EVENT_RESIZE = 'resize',
 
 	DEFAULTS = {
 		// Buttons:
@@ -118,6 +119,9 @@ const
 		paginationLabel: ({index}) => `${index + 1}`,
 		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
 		paginationTemplate: __templatePagination,
+
+		// Scrollbars, set to true when use default scrolling behaviour
+		hasScrollbars: false,
 
 		// Hooks:
 		onScroll: null
@@ -173,7 +177,9 @@ class Carousel {
 
 		// Events:
 		this._onScroll = debounce(this._onScroll.bind(this), 25);
+		this._onResize = debounce(this._onResize.bind(this), 25);
 		el.addEventListener(EVENT_SCROLL, this._onScroll);
+		window.addEventListener(EVENT_RESIZE, this._onResize);
 	}
 
 	get el() {
@@ -251,6 +257,7 @@ class Carousel {
 
 		// Remove events:
 		el.removeEventListener(EVENT_SCROLL, this._onScroll);
+		window.removeEventListener(EVENT_RESIZE, this._onResize);
 	}
 
 	update() {
@@ -261,6 +268,12 @@ class Carousel {
 	}
 
 	_update() {
+		const {hasScrollbars} = this._options;
+
+		if (hasScrollbars) {
+			return;
+		}
+
 		const {height} = scrollbar.dimensions;
 		const hasInvisbleScrollbar = (height === 0);
 
@@ -377,6 +390,12 @@ class Carousel {
 
 		const {onScroll} = _options;
 		onScroll && onScroll({index, type: EVENT_SCROLL, target: this, originalEvent: event});
+	}
+
+	_onResize() {
+		this._update();
+		this._updateButtons();
+		this._updatePagination();
 	}
 
 }

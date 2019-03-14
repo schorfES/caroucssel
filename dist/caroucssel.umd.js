@@ -164,6 +164,7 @@
       CLASS_VISIBLE_SCROLLBAR = 'has-visible-scrollbar',
       CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
       EVENT_SCROLL = 'scroll',
+      EVENT_RESIZE = 'resize',
       DEFAULTS = {
     // Buttons:
     hasButtons: false,
@@ -183,6 +184,8 @@
       return "Go to ".concat(index + 1, ". item");
     },
     paginationTemplate: __templatePagination,
+    // Scrollbars, set to true when use default scrolling behaviour
+    hasScrollbars: false,
     // Hooks:
     onScroll: null
   },
@@ -234,7 +237,9 @@
 
 
       this._onScroll = debounce(this._onScroll.bind(this), 25);
+      this._onResize = debounce(this._onResize.bind(this), 25);
       el.addEventListener(EVENT_SCROLL, this._onScroll);
+      window.addEventListener(EVENT_RESIZE, this._onResize);
     }
 
     _createClass(Carousel, [{
@@ -255,6 +260,7 @@
 
 
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
+        window.removeEventListener(EVENT_RESIZE, this._onResize);
       }
     }, {
       key: "update",
@@ -270,6 +276,12 @@
     }, {
       key: "_update",
       value: function _update() {
+        var hasScrollbars = this._options.hasScrollbars;
+
+        if (hasScrollbars) {
+          return;
+        }
+
         var height = scrollbar.dimensions.height;
         var hasInvisbleScrollbar = height === 0;
 
@@ -444,6 +456,15 @@
           target: this,
           originalEvent: event
         });
+      }
+    }, {
+      key: "_onResize",
+      value: function _onResize() {
+        this._update();
+
+        this._updateButtons();
+
+        this._updatePagination();
       }
     }, {
       key: "el",
