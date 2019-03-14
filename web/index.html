@@ -12,6 +12,19 @@
 		<link rel="stylesheet" href="./styles.min.css">
 	</head>
 	<body>
+		<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+			<symbol id="arrow" viewBox="0 0 26.26 77.71">
+				<path class="symbol"
+					d="M18.25 73.28L5.78 74.81c15.51-17 22.27-33 20.07-47.49C23.12
+					9.41 7.81.54 7.19.17a1.25 1.25 0 1 0-1.23 2.17c.15.09 14.91
+					8.63 17.46 25.36C25.53 41.57 18.83 57 3.54 73.6l-1-12.87a1.25
+					1.25 0 0 0-2.49.19l1.14 15.64a1.2 1.2 0 0 0 .46.87 1.23 1.23
+					0 0 0 .94.28l15.93-2a1.2 1.2 0 0 0 .73-.35 1.18 1.18 0 0 0
+					.35-1 1.24 1.24 0 0 0-1.35-1.08z" fill="inherit"
+				/>
+			</symbol>
+		</svg>
+
 		<div class="container">
 			<div class="caroucssel use-snap">
 				<div class="item item-1">
@@ -29,7 +42,19 @@
 				<div class="item item-2">
 					<div>
 						<h2>The scrollbar</h2>
-						<p>@TODO: add content here</p>
+						<p>CarouCSSel detects the height of the scrollbar and hides them if necessary...</p>
+						<p>
+							Do you want some more details? Go to the
+							<a
+								href="https://github.com/schorfES/caroucssel#scrollbars"
+								title="Go to the documentation"
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<span>documentation</span>
+							</a>.
+						</p>
+						<svg class="arrow"><use xlink:href="#arrow"></svg>
 					</div>
 				</div>
 				<div class="item item-3">
@@ -43,6 +68,18 @@ const carousel = new Carousel(el, {
 	hasButtons: true
 });</pre>
 						</div>
+						<p>
+							Do you want some more details? Go to the
+							<a
+								href="https://github.com/schorfES/caroucssel#buttons"
+								title="Go to the documentation"
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<span>documentation</span>
+							</a>.
+						</p>
+						<svg class="arrow"><use xlink:href="#arrow"></svg>
 					</div>
 				</div>
 				<div class="item item-4">
@@ -58,6 +95,18 @@ const carousel = new Carousel(el, {
 });</pre>
 
 						</div>
+						<p>
+							Do you want some more details? Go to the
+							<a
+								href="https://github.com/schorfES/caroucssel#pagination"
+								title="Go to the documentation"
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<span>documentation</span>
+							</a>.
+						</p>
+						<svg class="arrow"><use xlink:href="#arrow"></svg>
 					</div>
 				</div>
 				<div class="item item-5">
@@ -68,12 +117,9 @@ const carousel = new Carousel(el, {
 						<div class="code">
 							<pre>@import '~caroucssel/src/caroucssel';
 
-.selector { // Use sass extend
-	@extend %caroucssel;
-}
-
-.selector { // Use sass mixin
+.selector {
 	@include caroucssel();
+	@include caroucssel-snap(100%);
 }
 </pre>
 						</div>
@@ -87,6 +133,17 @@ const carousel = new Carousel(el, {
 &lt;/div&gt;
 </pre>
 						</div>
+						<p>
+							Do you want some more details? Go to the
+							<a
+								href="https://github.com/schorfES/caroucssel#scss"
+								title="Go to the documentation"
+								rel="noopener noreferrer"
+								target="_blank"
+							>
+								<span>documentation</span>
+							</a>.
+						</p>
 					</div>
 				</div>
 				<div class="item item-6">
@@ -97,8 +154,7 @@ const carousel = new Carousel(el, {
 						<div class="code">
 							<pre>npm i caroucssel</pre>
 						</div>
-
-						<h3>Via CDN</h3>
+						<svg class="arrow"><use xlink:href="#arrow"></svg>
 					</div>
 				</div>
 			</div>
