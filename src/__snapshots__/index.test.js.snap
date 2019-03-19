@@ -3,7 +3,7 @@
 exports[`Caroucssel buttons should add buttons 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"custom-id\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -23,7 +23,7 @@ exports[`Caroucssel buttons should add buttons 1`] = `
 exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"custom-id\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -43,7 +43,7 @@ exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"custom-id\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -59,7 +59,7 @@ exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 exports[`Caroucssel pagination should add pagination 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"custom-id\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -89,7 +89,7 @@ exports[`Caroucssel pagination should add pagination 1`] = `
 exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"custom-id\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -119,7 +119,7 @@ exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 exports[`Caroucssel pagination should add pagination with custom template 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-visible-scrollbar\\" id=\\"custom-id\\">
+			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"custom-id\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				

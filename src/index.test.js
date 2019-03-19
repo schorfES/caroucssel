@@ -251,7 +251,7 @@ describe('Caroucssel', () => {
 	describe('scrollbars', () => {
 
 		it('should detect invisible scrollbar of OS by adding classname', () => {
-			mockScrollbarDimensions = {width: 1, height: 1};
+			mockScrollbarDimensions = {width: 0, height: 0};
 
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
@@ -264,7 +264,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should detect visible scrollbar of OS by adding classname', () => {
-			mockScrollbarDimensions = {width: 0, height: 0};
+			mockScrollbarDimensions = {width: 1, height: 1};
 
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');

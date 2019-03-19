@@ -16,14 +16,14 @@
 		white-space: normal;
 	}
 
-	&.has-invisble-scrollbar {
+	&.has-invisible-scrollbar {
 		&::-webkit-scrollbar,
 		&::-webkit-scrollbar-track {
 			background: transparent;
 		}
 	}
 
-	&.has-visble-scrollbar {
+	&.has-visible-scrollbar {
 		overflow: hidden;
 	}
 }
