@@ -17,11 +17,11 @@
   white-space: normal;
 }
 
-.caroucssel.has-invisble-scrollbar::-webkit-scrollbar, .caroucssel.has-invisble-scrollbar::-webkit-scrollbar-track {
+.caroucssel.has-invisible-scrollbar::-webkit-scrollbar, .caroucssel.has-invisible-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.caroucssel.has-visble-scrollbar {
+.caroucssel.has-visible-scrollbar {
   overflow: hidden;
 }
 
