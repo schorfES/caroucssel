@@ -41,6 +41,7 @@
     "rollup": "^1.6.0",
     "sass-lint": "^1.12.1",
     "snyk": "^1.136.2",
-    "uglify-js": "^3.4.9"
+    "uglify-js": "^3.4.9",
+    "version-bump-prompt": "^5.0.0"
   }
 }

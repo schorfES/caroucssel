@@ -1,4 +1,4 @@
-.PHONY:  validate tests coverage build web ghpages
+.PHONY:  validate tests coverage build web ghpages release
 
 
 validate:
@@ -57,3 +57,10 @@ web:
 
 ghpages: web
 	gh-pages -d web/
+
+
+make release: validate tests build ghpages
+	node_modules/.bin/bump \
+		--commit "Release v%s" \
+		--tag \
+		--all
