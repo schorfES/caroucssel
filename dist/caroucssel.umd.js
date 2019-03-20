@@ -200,7 +200,7 @@
     title: 'Go to next'
   };
 
-  var carouselCount = 0,
+  var instanceCount = 0,
       scrollbar = null;
 
   var Carousel =
@@ -220,8 +220,8 @@
       scrollbar = scrollbar || new Scrollbar(); // Count all created instances to create unique id, if given dom element
       // has no id-attribute:
 
-      carouselCount++;
-      el.id = el.id || ID_NAME(carouselCount);
+      instanceCount++;
+      el.id = el.id || ID_NAME(instanceCount);
       this._id = el.id; // "deep" extend options and defaults:
 
       this._options = _objectSpread({}, DEFAULTS, options);
@@ -536,6 +536,15 @@
 
     return Carousel;
   }();
+  /**
+   * This can be used for testing purposes to reset the instance count which is
+   * used to create unique id's.
+   */
+
 
   _exports.Carousel = Carousel;
+
+  Carousel.resetInstanceCount = function () {
+    return instanceCount = 0;
+  };
 });
