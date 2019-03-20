@@ -38,6 +38,7 @@ describe('Caroucssel', () => {
 
 	afterEach(() => {
 		document.body.innerHTML = '';
+		Carousel.resetInstanceCount();
 	});
 
 
@@ -70,6 +71,17 @@ describe('Caroucssel', () => {
 			expect(/^caroucssel-[0-9]*$/.test(el.id)).toBeTruthy();
 		});
 
+		it('should create unique ids for multiple instances', () => {
+			document.body.innerHTML = `${__fixture(3)}${__fixture(3)}`;
+			const instances = [];
+			[...document.querySelectorAll('.caroucssel')].forEach((el) =>
+				instances.push(new Carousel(el)));
+
+			expect.assertions(2);
+			instances.forEach((el, index) =>
+				expect(el.id).toBe(`caroucssel-${index + 1}`));
+		});
+
 		it('should not add id-attribute when element already has an id', () => {
 			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
 			const el = document.querySelector('.caroucssel');
@@ -84,7 +96,7 @@ describe('Caroucssel', () => {
 	describe('buttons', () => {
 
 		it('should add buttons', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			const options = {
 				hasButtons: true
@@ -95,7 +107,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should add buttons with custom options', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			const options = {
 				hasButtons: true,
@@ -159,7 +171,7 @@ describe('Caroucssel', () => {
 	describe('pagination', () => {
 
 		it('should add pagination', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			const options = {
 				hasPagination: true
@@ -170,7 +182,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should add pagination with custom options', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			const items = [...el.children];
 			const options = {
@@ -207,7 +219,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should add pagination with custom template', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			const options = {
 				hasPagination: true,
