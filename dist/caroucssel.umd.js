@@ -344,7 +344,7 @@
         var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
         var _options = this._options;
 
-        if (!_options.hasPagination) {
+        if (!_options.hasButtons) {
           return;
         }
 
