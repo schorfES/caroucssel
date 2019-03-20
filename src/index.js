@@ -252,7 +252,7 @@ export class Carousel {
 
 	_updateButtons(index = 0) {
 		const {_options} = this;
-		if (!_options.hasPagination) {
+		if (!_options.hasButtons) {
 			return;
 		}
 
