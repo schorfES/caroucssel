@@ -229,11 +229,11 @@
       this._options.buttonNext = _objectSpread({}, DEFAULTS_BUTTON_NEXT, options.buttonNext);
       this._items = _toConsumableArray(this.el.children); // Render:
 
-      this._update();
-
       this._addButtons();
 
-      this._addPagination(); // Events:
+      this._addPagination();
+
+      this._updateScrollbars(); // Events:
 
 
       this._onScroll = debounce(this._onScroll.bind(this), 25);
@@ -265,17 +265,18 @@
     }, {
       key: "update",
       value: function update() {
+        var index = this.index;
         this._items = _toConsumableArray(this.el.children);
 
-        this._update();
+        this._updateButtons(index);
 
-        this._updateButtons();
+        this._updatePagination(index);
 
-        this._updatePagination();
+        this._updateScrollbars();
       }
     }, {
-      key: "_update",
-      value: function _update() {
+      key: "_updateScrollbars",
+      value: function _updateScrollbars() {
         var hasScrollbars = this._options.hasScrollbars;
 
         if (hasScrollbars) {
@@ -323,14 +324,14 @@
             next = _map2[1];
 
         previous.onclick = function () {
-          return _this2.index--;
+          return _this2.index = [_this2.index[0] - 1];
         };
 
         el.parentNode.appendChild(previous);
         this._previous = previous;
 
         next.onclick = function () {
-          return _this2.index++;
+          return _this2.index = [_this2.index[0] + 1];
         };
 
         el.parentNode.appendChild(next);
@@ -341,7 +342,7 @@
     }, {
       key: "_updateButtons",
       value: function _updateButtons() {
-        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.index;
         var _options = this._options;
 
         if (!_options.hasButtons) {
@@ -351,8 +352,8 @@
         var items = this.items,
             _previous = this._previous,
             _next = this._next;
-        _previous.disabled = index === 0;
-        _next.disabled = index === items.length - 1;
+        _previous.disabled = index[0] === 0;
+        _next.disabled = index[index.length - 1] === items.length - 1;
       }
     }, {
       key: "_removeButtons",
@@ -398,7 +399,7 @@
 
         var buttons = _toConsumableArray(pagination.querySelectorAll('button')).map(function (button, index) {
           button.onclick = function () {
-            return _this3.index = index;
+            return _this3.index = [index];
           };
 
           return button;
@@ -413,7 +414,7 @@
     }, {
       key: "_updatePagination",
       value: function _updatePagination() {
-        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.index;
         var _options = this._options;
 
         if (!_options.hasPagination) {
@@ -423,7 +424,7 @@
         var _paginationButtons = this._paginationButtons;
 
         _paginationButtons.forEach(function (button, at) {
-          return button.disabled = at === index;
+          return button.disabled = index.includes(at);
         });
       }
     }, {
@@ -460,11 +461,13 @@
     }, {
       key: "_onResize",
       value: function _onResize() {
-        this._update();
+        var index = this.index;
 
-        this._updateButtons();
+        this._updateButtons(index);
 
-        this._updatePagination();
+        this._updatePagination(index);
+
+        this._updateScrollbars();
       }
     }, {
       key: "el",
@@ -483,22 +486,32 @@
             items = this.items;
         var length = items.length;
         var clientWidth = el.clientWidth;
-        var outerLeft = el.getClientRects()[0].left;
-        var offset = clientWidth / 2;
-        var index = 0,
-            left;
+        var outerLeft = el.getBoundingClientRect().left;
+        var values = [];
+        var index = 0;
 
         for (; index < length; index++) {
-          left = items[index].getClientRects()[0].left - outerLeft + offset;
+          var item = items[index];
 
-          if (left >= 0 && left < clientWidth) {
-            return index;
+          var _item$getBoundingClie = item.getBoundingClientRect(),
+              left = _item$getBoundingClie.left,
+              width = _item$getBoundingClie.width;
+
+          left = left - outerLeft; // @TODO: This may not work properly when the item is larger than
+          // the clientWidth
+
+          if (left + width / 2 >= 0 && left < clientWidth - width / 2) {
+            values.push(index);
           }
         }
 
-        return index - 1;
+        if (values.length === 0) {
+          return [0];
+        }
+
+        return values;
       },
-      set: function set(value) {
+      set: function set(values) {
         var el = this.el,
             items = this.items;
         var length = items.length;
@@ -506,6 +519,7 @@
         var from = {
           scrollLeft: scrollLeft
         };
+        var value = values[0] || 0;
 
         if (-1 >= value) {
           value = 0;

@@ -171,9 +171,9 @@ class Carousel {
 		this._items = [...this.el.children];
 
 		// Render:
-		this._update();
 		this._addButtons();
 		this._addPagination();
+		this._updateScrollbars();
 
 		// Events:
 		this._onScroll = debounce(this._onScroll.bind(this), 25);
@@ -194,29 +194,35 @@ class Carousel {
 		const {el, items} = this;
 		const {length} = items;
 		const {clientWidth} = el;
-		const outerLeft = el.getClientRects()[0].left;
-		const offset = clientWidth / 2;
-
-		let
-			index = 0,
-			left
-		;
+		const outerLeft = el.getBoundingClientRect().left;
+		let values = [];
+		let index = 0;
 
 		for (;index < length; index++) {
-			left = items[index].getClientRects()[0].left - outerLeft + offset;
-			if (left >= 0 && left < clientWidth) {
-				return index;
+			const item = items[index];
+			let {left, width} = item.getBoundingClientRect();
+			left = left - outerLeft;
+
+			// @TODO: This may not work properly when the item is larger than
+			// the clientWidth
+			if (left + width / 2 >= 0 && left < clientWidth - width / 2) {
+				values.push(index);
 			}
 		}
 
-		return index - 1;
+		if (values.length === 0) {
+			return [0];
+		}
+
+		return values;
 	}
 
-	set index(value) {
+	set index(values) {
 		const {el, items} = this;
 		const {length} = items;
 		const {scrollLeft} = el;
 		const from = {scrollLeft};
+		let value = values[0] || 0;
 
 		if (-1 >= value) {
 			value = 0;
@@ -261,13 +267,14 @@ class Carousel {
 	}
 
 	update() {
+		const {index} = this;
 		this._items = [...this.el.children];
-		this._update();
-		this._updateButtons();
-		this._updatePagination();
+		this._updateButtons(index);
+		this._updatePagination(index);
+		this._updateScrollbars();
 	}
 
-	_update() {
+	_updateScrollbars() {
 		const {hasScrollbars} = this._options;
 
 		if (hasScrollbars) {
@@ -303,26 +310,26 @@ class Carousel {
 				className: `${buttonClassName} ${data.className}`
 			}));
 
-		previous.onclick = () => this.index--;
+		previous.onclick = () => this.index = [this.index[0] - 1];
 		el.parentNode.appendChild(previous);
 		this._previous = previous;
 
-		next.onclick = () => this.index++;
+		next.onclick = () => this.index = [this.index[0] + 1];
 		el.parentNode.appendChild(next);
 		this._next = next;
 
 		this._updateButtons();
 	}
 
-	_updateButtons(index = 0) {
+	_updateButtons(index = this.index) {
 		const {_options} = this;
 		if (!_options.hasButtons) {
 			return;
 		}
 
 		const {items, _previous, _next} = this;
-		_previous.disabled = index === 0;
-		_next.disabled = index === items.length - 1;
+		_previous.disabled = index[0] === 0;
+		_next.disabled = index[index.length - 1] === items.length - 1;
 	}
 
 	_removeButtons() {
@@ -354,7 +361,7 @@ class Carousel {
 		// @TODO: Add template for buttons:
 		const buttons = [...pagination.querySelectorAll('button')]
 			.map((button, index) => {
-				button.onclick = () => this.index = index;
+				button.onclick = () => this.index = [index];
 				return button;
 			});
 		el.parentNode.appendChild(pagination);
@@ -364,14 +371,14 @@ class Carousel {
 		this._updatePagination();
 	}
 
-	_updatePagination(index = 0) {
+	_updatePagination(index = this.index) {
 		const {_options} = this;
 		if (!_options.hasPagination) {
 			return;
 		}
 
 		const {_paginationButtons} = this;
-		_paginationButtons.forEach((button, at) => button.disabled = at === index);
+		_paginationButtons.forEach((button, at) => button.disabled = index.includes(at));
 	}
 
 	_removePagination() {
@@ -393,9 +400,10 @@ class Carousel {
 	}
 
 	_onResize() {
-		this._update();
-		this._updateButtons();
-		this._updatePagination();
+		const {index} = this;
+		this._updateButtons(index);
+		this._updatePagination(index);
+		this._updateScrollbars();
 	}
 
 }
