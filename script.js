@@ -6,7 +6,6 @@
 		hasButtons: true,
 		hasPagination: true,
 		onScroll: function(event) {
-			console.log(items);
 			items.forEach(function(item, index) {
 				item.classList[event.index === index ? 'add' : 'remove']('is-active');
 			});
