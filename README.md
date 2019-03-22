@@ -96,7 +96,7 @@ A full set of button options could look like this:
 const carousel = new Carousel(el, {
     hasButtons: true,
     buttonClassName: 'my-button',
-    buttonTemplate: ({className, label, title}) => 
+    buttonTemplate: ({className, label, title}) =>
         `<button class="${className}" title="${title}">
             ${label}
         </button>`,
@@ -140,7 +140,7 @@ The pagination can be customized by additional options. The following options ar
     * `items` – a dom element list of all items
     * `label` – the function reference for `paginationLabel` to create a button label
     * `title` – the function reference for `paginationTitle` to create a button tile
-    
+
 A full set of pagination options could look like this:
 
 ```javascript
@@ -149,9 +149,9 @@ const carousel = new Carousel(el, {
     paginationClassName: 'my-pagination',
     paginationLabel: ({index}) => `${index + 1}.`,
     paginationTitle: ({index}) => `Jump to ${index + 1}. item`,
-    paginationTemplate: ({className, items, label, title}) => 
+    paginationTemplate: ({className, items, label, title}) =>
         `<div class="${className}">
-            ${items.map((item, index) => 
+            ${items.map((item, index) =>
                 `<button title="${title({index})}">${label({index})}</button>`
             ).join('')}
         </div>`
@@ -170,7 +170,7 @@ const carousel = new Carousel(el, {
 
 ##### Events
 
-* `onScroll` a function which is invoked when the user scrolls through the carousel. An object containing the current `index`, an event `type`, a reference to the carousel instance (`target`) and the original scroll event (`originalEvent`) is passed to the function. 
+* `onScroll` a function which is invoked when the user scrolls through the carousel. An object containing the current `index` (a list of visible indexes), an event `type`, a reference to the carousel instance (`target`) and the original scroll event (`originalEvent`) is passed to the function.
 
 ## API
 
@@ -190,7 +190,7 @@ Enables CSS-snapping inside the carousel. The following parameters are available
 
 #### `.index`
 
-Returns and/or sets the current index of the carousel.
+Returns and/or sets the current index of the carousel. The returned index is a list (array) of indexes that are currently visible (depending on each item width). To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
 
 #### `.items` (read only)
 
@@ -216,5 +216,3 @@ This completely deconstructs the carousel and returns the dom to its initial sta
 ## License
 
 [LICENSE (MIT)](./LICENSE)
-
-
