@@ -1,0 +1,12 @@
+coverage/
+scripts/
+src/
+web/
+.editorconfig
+.eslintignore
+.eslintrc
+.nvmrc
+.sass-lint.yml
+.travis.yml
+babel.config.js
+Makefile
