@@ -2,10 +2,10 @@
 
 
 validate:
-	node_modules/.bin/audit-ci  \
+	./node_modules/.bin/audit-ci  \
 		--moderate
 
-	node_modules/.bin/eslint \
+	./node_modules/.bin/eslint \
 		. \
 		--ext .js
 
@@ -16,7 +16,7 @@ validate:
 
 
 tests:
-	node_modules/.bin/jest \
+	./node_modules/.bin/jest \
 		src \
 		--coverage \
 		--verbose
@@ -29,19 +29,21 @@ coverage:
 build:
 	rm -rf dist/ && mkdir dist/
 
-	node_modules/.bin/node-sass \
+	./node_modules/.bin/node-sass \
 		./src/caroucssel.css.scss \
 		./dist/caroucssel.css \
 		--indent-type space \
 		--output-style expanded
 
-	node_modules/.bin/node-sass \
+	./node_modules/.bin/node-sass \
 		./src/caroucssel.css.scss \
 		./dist/caroucssel.min.css \
 		--indent-type space \
 		--output-style compressed
 
-	node scripts/build.js
+	cp ./src/caroucssel.scss ./dist/caroucssel.scss
+
+	node ./scripts/build.js
 
 
 web:
@@ -56,11 +58,11 @@ web:
 
 
 ghpages: web
-	gh-pages -d web/
+	gh-pages -d ./web/
 
 
 release: validate tests build ghpages
-	node_modules/.bin/bump \
+	./node_modules/.bin/bump \
 		--commit "Release v%s" \
 		--tag \
 		--all
