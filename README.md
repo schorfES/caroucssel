@@ -65,7 +65,7 @@ const carousel = new Carousel(el, { /* options here */ });
 
 ##### Index
 
-Set the initial scroll index. The option format as an array follows API format for possibly multiple visible items. To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
+Set the initial scroll index. The option format as an array follows API format for possibly multiple visible items ([read more](#index-1)). To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
 
 ```javascript
 const carousel = new Carousel(el, {
