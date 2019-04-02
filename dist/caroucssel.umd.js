@@ -233,8 +233,12 @@
 
       this._addPagination();
 
-      this._updateScrollbars(); // Events:
+      this._updateScrollbars(); // Set index:
 
+
+      this._isSmooth = false;
+      this.index = this._options.index || [0];
+      this._isSmooth = true; // Events:
 
       this._onScroll = debounce(this._onScroll.bind(this), 25);
       this._onResize = debounce(this._onResize.bind(this), 25);
@@ -502,7 +506,16 @@
 
           if (left + width / 2 >= 0 && left < clientWidth - width / 2) {
             values.push(index);
-          }
+          } // else if (values.length > 0) {
+          // 	If we already pushed an item trough this loop, we can break this
+          // 	loop, because all other items will be out of visibility.
+          //
+          // 	NOTE: Do not implement this, because if a flexbox ordering is
+          // 	attached to one of the items, this rule won't apply!
+          //
+          // 	break;
+          // }
+
         }
 
         if (values.length === 0) {
@@ -517,7 +530,7 @@
         var length = items.length;
         var scrollLeft = el.scrollLeft;
         var from = {
-          scrollLeft: scrollLeft
+          left: scrollLeft
         };
         var value = values[0] || 0;
 
@@ -537,8 +550,9 @@
           return;
         }
 
+        var behavior = this._isSmooth ? 'smooth' : 'auto';
         el.scrollTo(_objectSpread({}, to, {
-          behavior: 'smooth'
+          behavior: behavior
         }));
       }
     }, {
