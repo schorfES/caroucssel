@@ -528,20 +528,17 @@
         var el = this.el,
             items = this.items;
         var length = items.length;
+
+        if (length === 0) {
+          return;
+        }
+
+        var value = values[0] || 0;
+        value = Math.max(Math.min(value, length - 1), 0);
         var scrollLeft = el.scrollLeft;
         var from = {
           left: scrollLeft
         };
-        var value = values[0] || 0;
-
-        if (-1 >= value) {
-          value = 0;
-        }
-
-        if (value >= length) {
-          value = length - 1;
-        }
-
         var to = {
           left: items[value].offsetLeft
         };

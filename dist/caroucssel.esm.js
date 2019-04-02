@@ -234,18 +234,16 @@ class Carousel {
 	set index(values) {
 		const {el, items} = this;
 		const {length} = items;
+
+		if (length === 0) {
+			return;
+		}
+
+		let value = values[0] || 0;
+		value = Math.max(Math.min(value, length - 1), 0);
+
 		const {scrollLeft} = el;
 		const from = {left: scrollLeft};
-		let value = values[0] || 0;
-
-		if (-1 >= value) {
-			value = 0;
-		}
-
-		if (value >= length) {
-			value = length - 1;
-		}
-
 		const to = {left: items[value].offsetLeft};
 		if (from.left === to.left) {
 			return;
