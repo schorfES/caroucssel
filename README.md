@@ -63,6 +63,16 @@ const carousel = new Carousel(el, { /* options here */ });
 
 #### Options
 
+##### Index
+
+Set the initial scroll index. The option format as an array follows API format for possibly multiple visible items. To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
+
+```javascript
+const carousel = new Carousel(el, {
+    index: [42]
+});
+```
+
 ##### Buttons
 
 Buttons allow the user to scroll step by step, forwards and backward between items inside the carousel. Buttons are rendered as `<button>` into the DOM as a direct sibling of the carousel element. By default, the buttons are rendered with required WIA-ARIA attributes. To enable buttons set `hasButtons` to `true` inside the options object:

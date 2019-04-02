@@ -111,6 +111,11 @@ export class Carousel {
 		this._addPagination();
 		this._updateScrollbars();
 
+		// Set index:
+		this._isSmooth = false;
+		this.index = this._options.index || [0];
+		this._isSmooth = true;
+
 		// Events:
 		this._onScroll = debounce(this._onScroll.bind(this), 25);
 		this._onResize = debounce(this._onResize.bind(this), 25);
@@ -144,6 +149,15 @@ export class Carousel {
 			if (left + width / 2 >= 0 && left < clientWidth - width / 2) {
 				values.push(index)
 			}
+			// else if (values.length > 0) {
+			// 	If we already pushed an item trough this loop, we can break this
+			// 	loop, because all other items will be out of visibility.
+			//
+			// 	NOTE: Do not implement this, because if a flexbox ordering is
+			// 	attached to one of the items, this rule won't apply!
+			//
+			// 	break;
+			// }
 		}
 
 		if (values.length === 0) {
@@ -157,7 +171,7 @@ export class Carousel {
 		const {el, items} = this;
 		const {length} = items;
 		const {scrollLeft} = el;
-		const from = {scrollLeft};
+		const from = {left: scrollLeft};
 		let value = values[0] || 0;
 
 		if (-1 >= value) {
@@ -173,7 +187,8 @@ export class Carousel {
 			return;
 		}
 
-		el.scrollTo({...to, behavior: 'smooth'});
+		const behavior = this._isSmooth ? 'smooth' : 'auto';
+		el.scrollTo({...to, behavior});
 	}
 
 	get items() {

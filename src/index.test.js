@@ -90,6 +90,68 @@ describe('Caroucssel', () => {
 			expect(el.id).toBe('custom-id');
 		});
 
+		it('should return current index of visible item', () => {
+			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el);
+			expect(carousel.index).toEqual([0]);
+
+			el.scrollTo({left: 120});
+			expect(carousel.index).toEqual([1]);
+		});
+
+		it('should return current index(s) when multiple items are visible', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 120;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 40);
+
+			const carousel = new Carousel(el);
+			expect(carousel.index).toEqual([0, 1, 2]);
+
+			el.scrollTo({left: 120});
+			expect(carousel.index).toEqual([3, 4, 5]);
+		});
+
+		it('should set initial index as option', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el, {index: [2]});
+			expect(carousel.index).toEqual([2]);
+		});
+
+		it('should set initial index as option when multiple items are visible', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 120;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 40);
+
+			const carousel = new Carousel(el, {index: [2]});
+			expect(carousel.index).toEqual([2, 3, 4]);
+		});
+
+		it('should return current index(s) at expected bounds', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+
+			const carousel = new Carousel(el);
+			expect(carousel.index).toEqual([0, 1]);
+
+			el.scrollTo({left: 25});
+			expect(carousel.index).toEqual([0, 1]);
+
+			el.scrollTo({left: 26});
+			expect(carousel.index).toEqual([1, 2]);
+
+			el.scrollTo({left: 75});
+			expect(carousel.index).toEqual([1, 2]);
+
+			el.scrollTo({left: 76});
+			expect(carousel.index).toEqual([2, 3]);
+		});
+
 	});
 
 
