@@ -59,7 +59,7 @@ ghpages: web
 	gh-pages -d web/
 
 
-make release: validate tests build ghpages
+release: validate tests build ghpages
 	node_modules/.bin/bump \
 		--commit "Release v%s" \
 		--tag \
