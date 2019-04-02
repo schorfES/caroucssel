@@ -55,6 +55,14 @@ describe('Caroucssel', () => {
 				.toThrow(new Error('Carousel needs a dom element but "object" was passed.'));
 		});
 
+		it('should render empty', () => {
+			document.body.innerHTML = __fixture(0);
+
+			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el);
+			expect(carousel.el).toBe(el);
+		});
+
 		it('should return given element', () => {
 			document.body.innerHTML = __fixture(3);
 
@@ -111,6 +119,14 @@ describe('Caroucssel', () => {
 
 			el.scrollTo({left: 120});
 			expect(carousel.index).toEqual([3, 4, 5]);
+		});
+
+		it('should return current index when no items are available', () => {
+			document.body.innerHTML = __fixture(0);
+
+			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el);
+			expect(carousel.index).toEqual([0]);
 		});
 
 		it('should set initial index as option', () => {
