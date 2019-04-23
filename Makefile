@@ -3,7 +3,8 @@
 
 validate:
 	./node_modules/.bin/audit-ci  \
-		--moderate
+		--moderate \
+		--whitelist=tar
 
 	./node_modules/.bin/eslint \
 		. \
