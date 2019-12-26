@@ -63,7 +63,7 @@ ghpages: web
 
 
 release: validate tests build ghpages
-	./node_modules/.bin/bump \
-		--commit "Release v%s" \
-		--tag "%s" \
-		--all
+	node_modules/.bin/np \
+		--no-yarn \
+		--no-tests \
+		--tag
