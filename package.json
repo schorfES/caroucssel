@@ -11,13 +11,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/schorfES/scrollr.git"
+    "url": "git+https://github.com/schorfES/caroucssel.git"
   },
   "keywords": [],
   "author": "Norman Rusch",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/schorfES/scrollr/issues"
+    "url": "https://github.com/schorfES/caroucssel/issues"
   },
   "homepage": "https://schorfes.github.io/caroucssel/",
   "dependencies": {},
