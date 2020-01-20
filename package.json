@@ -4,6 +4,7 @@
   "description": "A lightweight dependency-free css carousel.",
   "main": "dist/caroucssel.umd.js",
   "module": "dist/caroucssel.esm.js",
+  "types": "dist/caroucssel.d.ts",
   "scripts": {
     "validate": "make validate",
     "test": "snyk test && make tests",

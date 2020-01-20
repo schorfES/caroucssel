@@ -44,6 +44,8 @@ build:
 
 	cp ./src/caroucssel.scss ./dist/caroucssel.scss
 
+	cp ./src/index.d.ts ./dist/caroucssel.d.ts
+
 	node ./scripts/build.js
 
 
