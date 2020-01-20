@@ -7,7 +7,7 @@
 		hasPagination: true,
 		onScroll: function(event) {
 			items.forEach(function(item, index) {
-				item.classList[event.index === index ? 'add' : 'remove']('is-active');
+				item.classList[event.index.includes(index) ? 'add' : 'remove']('is-active');
 			});
 		}
 	});
