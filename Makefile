@@ -4,7 +4,7 @@
 validate:
 	./node_modules/.bin/audit-ci  \
 		--moderate \
-		--whitelist=tar
+		--whitelist=acorn
 
 	./node_modules/.bin/eslint \
 		. \
