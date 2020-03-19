@@ -43,6 +43,9 @@ export type ScrollHook = (event: {
 }) => any;
 
 export type Options = {
+	// Settings:
+	index?: number;
+
 	// Buttons:
 	hasButtons?: boolean;
 	buttonClassName?: string;
