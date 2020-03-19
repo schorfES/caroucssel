@@ -1,32 +1,32 @@
 export type ButtonParams = {
-    controls: string;
-    className: string;
-    label: string;
-    title: string;
+	controls: string;
+	className: string;
+	label: string;
+	title: string;
 };
 
 export type ButtonTemplate = (params: ButtonParams) => string;
 
 export type ButtonOptions = {
-    className?: string;
-    label?: string;
-    title?: string;
+	className?: string;
+	label?: string;
+	title?: string;
 };
 
 export type PaginationTextParams = {
-    index: number;
-    item: Element;
-    items: Element[];
+	index: number;
+	item: Element;
+	items: Element[];
 };
 
 export type PaginationText = (params: PaginationTextParams) => string;
 
 export type PaginationParams = {
-    controls: string;
-    className: string;
-    label: PaginationText;
-    title: PaginationText;
-    items: Element[];
+	controls: string;
+	className: string;
+	label: PaginationText;
+	title: PaginationText;
+	items: Element[];
 };
 
 export type PaginationTemplate = (params: PaginationParams) => string;
@@ -43,25 +43,28 @@ export type ScrollHook = (event: {
 }) => any;
 
 export type Options = {
-    // Buttons:
-    hasButtons?: boolean;
-    buttonClassName?: string;
-    buttonTemplate?: ButtonTemplate;
-    buttonPrevious?: ButtonOptions;
-    buttonNext?: ButtonOptions;
+	// Settings:
+	index?: number;
 
-    // Pagination:
-    hasPagination?: boolean;
-    paginationClassName?: string;
-    paginationTemplate?: PaginationTemplate;
-    paginationLabel?: PaginationLabelTemplate;
-    paginationTitle?: PaginationTitleTemplate;
+	// Buttons:
+	hasButtons?: boolean;
+	buttonClassName?: string;
+	buttonTemplate?: ButtonTemplate;
+	buttonPrevious?: ButtonOptions;
+	buttonNext?: ButtonOptions;
 
-    // Scrollbars:
-    hasScrollbars?: boolean;
+	// Pagination:
+	hasPagination?: boolean;
+	paginationClassName?: string;
+	paginationTemplate?: PaginationTemplate;
+	paginationLabel?: PaginationLabelTemplate;
+	paginationTitle?: PaginationTitleTemplate;
 
-    // Hooks:
-    onScroll?: ScrollHook;
+	// Scrollbars:
+	hasScrollbars?: boolean;
+
+	// Hooks:
+	onScroll?: ScrollHook;
 };
 
 export class Carousel {
