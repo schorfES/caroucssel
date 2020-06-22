@@ -16,10 +16,10 @@ function __templateButton({className, controls, label, title}) {
 }
 
 
-function __templatePagination({className, controls, items, label, title}) {
+function __templatePagination({className, controls, pages, label, title}) {
 	return `<ul class="${className}">
-		${items.map((item, index) => {
-			const data = {index, item, items};
+		${pages.map((page, index) => {
+			const data = {index, page, pages};
 			const labelStr = label(data);
 			const titleStr = title(data);
 			return `<li>
@@ -193,6 +193,25 @@ export class Carousel {
 		return this._items;
 	}
 
+	get pages() {
+		const {el, items} = this;
+		const {clientWidth} = el;
+		const pages = [[]];
+
+		items.forEach((item, index) => {
+			const {offsetLeft} = item;
+			const page = Math.floor(offsetLeft / clientWidth);
+
+			if (!pages[page]) {
+				pages.push([]);
+			}
+
+			pages[page].push(index);
+		});
+
+		return pages;
+	}
+
 	destroy() {
 		const {el} = this;
 		const {classList} = el;
@@ -293,14 +312,15 @@ export class Carousel {
 	}
 
 	_addPagination() {
-		const {el, id, items, _options} = this;
+		const {_options} = this;
 		if (!_options.hasPagination) {
 			return;
 		}
 
+		const {el, id, pages} = this;
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
 		const pagination = __render(paginationTemplate, {
-			items,
+			pages,
 			controls: id,
 			className: paginationClassName,
 			label: paginationLabel,
@@ -310,7 +330,7 @@ export class Carousel {
 		// @TODO: Add template for buttons:
 		const buttons = [...pagination.querySelectorAll('button')]
 			.map((button, index) => {
-				button.onclick = () => this.index = [index];
+				button.onclick = () => this.index = pages[index];
 				return button;
 			});
 		el.parentNode.appendChild(pagination);
@@ -326,8 +346,10 @@ export class Carousel {
 			return;
 		}
 
-		const {_paginationButtons} = this;
-		_paginationButtons.forEach((button, at) => button.disabled = index.includes(at));
+		const {pages, _paginationButtons} = this;
+		const lastIndex = index[index.length - 1];
+		const selected = pages.findIndex((page) => page.includes(lastIndex));
+		_paginationButtons.forEach((button, at) => button.disabled = (at === selected));
 	}
 
 	_removePagination() {
@@ -351,7 +373,8 @@ export class Carousel {
 	_onResize() {
 		const {index} = this;
 		this._updateButtons(index);
-		this._updatePagination(index);
+		this._removePagination();
+		this._addPagination();
 		this._updateScrollbars();
 	}
 

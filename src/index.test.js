@@ -262,7 +262,6 @@ describe('Caroucssel', () => {
 		it('should add pagination with custom options', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
-			const items = [...el.children];
 			const options = {
 				hasPagination: true,
 				paginationClassName: 'custom-pagination-class',
@@ -290,10 +289,18 @@ describe('Caroucssel', () => {
 			expect(document.body.innerHTML).toMatchSnapshot();
 
 			expect(options.paginationLabel).toHaveBeenCalledTimes(3);
-			expect(options.paginationLabel).toHaveBeenNthCalledWith(1, {index: 0, item: items[0], items});
+			expect(options.paginationLabel).toHaveBeenNthCalledWith(1, {
+				index: 0,
+				page: [0],
+				pages: [[0], [1], [2]],
+			});
 
 			expect(options.paginationTitle).toHaveBeenCalledTimes(3);
-			expect(options.paginationTitle).toHaveBeenNthCalledWith(3, {index: 2, item: items[2], items});
+			expect(options.paginationTitle).toHaveBeenNthCalledWith(3, {
+				index: 2,
+				page: [2],
+				pages: [[0], [1], [2]],
+			});
 		});
 
 		it('should add pagination with custom template', () => {
@@ -320,9 +327,9 @@ describe('Caroucssel', () => {
 					}
 					return `Go to ${name} item`;
 				}),
-				paginationTemplate: jest.fn(({className, controls, items, label, title}) =>
+				paginationTemplate: jest.fn(({className, controls, pages, label, title}) =>
 					`<div class="${className}" aria-controls="${controls}">
-						${items.map((item, index) => `
+						${pages.map((page, index) => `
 							<div class="item" aria-label="${title({index})}">
 								${label({index})}
 							</div>`
