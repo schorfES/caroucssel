@@ -3,7 +3,7 @@
 exports[`Caroucssel buttons should add buttons 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -23,7 +23,7 @@ exports[`Caroucssel buttons should add buttons 1`] = `
 exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -43,7 +43,7 @@ exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"custom-id\\" style=\\"margin-bottom: 0px;\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"custom-id\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -59,7 +59,7 @@ exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 exports[`Caroucssel pagination should add pagination 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -70,15 +70,15 @@ exports[`Caroucssel pagination should add pagination 1`] = `
 			</div></div>
 		<ul class=\\"pagination\\">
 		<li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 1. item\\" title=\\"Go to 1. item\\" disabled=\\"\\">
+				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 1. page\\" title=\\"Go to 1. page\\" disabled=\\"\\">
 					<span>1</span>
 				</button>
 			</li><li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 2. item\\" title=\\"Go to 2. item\\">
+				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 2. page\\" title=\\"Go to 2. page\\">
 					<span>2</span>
 				</button>
 			</li><li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 3. item\\" title=\\"Go to 3. item\\">
+				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 3. page\\" title=\\"Go to 3. page\\">
 					<span>3</span>
 				</button>
 			</li>
@@ -89,7 +89,7 @@ exports[`Caroucssel pagination should add pagination 1`] = `
 exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -119,7 +119,7 @@ exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 exports[`Caroucssel pagination should add pagination with custom template 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -130,13 +130,13 @@ exports[`Caroucssel pagination should add pagination with custom template 1`] = 
 			</div></div>
 		<div class=\\"custom-pagination-class\\" aria-controls=\\"caroucssel-1\\">
 						
-							<div class=\\"item\\" aria-label=\\"Go to first item\\">
+							<div class=\\"item\\" aria-label=\\"Go to first page\\">
 								first
 							</div>
-							<div class=\\"item\\" aria-label=\\"Go to second item\\">
+							<div class=\\"item\\" aria-label=\\"Go to second page\\">
 								second
 							</div>
-							<div class=\\"item\\" aria-label=\\"Go to third item\\">
+							<div class=\\"item\\" aria-label=\\"Go to third page\\">
 								third
 							</div>
 					</div></div>

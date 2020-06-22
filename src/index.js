@@ -16,10 +16,10 @@ function __templateButton({className, controls, label, title}) {
 }
 
 
-function __templatePagination({className, controls, items, label, title}) {
+function __templatePagination({className, controls, pages, label, title}) {
 	return `<ul class="${className}">
-		${items.map((item, index) => {
-			const data = {index, item, items};
+		${pages.map((page, index) => {
+			const data = {index, page, pages};
 			const labelStr = label(data);
 			const titleStr = title(data);
 			return `<li>
@@ -53,7 +53,7 @@ const
 		hasPagination: false,
 		paginationClassName: 'pagination',
 		paginationLabel: ({index}) => `${index + 1}`,
-		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
+		paginationTitle: ({index}) => `Go to ${index + 1}. page`,
 		paginationTemplate: __templatePagination,
 
 		// Scrollbars, set to true when use default scrolling behaviour
@@ -198,6 +198,26 @@ export class Carousel {
 		return this._items;
 	}
 
+	get pages() {
+		const {el, items} = this;
+		const {clientWidth} = el;
+		const pages = [[]];
+
+		items.forEach((item, index) => {
+			const {offsetLeft, clientWidth: width} = item;
+			// at least 90% of the items needs to be in the page:
+			const page = Math.floor((offsetLeft +  width * 0.9) / clientWidth);
+
+			if (!pages[page]) {
+				pages.push([]);
+			}
+
+			pages[page].push(index);
+		});
+
+		return pages;
+	}
+
 	destroy() {
 		const {el} = this;
 
@@ -287,11 +307,23 @@ export class Carousel {
 				className: `${buttonClassName} ${data.className}`
 			}));
 
-		previous.onclick = () => this.index = [this.index[0] - 1];
+		previous.onclick = () => {
+			const { index, pages } = this;
+			const item = index[index.length - 1];
+			const at = pages.findIndex((page) => page.includes(item));
+			const page = pages[at - 1];
+			this.index = page;
+		};
 		el.parentNode.appendChild(previous);
 		this._previous = previous;
 
-		next.onclick = () => this.index = [this.index[0] + 1];
+		next.onclick = () => {
+			const { index, pages } = this;
+			const item = index[0];
+			const at = pages.findIndex((page) => page.includes(item));
+			const page = pages[at + 1];
+			this.index = page;
+		};
 		el.parentNode.appendChild(next);
 		this._next = next;
 
@@ -326,10 +358,10 @@ export class Carousel {
 			return;
 		}
 
-		const {_mask, el, id, items} = this;
+		const {_mask, el, id, pages} = this;
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
 		const pagination = __render(paginationTemplate, {
-			items,
+			pages,
 			controls: id,
 			className: paginationClassName,
 			label: paginationLabel,
@@ -339,7 +371,7 @@ export class Carousel {
 		// @TODO: Add template for buttons:
 		const buttons = [...pagination.querySelectorAll('button')]
 			.map((button, index) => {
-				button.onclick = () => this.index = [index];
+				button.onclick = () => this.index = pages[index];
 				return button;
 			});
 
@@ -357,8 +389,10 @@ export class Carousel {
 			return;
 		}
 
-		const {_paginationButtons} = this;
-		_paginationButtons.forEach((button, at) => button.disabled = index.includes(at));
+		const {pages, _paginationButtons} = this;
+		const lastIndex = index[index.length - 1];
+		const selected = pages.findIndex((page) => page.includes(lastIndex));
+		_paginationButtons.forEach((button, at) => button.disabled = (at === selected));
 	}
 
 	_removePagination() {
@@ -382,7 +416,8 @@ export class Carousel {
 	_onResize() {
 		const {index} = this;
 		this._updateButtons(index);
-		this._updatePagination(index);
+		this._removePagination();
+		this._addPagination();
 		this._updateScrollbars();
 	}
 

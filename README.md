@@ -138,16 +138,16 @@ The pagination can be customized by additional options. The following options ar
 * `paginationClassName` – a string which represents the class name for the `<ul>` element of the pagination – Default value is: `'pagination'`
 * `paginationLabel` – a function which returns a string for the label of each button inside the pagination. A data object is passed as param into the invoked function, containing information about:
     * `index` – a number of the current item index
-    * `item` – a dom element reference to the related item
-    * `items` – a dom element list of all items
+	* `pages` – all existing pages, a list of grouped indexes
+    * `page` – the current page
 * `paginationTitle` – a function which returns a string for the title of each button inside the pagination. A data object is passed as param into the invoked function, containing information about:
     * `index` – a number of the current item index
-    * `item` – a dom element reference to the related item
-    * `items` – a dom element list of all items
+    * `pages` – all existing pages, a list of grouped indexes
+    * `page` – the current page
 * `paginationTemplate`– is a function which returns an HTML-string of the complete pagination. The default implementation invokes the `paginationLabel` and `paginationTitle` functions to create the string. A data object is passed as param into the invoked function, containing information about:
     * `className` – a string with the value of the `paginationClassName` option.
     *  `controls` – a string reference to the HTML id of the carousel element. this is relevant for an `aria-controls="..."` attribute.
-    * `items` – a dom element list of all items
+    * `pages` – all existing pages, a list of grouped indexes
     * `label` – the function reference for `paginationLabel` to create a button label
     * `title` – the function reference for `paginationTitle` to create a button tile
 
@@ -159,9 +159,9 @@ const carousel = new Carousel(el, {
     paginationClassName: 'my-pagination',
     paginationLabel: ({index}) => `${index + 1}.`,
     paginationTitle: ({index}) => `Jump to ${index + 1}. item`,
-    paginationTemplate: ({className, items, label, title}) =>
+    paginationTemplate: ({className, pages, label, title}) =>
         `<div class="${className}">
-            ${items.map((item, index) =>
+            ${pages.map((page, index) =>
                 `<button title="${title({index})}">${label({index})}</button>`
             ).join('')}
         </div>`
@@ -217,6 +217,10 @@ Returns and/or sets the current index of the carousel. The returned index is a l
 #### `.items` (read only)
 
 Returns an array of all child dom elements of the carousel.
+
+#### `.pages` (read only)
+
+Returns an array of all pages. Each page is a group of indexes that matches a page.
 
 #### `.id` (read only)
 
