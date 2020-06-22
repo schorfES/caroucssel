@@ -15,8 +15,8 @@ export type ButtonOptions = {
 
 export type PaginationTextParams = {
 	index: number;
-	item: Element;
-	items: Element[];
+	page: number[];
+	pages: number[][];
 };
 
 export type PaginationText = (params: PaginationTextParams) => string;
@@ -26,7 +26,7 @@ export type PaginationParams = {
 	className: string;
 	label: PaginationText;
 	title: PaginationText;
-	items: Element[];
+	pages: number[][];
 };
 
 export type PaginationTemplate = (params: PaginationParams) => string;
@@ -75,6 +75,7 @@ export class Carousel {
 	public get index(): number[];
 	public set index(values: number[]);
 	public get items(): Element[];
+	public get pages(): number[][];
 	public destroy(): void;
 	public update(): void;
 
