@@ -142,14 +142,14 @@
   function __templatePagination(_ref2) {
     var className = _ref2.className,
         controls = _ref2.controls,
-        items = _ref2.items,
+        pages = _ref2.pages,
         label = _ref2.label,
         title = _ref2.title;
-    return "<ul class=\"".concat(className, "\">\n\t\t").concat(items.map(function (item, index) {
+    return "<ul class=\"".concat(className, "\">\n\t\t").concat(pages.map(function (page, index) {
       var data = {
         index: index,
-        item: item,
-        items: items
+        page: page,
+        pages: pages
       };
       var labelStr = label(data);
       var titleStr = title(data);
@@ -376,22 +376,22 @@
       value: function _addPagination() {
         var _this3 = this;
 
-        var el = this.el,
-            id = this.id,
-            items = this.items,
-            _options = this._options;
+        var _options = this._options;
 
         if (!_options.hasPagination) {
           return;
         }
 
+        var el = this.el,
+            id = this.id,
+            pages = this.pages;
         var paginationTemplate = _options.paginationTemplate,
             paginationClassName = _options.paginationClassName,
             paginationLabel = _options.paginationLabel,
             paginationTitle = _options.paginationTitle;
 
         var pagination = __render(paginationTemplate, {
-          items: items,
+          pages: pages,
           controls: id,
           className: paginationClassName,
           label: paginationLabel,
@@ -401,7 +401,7 @@
 
         var buttons = _toConsumableArray(pagination.querySelectorAll('button')).map(function (button, index) {
           button.onclick = function () {
-            return _this3.index = [index];
+            return _this3.index = pages[index];
           };
 
           return button;
@@ -423,10 +423,15 @@
           return;
         }
 
-        var _paginationButtons = this._paginationButtons;
+        var pages = this.pages,
+            _paginationButtons = this._paginationButtons;
+        var lastIndex = index[index.length - 1];
+        var selected = pages.findIndex(function (page) {
+          return page.includes(lastIndex);
+        });
 
         _paginationButtons.forEach(function (button, at) {
-          return button.disabled = index.includes(at);
+          return button.disabled = at === selected;
         });
       }
     }, {
@@ -467,7 +472,9 @@
 
         this._updateButtons(index);
 
-        this._updatePagination(index);
+        this._removePagination();
+
+        this._addPagination();
 
         this._updateScrollbars();
       }
@@ -554,6 +561,25 @@
       key: "items",
       get: function get() {
         return this._items;
+      }
+    }, {
+      key: "pages",
+      get: function get() {
+        var el = this.el,
+            items = this.items;
+        var clientWidth = el.clientWidth;
+        var pages = [[]];
+        items.forEach(function (item, index) {
+          var offsetLeft = item.offsetLeft;
+          var page = Math.floor(offsetLeft / clientWidth);
+
+          if (!pages[page]) {
+            pages.push([]);
+          }
+
+          pages[page].push(index);
+        });
+        return pages;
       }
     }]);
 
