@@ -51,7 +51,7 @@ const
 		hasPagination: false,
 		paginationClassName: 'pagination',
 		paginationLabel: ({index}) => `${index + 1}`,
-		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
+		paginationTitle: ({index}) => `Go to ${index + 1}. page`,
 		paginationTemplate: __templatePagination,
 
 		// Scrollbars, set to true when use default scrolling behaviour

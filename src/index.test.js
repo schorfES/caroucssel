@@ -325,7 +325,7 @@ describe('Caroucssel', () => {
 						case 2: name = 'third'; break;
 						default: name = 'un-defined'; break;
 					}
-					return `Go to ${name} item`;
+					return `Go to ${name} page`;
 				}),
 				paginationTemplate: jest.fn(({className, controls, pages, label, title}) =>
 					`<div class="${className}" aria-controls="${controls}">
