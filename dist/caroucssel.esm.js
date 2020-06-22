@@ -117,7 +117,7 @@ const
 		hasPagination: false,
 		paginationClassName: 'pagination',
 		paginationLabel: ({index}) => `${index + 1}`,
-		paginationTitle: ({index}) => `Go to ${index + 1}. item`,
+		paginationTitle: ({index}) => `Go to ${index + 1}. page`,
 		paginationTemplate: __templatePagination,
 
 		// Scrollbars, set to true when use default scrolling behaviour
@@ -168,7 +168,7 @@ class Carousel {
 		this._options.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
 		this._options.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
 
-		this._items = [...this.el.children];
+		this._items = Array.from(this.el.children);
 
 		// Render:
 		this._addButtons();
@@ -300,7 +300,7 @@ class Carousel {
 
 	update() {
 		const {index} = this;
-		this._items = [...this.el.children];
+		this._items = Array.from(this.el.children);
 		this._updateButtons(index);
 		this._updatePagination(index);
 		this._updateScrollbars();
@@ -392,7 +392,7 @@ class Carousel {
 		});
 
 		// @TODO: Add template for buttons:
-		const buttons = [...pagination.querySelectorAll('button')]
+		const buttons = Array.from(pagination.querySelectorAll('button'))
 			.map((button, index) => {
 				button.onclick = () => this.index = pages[index];
 				return button;

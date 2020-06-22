@@ -26,14 +26,6 @@
 
   function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-  function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
   function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
   function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -181,7 +173,7 @@
     },
     paginationTitle: function paginationTitle(_ref4) {
       var index = _ref4.index;
-      return "Go to ".concat(index + 1, ". item");
+      return "Go to ".concat(index + 1, ". page");
     },
     paginationTemplate: __templatePagination,
     // Scrollbars, set to true when use default scrolling behaviour
@@ -225,7 +217,7 @@
       this._options = _objectSpread({}, DEFAULTS, {}, options);
       this._options.buttonPrevious = _objectSpread({}, DEFAULTS_BUTTON_PREVIOUS, {}, options.buttonPrevious);
       this._options.buttonNext = _objectSpread({}, DEFAULTS_BUTTON_NEXT, {}, options.buttonNext);
-      this._items = _toConsumableArray(this.el.children); // Render:
+      this._items = Array.from(this.el.children); // Render:
 
       this._addButtons();
 
@@ -268,7 +260,7 @@
       key: "update",
       value: function update() {
         var index = this.index;
-        this._items = _toConsumableArray(this.el.children);
+        this._items = Array.from(this.el.children);
 
         this._updateButtons(index);
 
@@ -399,14 +391,13 @@
         }); // @TODO: Add template for buttons:
 
 
-        var buttons = _toConsumableArray(pagination.querySelectorAll('button')).map(function (button, index) {
+        var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
           button.onclick = function () {
             return _this3.index = pages[index];
           };
 
           return button;
         });
-
         el.parentNode.appendChild(pagination);
         this._pagination = pagination;
         this._paginationButtons = buttons;
