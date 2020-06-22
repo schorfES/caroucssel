@@ -369,7 +369,7 @@ export class Carousel {
 		});
 
 		// @TODO: Add template for buttons:
-		const buttons = [...pagination.querySelectorAll('button')]
+		const buttons = Array.from(pagination.querySelectorAll('button'))
 			.map((button, index) => {
 				button.onclick = () => this.index = pages[index];
 				return button;
