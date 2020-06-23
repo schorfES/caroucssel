@@ -35,8 +35,6 @@ function __templatePagination({className, controls, items, label, title}) {
 const
 	ID_NAME = (count) => `caroucssel-${count}`,
 	ID_MATCH = /^caroucssel-[0-9]*$/,
-	CLASS_VISIBLE_SCROLLBAR = 'has-visible-scrollbar',
-	CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
 
 	EVENT_SCROLL = 'scroll',
 	EVENT_RESIZE = 'resize',
@@ -58,6 +56,7 @@ const
 
 		// Scrollbars, set to true when use default scrolling behaviour
 		hasScrollbars: false,
+		scrollbarsMaskClassName: 'caroucssel-mask',
 
 		// Hooks:
 		onScroll: null
@@ -195,20 +194,18 @@ export class Carousel {
 
 	destroy() {
 		const {el} = this;
-		const {classList} = el;
 
 		// Remove created id if it was created by carousel:
 		ID_MATCH.test(el.id) && el.removeAttribute('id');
-
-		// Remove scrollbar classes:
-		classList.remove(CLASS_VISIBLE_SCROLLBAR);
-		classList.remove(CLASS_INVISIBLE_SCROLLBAR);
 
 		// Remove buttons:
 		this._removeButtons();
 
 		// Remove pagination:
 		this._removePagination();
+
+		// Remove scrollbars:
+		this._removeScrollbars();
 
 		// Remove events:
 		el.removeEventListener(EVENT_SCROLL, this._onScroll);
@@ -224,23 +221,40 @@ export class Carousel {
 	}
 
 	_updateScrollbars() {
-		const {hasScrollbars} = this._options;
-
+		const {hasScrollbars, scrollbarsMaskClassName} = this._options;
 		if (hasScrollbars) {
 			return;
 		}
 
 		const {height} = scrollbar.dimensions;
-		const hasInvisbleScrollbar = (height === 0);
-
-		if (hasInvisbleScrollbar === this._hasInvisbleScrollbar) {
+		if (height === this._scrollbarHeight) {
 			return;
 		}
 
-		const classList = this.el.classList;
-		classList.add(hasInvisbleScrollbar ? CLASS_INVISIBLE_SCROLLBAR : CLASS_VISIBLE_SCROLLBAR);
-		classList.remove(hasInvisbleScrollbar ? CLASS_VISIBLE_SCROLLBAR : CLASS_INVISIBLE_SCROLLBAR);
-		this._hasInvisbleScrollbar = hasInvisbleScrollbar;
+		this._mask = this._mask || (() => {
+			const mask = document.createElement('div');
+			mask.className = scrollbarsMaskClassName;
+			mask.style.overflow = 'hidden';
+			mask.style.height = '100%';
+			this.el.parentNode.insertBefore(mask, this.el);
+			mask.appendChild(this.el);
+			return mask;
+		})();
+
+		this.el.style.height = `calc(100% + ${height}px)`;
+		this.el.style.marginBottom = `${height * -1}px`;
+		this._scrollbarHeight = height;
+	}
+
+	_removeScrollbars() {
+		const {_mask, el} = this;
+		if (!this._mask) {
+			return;
+		}
+
+		_mask.parentNode.insertBefore(el, _mask);
+		_mask.parentNode.removeChild(_mask);
+		el.removeAttribute('style');
 	}
 
 	_addButtons() {
@@ -293,11 +307,12 @@ export class Carousel {
 	}
 
 	_addPagination() {
-		const {el, id, items, _options} = this;
+		const {_options} = this;
 		if (!_options.hasPagination) {
 			return;
 		}
 
+		const {_mask, el, id, items} = this;
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
 		const pagination = __render(paginationTemplate, {
 			items,
@@ -313,7 +328,9 @@ export class Carousel {
 				button.onclick = () => this.index = [index];
 				return button;
 			});
-		el.parentNode.appendChild(pagination);
+
+		const target = (_mask || el).parentNode;
+		target.appendChild(pagination);
 		this._pagination = pagination;
 		this._paginationButtons = buttons;
 
