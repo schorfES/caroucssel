@@ -416,7 +416,8 @@
           return;
         }
 
-        var el = this.el,
+        var _mask = this._mask,
+            el = this.el,
             id = this.id,
             pages = this.pages;
         var paginationTemplate = _options.paginationTemplate,
@@ -440,7 +441,8 @@
 
           return button;
         });
-        el.parentNode.appendChild(pagination);
+        var target = (_mask || el).parentNode;
+        target.appendChild(pagination);
         this._pagination = pagination;
         this._paginationButtons = buttons;
 
