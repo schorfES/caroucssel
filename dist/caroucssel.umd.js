@@ -318,14 +318,28 @@
             next = _map2[1];
 
         previous.onclick = function () {
-          return _this2.index = [_this2.index[0] - 1];
+          var index = _this2.index,
+              pages = _this2.pages;
+          var item = index[index.length - 1];
+          var at = pages.findIndex(function (page) {
+            return page.includes(item);
+          });
+          var page = pages[at - 1];
+          _this2.index = page;
         };
 
         el.parentNode.appendChild(previous);
         this._previous = previous;
 
         next.onclick = function () {
-          return _this2.index = [_this2.index[0] + 1];
+          var index = _this2.index,
+              pages = _this2.pages;
+          var item = index[0];
+          var at = pages.findIndex(function (page) {
+            return page.includes(item);
+          });
+          var page = pages[at + 1];
+          _this2.index = page;
         };
 
         el.parentNode.appendChild(next);
@@ -561,8 +575,10 @@
         var clientWidth = el.clientWidth;
         var pages = [[]];
         items.forEach(function (item, index) {
-          var offsetLeft = item.offsetLeft;
-          var page = Math.floor(offsetLeft / clientWidth);
+          var offsetLeft = item.offsetLeft,
+              width = item.clientWidth; // at least 90% of the items needs to be in the page:
+
+          var page = Math.floor((offsetLeft + width * 0.9) / clientWidth);
 
           if (!pages[page]) {
             pages.push([]);
