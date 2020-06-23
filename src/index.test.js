@@ -346,41 +346,56 @@ describe('Caroucssel', () => {
 
 
 	describe('scrollbars', () => {
+		it('should wrap mask element', () => {
+			mockScrollbarDimensions = {width: 15, height: 15};
 
-		it('should detect invisible scrollbar of OS by adding classname', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+
+			new Carousel(el);
+			expect(el.parentNode.className).toBe('caroucssel-mask');
+			expect(el.parentNode.style.overflow).toBe('hidden');
+			expect(el.parentNode.style.height).toBe('100%');
+		});
+
+		it('should detect invisible scrollbar', () => {
 			mockScrollbarDimensions = {width: 0, height: 0};
 
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
+			const style = {};
+			Object.defineProperty(el, 'style', { value: style, writable: false });
 
 			new Carousel(el);
-			expect(Array.from(el.classList)).toEqual([
-				'caroucssel',
-				'has-invisible-scrollbar'
-			]);
+			expect(style).toEqual({
+				marginBottom: '0px',
+				height: 'calc(100% + 0px)',
+			});
 		});
 
-		it('should detect visible scrollbar of OS by adding classname', () => {
-			mockScrollbarDimensions = {width: 1, height: 1};
+		it('should detect visible scrollbar', () => {
+			mockScrollbarDimensions = {width: 15, height: 15};
 
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
+			const style = {};
+			Object.defineProperty(el, 'style', { value: style, writable: false });
 
 			new Carousel(el);
-			expect(Array.from(el.classList)).toEqual([
-				'caroucssel',
-				'has-visible-scrollbar'
-			]);
+			expect(style).toEqual({
+				marginBottom: '-15px',
+				height: 'calc(100% + 15px)',
+			});
 		});
 
-		it('should use css defaults by don\'t adding any classname', () => {
+		it('should use css defaults by not wrapping mask element', () => {
 			mockScrollbarDimensions = {width: 1, height: 1};
 
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 
 			new Carousel(el, {hasScrollbars: true});
-			expect(Array.from(el.classList)).toEqual(['caroucssel']);
+			expect(el.getAttribute('style')).toBeNull();
 		});
 
 	});
