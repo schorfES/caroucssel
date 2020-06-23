@@ -15,17 +15,6 @@
 		outline: none;
 		white-space: normal;
 	}
-
-	&.has-invisible-scrollbar {
-		&::-webkit-scrollbar,
-		&::-webkit-scrollbar-track {
-			background: transparent;
-		}
-	}
-
-	&.has-visible-scrollbar {
-		overflow: hidden;
-	}
 }
 
 @mixin caroucssel-snap($at: 100%) {

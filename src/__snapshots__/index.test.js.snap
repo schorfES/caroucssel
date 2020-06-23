@@ -3,7 +3,7 @@
 exports[`Caroucssel buttons should add buttons 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"caroucssel-1\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -11,7 +11,7 @@ exports[`Caroucssel buttons should add buttons 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div>
+			</div></div>
 		<button type=\\"button\\" class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
 		<span>Previous</span>
 	</button><button type=\\"button\\" class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"caroucssel-1\\">
@@ -23,7 +23,7 @@ exports[`Caroucssel buttons should add buttons 1`] = `
 exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"caroucssel-1\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -31,7 +31,7 @@ exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div>
+			</div></div>
 		<button type=\\"button\\" class=\\"custom-button-class custom-previous-button-class\\" aria-label=\\"Custom previous label\\" title=\\"Custom previous title\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
 		<span>Custom previous label</span>
 	</button><button type=\\"button\\" class=\\"custom-button-class custom-next-button-class\\" aria-label=\\"Custom next label\\" title=\\"Custom next title\\" aria-controls=\\"caroucssel-1\\">
@@ -43,7 +43,7 @@ exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"custom-id\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"custom-id\\" style=\\"margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -51,7 +51,7 @@ exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div>
+			</div></div>
 		<span class=\\"custom-button-class custom-previous-button-class\\" title=\\"Custom previous title\\">Custom previous label</span><span class=\\"custom-button-class custom-next-button-class\\" title=\\"Custom next title\\">Custom next label</span></div>
 	"
 `;
@@ -59,7 +59,7 @@ exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 exports[`Caroucssel pagination should add pagination 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"caroucssel-1\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -67,7 +67,7 @@ exports[`Caroucssel pagination should add pagination 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div>
+			</div></div>
 		<ul class=\\"pagination\\">
 		<li>
 				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 1. item\\" title=\\"Go to 1. item\\" disabled=\\"\\">
@@ -89,7 +89,7 @@ exports[`Caroucssel pagination should add pagination 1`] = `
 exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"caroucssel-1\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -97,7 +97,7 @@ exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div>
+			</div></div>
 		<ul class=\\"custom-pagination-class\\">
 		<li>
 				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to first item\\" title=\\"Go to first item\\" disabled=\\"\\">
@@ -119,7 +119,7 @@ exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 exports[`Caroucssel pagination should add pagination with custom template 1`] = `
 "
 		<div class=\\"container\\">
-			<div class=\\"caroucssel has-invisible-scrollbar\\" id=\\"caroucssel-1\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"margin-bottom: 0px;\\">
 				
 					<div class=\\"item item-0\\">Item 0</div>
 				
@@ -127,7 +127,7 @@ exports[`Caroucssel pagination should add pagination with custom template 1`] = 
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div>
+			</div></div>
 		<div class=\\"custom-pagination-class\\" aria-controls=\\"caroucssel-1\\">
 						
 							<div class=\\"item\\" aria-label=\\"Go to first item\\">
