@@ -199,8 +199,9 @@ export class Carousel {
 		const pages = [[]];
 
 		items.forEach((item, index) => {
-			const {offsetLeft} = item;
-			const page = Math.floor(offsetLeft / clientWidth);
+			const {offsetLeft, clientWidth: width} = item;
+			// at least 90% of the items needs to be in the page:
+			const page = Math.floor((offsetLeft +  width * 0.9) / clientWidth);
 
 			if (!pages[page]) {
 				pages.push([]);
@@ -278,11 +279,23 @@ export class Carousel {
 				className: `${buttonClassName} ${data.className}`
 			}));
 
-		previous.onclick = () => this.index = [this.index[0] - 1];
+		previous.onclick = () => {
+			const { index, pages } = this;
+			const item = index[index.length - 1];
+			const at = pages.findIndex((page) => page.includes(item));
+			const page = pages[at - 1];
+			this.index = page;
+		};
 		el.parentNode.appendChild(previous);
 		this._previous = previous;
 
-		next.onclick = () => this.index = [this.index[0] + 1];
+		next.onclick = () => {
+			const { index, pages } = this;
+			const item = index[0];
+			const at = pages.findIndex((page) => page.includes(item));
+			const page = pages[at + 1];
+			this.index = page;
+		};
 		el.parentNode.appendChild(next);
 		this._next = next;
 
