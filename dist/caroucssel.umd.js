@@ -153,8 +153,6 @@
     return "caroucssel-".concat(count);
   },
       ID_MATCH = /^caroucssel-[0-9]*$/,
-      CLASS_VISIBLE_SCROLLBAR = 'has-visible-scrollbar',
-      CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
       EVENT_SCROLL = 'scroll',
       EVENT_RESIZE = 'resize',
       DEFAULTS = {
@@ -178,6 +176,7 @@
     paginationTemplate: __templatePagination,
     // Scrollbars, set to true when use default scrolling behaviour
     hasScrollbars: false,
+    scrollbarsMaskClassName: 'caroucssel-mask',
     // Hooks:
     onScroll: null
   },
@@ -239,18 +238,17 @@
     _createClass(Carousel, [{
       key: "destroy",
       value: function destroy() {
-        var el = this.el;
-        var classList = el.classList; // Remove created id if it was created by carousel:
+        var el = this.el; // Remove created id if it was created by carousel:
 
-        ID_MATCH.test(el.id) && el.removeAttribute('id'); // Remove scrollbar classes:
-
-        classList.remove(CLASS_VISIBLE_SCROLLBAR);
-        classList.remove(CLASS_INVISIBLE_SCROLLBAR); // Remove buttons:
+        ID_MATCH.test(el.id) && el.removeAttribute('id'); // Remove buttons:
 
         this._removeButtons(); // Remove pagination:
 
 
-        this._removePagination(); // Remove events:
+        this._removePagination(); // Remove scrollbars:
+
+
+        this._removeScrollbars(); // Remove events:
 
 
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
@@ -271,28 +269,58 @@
     }, {
       key: "_updateScrollbars",
       value: function _updateScrollbars() {
-        var hasScrollbars = this._options.hasScrollbars;
+        var _this2 = this;
+
+        var _this$_options = this._options,
+            hasScrollbars = _this$_options.hasScrollbars,
+            scrollbarsMaskClassName = _this$_options.scrollbarsMaskClassName;
 
         if (hasScrollbars) {
           return;
         }
 
         var height = scrollbar.dimensions.height;
-        var hasInvisbleScrollbar = height === 0;
 
-        if (hasInvisbleScrollbar === this._hasInvisbleScrollbar) {
+        if (height === this._scrollbarHeight) {
           return;
         }
 
-        var classList = this.el.classList;
-        classList.add(hasInvisbleScrollbar ? CLASS_INVISIBLE_SCROLLBAR : CLASS_VISIBLE_SCROLLBAR);
-        classList.remove(hasInvisbleScrollbar ? CLASS_VISIBLE_SCROLLBAR : CLASS_INVISIBLE_SCROLLBAR);
-        this._hasInvisbleScrollbar = hasInvisbleScrollbar;
+        this._mask = this._mask || function () {
+          var mask = document.createElement('div');
+          mask.className = scrollbarsMaskClassName;
+          mask.style.overflow = 'hidden';
+          mask.style.height = '100%';
+
+          _this2.el.parentNode.insertBefore(mask, _this2.el);
+
+          mask.appendChild(_this2.el);
+          return mask;
+        }();
+
+        this.el.style.height = "calc(100% + ".concat(height, "px)");
+        this.el.style.marginBottom = "".concat(height * -1, "px");
+        this._scrollbarHeight = height;
+      }
+    }, {
+      key: "_removeScrollbars",
+      value: function _removeScrollbars() {
+        var _mask = this._mask,
+            el = this.el;
+
+        if (!this._mask) {
+          return;
+        }
+
+        _mask.parentNode.insertBefore(el, _mask);
+
+        _mask.parentNode.removeChild(_mask);
+
+        el.removeAttribute('style');
       }
     }, {
       key: "_addButtons",
       value: function _addButtons() {
-        var _this2 = this;
+        var _this3 = this;
 
         var el = this.el,
             id = this.id,
@@ -318,28 +346,28 @@
             next = _map2[1];
 
         previous.onclick = function () {
-          var index = _this2.index,
-              pages = _this2.pages;
+          var index = _this3.index,
+              pages = _this3.pages;
           var item = index[index.length - 1];
           var at = pages.findIndex(function (page) {
             return page.includes(item);
           });
           var page = pages[at - 1];
-          _this2.index = page;
+          _this3.index = page;
         };
 
         el.parentNode.appendChild(previous);
         this._previous = previous;
 
         next.onclick = function () {
-          var index = _this2.index,
-              pages = _this2.pages;
+          var index = _this3.index,
+              pages = _this3.pages;
           var item = index[0];
           var at = pages.findIndex(function (page) {
             return page.includes(item);
           });
           var page = pages[at + 1];
-          _this2.index = page;
+          _this3.index = page;
         };
 
         el.parentNode.appendChild(next);
@@ -380,7 +408,7 @@
     }, {
       key: "_addPagination",
       value: function _addPagination() {
-        var _this3 = this;
+        var _this4 = this;
 
         var _options = this._options;
 
@@ -407,7 +435,7 @@
 
         var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
           button.onclick = function () {
-            return _this3.index = pages[index];
+            return _this4.index = pages[index];
           };
 
           return button;

@@ -62,6 +62,7 @@ export type Options = {
 
 	// Scrollbars:
 	hasScrollbars?: boolean;
+	scrollbarsMaskClassName?: string;
 
 	// Hooks:
 	onScroll?: ScrollHook;

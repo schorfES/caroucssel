@@ -17,12 +17,8 @@
   white-space: normal;
 }
 
-.caroucssel.has-invisible-scrollbar::-webkit-scrollbar, .caroucssel.has-invisible-scrollbar::-webkit-scrollbar-track {
+.caroucssel::-webkit-scrollbar, .caroucssel::-webkit-scrollbar-track {
   background: transparent;
-}
-
-.caroucssel.has-visible-scrollbar {
-  overflow: hidden;
 }
 
 .caroucssel.use-snap {
