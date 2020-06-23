@@ -344,7 +344,7 @@ export class Carousel {
 			return;
 		}
 
-		const {el, id, pages} = this;
+		const {_mask, el, id, pages} = this;
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
 		const pagination = __render(paginationTemplate, {
 			pages,
@@ -360,7 +360,9 @@ export class Carousel {
 				button.onclick = () => this.index = pages[index];
 				return button;
 			});
-		el.parentNode.appendChild(pagination);
+
+		const target = (_mask || el).parentNode;
+		target.appendChild(pagination);
 		this._pagination = pagination;
 		this._paginationButtons = buttons;
 
