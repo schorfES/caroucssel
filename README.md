@@ -182,6 +182,18 @@ const carousel = new Carousel(el, {
 
 * `onScroll` a function which is invoked when the user scrolls through the carousel. An object containing the current `index` (a list of visible indexes), an event `type`, a reference to the carousel instance (`target`) and the original scroll event (`originalEvent`) is passed to the function.
 
+##### Hidden elements
+
+The carousel will ignore "invisible" html elements as scroll items by default. These elements are: `<link>`, `<meta>`, `<noscript>`, `<script>`, `<style>` and `<title>`. Other elements with a `hidden` attribute are ignored as well: `<div hidden>Hidden item</div>`.
+
+To manually filter elements as items, the `filterItem` function can be used. This function is a regular filter function which receives the current element (and it's index as child element) and returns a boolean that flags if the element is a valid item:
+
+```javascript
+const carousel = new Carousel(el, {
+    filterItem: (item, index) => (index % 3) === 0
+});
+```
+
 ## API
 
 ### SCSS
