@@ -100,6 +100,8 @@ const
 	ID_NAME = (count) => `caroucssel-${count}`,
 	ID_MATCH = /^caroucssel-[0-9]*$/,
 
+	INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i,
+
 	EVENT_SCROLL = 'scroll',
 	EVENT_RESIZE = 'resize',
 
@@ -121,6 +123,9 @@ const
 		// Scrollbars, set to true when use default scrolling behaviour
 		hasScrollbars: false,
 		scrollbarsMaskClassName: 'caroucssel-mask',
+
+		// filter
+		filterItem: () => true,
 
 		// Hooks:
 		onScroll: null
@@ -167,7 +172,8 @@ class Carousel {
 		this._options.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
 		this._options.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
 
-		this._items = Array.from(this.el.children);
+		// Receive all items:
+		this._updateItems();
 
 		// Render:
 		this._addButtons();
@@ -298,10 +304,18 @@ class Carousel {
 
 	update() {
 		const {index} = this;
-		this._items = Array.from(this.el.children);
+		this._updateItems();
 		this._updateButtons(index);
 		this._updatePagination(index);
 		this._updateScrollbars();
+	}
+
+	_updateItems() {
+		const { el, _options } = this;
+		this._items = Array
+			.from(el.children)
+			.filter((item) => !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden)
+			.filter(_options.filterItem);
 	}
 
 	_updateScrollbars() {

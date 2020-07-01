@@ -153,6 +153,7 @@
     return "caroucssel-".concat(count);
   },
       ID_MATCH = /^caroucssel-[0-9]*$/,
+      INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i,
       EVENT_SCROLL = 'scroll',
       EVENT_RESIZE = 'resize',
       DEFAULTS = {
@@ -177,6 +178,10 @@
     // Scrollbars, set to true when use default scrolling behaviour
     hasScrollbars: false,
     scrollbarsMaskClassName: 'caroucssel-mask',
+    // filter
+    filterItem: function filterItem() {
+      return true;
+    },
     // Hooks:
     onScroll: null
   },
@@ -215,8 +220,10 @@
 
       this._options = _objectSpread({}, DEFAULTS, {}, options);
       this._options.buttonPrevious = _objectSpread({}, DEFAULTS_BUTTON_PREVIOUS, {}, options.buttonPrevious);
-      this._options.buttonNext = _objectSpread({}, DEFAULTS_BUTTON_NEXT, {}, options.buttonNext);
-      this._items = Array.from(this.el.children); // Render:
+      this._options.buttonNext = _objectSpread({}, DEFAULTS_BUTTON_NEXT, {}, options.buttonNext); // Receive all items:
+
+      this._updateItems(); // Render:
+
 
       this._addButtons();
 
@@ -258,13 +265,23 @@
       key: "update",
       value: function update() {
         var index = this.index;
-        this._items = Array.from(this.el.children);
+
+        this._updateItems();
 
         this._updateButtons(index);
 
         this._updatePagination(index);
 
         this._updateScrollbars();
+      }
+    }, {
+      key: "_updateItems",
+      value: function _updateItems() {
+        var el = this.el,
+            _options = this._options;
+        this._items = Array.from(el.children).filter(function (item) {
+          return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
+        }).filter(_options.filterItem);
       }
     }, {
       key: "_updateScrollbars",

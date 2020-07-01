@@ -42,6 +42,10 @@ export type ScrollHook = (event: {
 	originalEvent: Event;
 }) => any;
 
+export type FilterItemFn =
+	((item: Element) => boolean) |
+	((item: Element, index: number) => boolean);
+
 export type Options = {
 	// Settings:
 	index?: number;
@@ -63,6 +67,9 @@ export type Options = {
 	// Scrollbars:
 	hasScrollbars?: boolean;
 	scrollbarsMaskClassName?: string;
+
+	// Filter:
+	filterItem?: FilterItemFn;
 
 	// Hooks:
 	onScroll?: ScrollHook;
