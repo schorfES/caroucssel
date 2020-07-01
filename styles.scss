@@ -19,6 +19,7 @@
 }
 
 body {
+	overflow: hidden;
 	background: #2F2F2F;
 	color: #FFFFFF;
 	font-family: 'Vollkorn', serif;
@@ -91,7 +92,6 @@ a {
 	text-align: left;
 }
 
-.container,
 .caroucssel {
 	height: 100vh;
 }
