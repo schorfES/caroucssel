@@ -168,6 +168,88 @@ describe('Caroucssel', () => {
 			expect(carousel.index).toEqual([2, 3]);
 		});
 
+		it('should ignore <link> in items', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const hidden = document.createElement('link');
+			el.appendChild(hidden);
+
+			const carousel = new Carousel(el);
+			expect(carousel.items).toHaveLength(3);
+		});
+
+		it('should ignore <link> in items', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const hidden = document.createElement('link');
+			el.appendChild(hidden);
+
+			const carousel = new Carousel(el);
+			expect(carousel.items).toHaveLength(3);
+		});
+
+		it('should ignore <noscript> in items', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const hidden = document.createElement('noscript');
+			el.appendChild(hidden);
+
+			const carousel = new Carousel(el);
+			expect(carousel.items).toHaveLength(3);
+		});
+
+		it('should ignore <script> in items', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const hidden = document.createElement('script');
+			el.appendChild(hidden);
+
+			const carousel = new Carousel(el);
+			expect(carousel.items).toHaveLength(3);
+		});
+
+		it('should ignore <style> in items', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const hidden = document.createElement('style');
+			el.appendChild(hidden);
+
+			const carousel = new Carousel(el);
+			expect(carousel.items).toHaveLength(3);
+		});
+
+		it('should ignore <title> in items', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const hidden = document.createElement('title');
+			el.appendChild(hidden);
+
+			const carousel = new Carousel(el);
+			expect(carousel.items).toHaveLength(3);
+		});
+
+		it('should ignore with "hidden" attribute in items', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			el.children[0].hidden = true;
+
+			const hidden = document.createElement('div');
+			hidden.setAttribute('hidden', 'hidden');
+			el.appendChild(hidden);
+
+			const carousel = new Carousel(el);
+			expect(carousel.items).toHaveLength(2);
+		});
+
+		it('should filter items based on filter function', () => {
+			document.body.innerHTML = __fixture(9);
+			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el, {
+				filterItem: (item, index) => (index % 3) === 0
+			});
+			expect(carousel.items).toHaveLength(3);
+		});
+
 	});
 
 
