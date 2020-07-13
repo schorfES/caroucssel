@@ -26,14 +26,6 @@
 
   function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-  function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
   function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
   function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -142,14 +134,14 @@
   function __templatePagination(_ref2) {
     var className = _ref2.className,
         controls = _ref2.controls,
-        items = _ref2.items,
+        pages = _ref2.pages,
         label = _ref2.label,
         title = _ref2.title;
-    return "<ul class=\"".concat(className, "\">\n\t\t").concat(items.map(function (item, index) {
+    return "<ul class=\"".concat(className, "\">\n\t\t").concat(pages.map(function (page, index) {
       var data = {
         index: index,
-        item: item,
-        items: items
+        page: page,
+        pages: pages
       };
       var labelStr = label(data);
       var titleStr = title(data);
@@ -161,8 +153,7 @@
     return "caroucssel-".concat(count);
   },
       ID_MATCH = /^caroucssel-[0-9]*$/,
-      CLASS_VISIBLE_SCROLLBAR = 'has-visible-scrollbar',
-      CLASS_INVISIBLE_SCROLLBAR = 'has-invisible-scrollbar',
+      INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i,
       EVENT_SCROLL = 'scroll',
       EVENT_RESIZE = 'resize',
       DEFAULTS = {
@@ -181,11 +172,16 @@
     },
     paginationTitle: function paginationTitle(_ref4) {
       var index = _ref4.index;
-      return "Go to ".concat(index + 1, ". item");
+      return "Go to ".concat(index + 1, ". page");
     },
     paginationTemplate: __templatePagination,
     // Scrollbars, set to true when use default scrolling behaviour
     hasScrollbars: false,
+    scrollbarsMaskClassName: 'caroucssel-mask',
+    // filter
+    filterItem: function filterItem() {
+      return true;
+    },
     // Hooks:
     onScroll: null
   },
@@ -222,10 +218,12 @@
       el.id = el.id || ID_NAME(instanceCount);
       this._id = el.id; // "deep" extend options and defaults:
 
-      this._options = _objectSpread({}, DEFAULTS, {}, options);
-      this._options.buttonPrevious = _objectSpread({}, DEFAULTS_BUTTON_PREVIOUS, {}, options.buttonPrevious);
-      this._options.buttonNext = _objectSpread({}, DEFAULTS_BUTTON_NEXT, {}, options.buttonNext);
-      this._items = _toConsumableArray(this.el.children); // Render:
+      this._options = _objectSpread(_objectSpread({}, DEFAULTS), options);
+      this._options.buttonPrevious = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_PREVIOUS), options.buttonPrevious);
+      this._options.buttonNext = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_NEXT), options.buttonNext); // Receive all items:
+
+      this._updateItems(); // Render:
+
 
       this._addButtons();
 
@@ -247,18 +245,17 @@
     _createClass(Carousel, [{
       key: "destroy",
       value: function destroy() {
-        var el = this.el;
-        var classList = el.classList; // Remove created id if it was created by carousel:
+        var el = this.el; // Remove created id if it was created by carousel:
 
-        ID_MATCH.test(el.id) && el.removeAttribute('id'); // Remove scrollbar classes:
-
-        classList.remove(CLASS_VISIBLE_SCROLLBAR);
-        classList.remove(CLASS_INVISIBLE_SCROLLBAR); // Remove buttons:
+        ID_MATCH.test(el.id) && el.removeAttribute('id'); // Remove buttons:
 
         this._removeButtons(); // Remove pagination:
 
 
-        this._removePagination(); // Remove events:
+        this._removePagination(); // Remove scrollbars:
+
+
+        this._removeScrollbars(); // Remove events:
 
 
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
@@ -268,7 +265,8 @@
       key: "update",
       value: function update() {
         var index = this.index;
-        this._items = _toConsumableArray(this.el.children);
+
+        this._updateItems();
 
         this._updateButtons(index);
 
@@ -277,30 +275,69 @@
         this._updateScrollbars();
       }
     }, {
+      key: "_updateItems",
+      value: function _updateItems() {
+        var el = this.el,
+            _options = this._options;
+        this._items = Array.from(el.children).filter(function (item) {
+          return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
+        }).filter(_options.filterItem);
+      }
+    }, {
       key: "_updateScrollbars",
       value: function _updateScrollbars() {
-        var hasScrollbars = this._options.hasScrollbars;
+        var _this2 = this;
+
+        var _this$_options = this._options,
+            hasScrollbars = _this$_options.hasScrollbars,
+            scrollbarsMaskClassName = _this$_options.scrollbarsMaskClassName;
 
         if (hasScrollbars) {
           return;
         }
 
         var height = scrollbar.dimensions.height;
-        var hasInvisbleScrollbar = height === 0;
 
-        if (hasInvisbleScrollbar === this._hasInvisbleScrollbar) {
+        if (height === this._scrollbarHeight) {
           return;
         }
 
-        var classList = this.el.classList;
-        classList.add(hasInvisbleScrollbar ? CLASS_INVISIBLE_SCROLLBAR : CLASS_VISIBLE_SCROLLBAR);
-        classList.remove(hasInvisbleScrollbar ? CLASS_VISIBLE_SCROLLBAR : CLASS_INVISIBLE_SCROLLBAR);
-        this._hasInvisbleScrollbar = hasInvisbleScrollbar;
+        this._mask = this._mask || function () {
+          var mask = document.createElement('div');
+          mask.className = scrollbarsMaskClassName;
+          mask.style.overflow = 'hidden';
+          mask.style.height = '100%';
+
+          _this2.el.parentNode.insertBefore(mask, _this2.el);
+
+          mask.appendChild(_this2.el);
+          return mask;
+        }();
+
+        this.el.style.height = "calc(100% + ".concat(height, "px)");
+        this.el.style.marginBottom = "".concat(height * -1, "px");
+        this._scrollbarHeight = height;
+      }
+    }, {
+      key: "_removeScrollbars",
+      value: function _removeScrollbars() {
+        var _mask = this._mask,
+            el = this.el;
+
+        if (!this._mask) {
+          return;
+        }
+
+        _mask.parentNode.insertBefore(el, _mask);
+
+        _mask.parentNode.removeChild(_mask);
+
+        el.removeAttribute('style');
       }
     }, {
       key: "_addButtons",
       value: function _addButtons() {
-        var _this2 = this;
+        var _this3 = this;
 
         var el = this.el,
             id = this.id,
@@ -316,7 +353,7 @@
             buttonNext = _options.buttonNext; // Create previous buttons:
 
         var _map = [buttonPrevious, buttonNext].map(function (data) {
-          return __render(buttonTemplate, _objectSpread({}, data, {
+          return __render(buttonTemplate, _objectSpread(_objectSpread({}, data), {}, {
             controls: id,
             className: "".concat(buttonClassName, " ").concat(data.className)
           }));
@@ -326,14 +363,28 @@
             next = _map2[1];
 
         previous.onclick = function () {
-          return _this2.index = [_this2.index[0] - 1];
+          var index = _this3.index,
+              pages = _this3.pages;
+          var item = index[index.length - 1];
+          var at = pages.findIndex(function (page) {
+            return page.includes(item);
+          });
+          var page = pages[at - 1];
+          _this3.index = page;
         };
 
         el.parentNode.appendChild(previous);
         this._previous = previous;
 
         next.onclick = function () {
-          return _this2.index = [_this2.index[0] + 1];
+          var index = _this3.index,
+              pages = _this3.pages;
+          var item = index[0];
+          var at = pages.findIndex(function (page) {
+            return page.includes(item);
+          });
+          var page = pages[at + 1];
+          _this3.index = page;
         };
 
         el.parentNode.appendChild(next);
@@ -374,24 +425,25 @@
     }, {
       key: "_addPagination",
       value: function _addPagination() {
-        var _this3 = this;
+        var _this4 = this;
 
-        var el = this.el,
-            id = this.id,
-            items = this.items,
-            _options = this._options;
+        var _options = this._options;
 
         if (!_options.hasPagination) {
           return;
         }
 
+        var _mask = this._mask,
+            el = this.el,
+            id = this.id,
+            pages = this.pages;
         var paginationTemplate = _options.paginationTemplate,
             paginationClassName = _options.paginationClassName,
             paginationLabel = _options.paginationLabel,
             paginationTitle = _options.paginationTitle;
 
         var pagination = __render(paginationTemplate, {
-          items: items,
+          pages: pages,
           controls: id,
           className: paginationClassName,
           label: paginationLabel,
@@ -399,15 +451,15 @@
         }); // @TODO: Add template for buttons:
 
 
-        var buttons = _toConsumableArray(pagination.querySelectorAll('button')).map(function (button, index) {
+        var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
           button.onclick = function () {
-            return _this3.index = [index];
+            return _this4.index = pages[index];
           };
 
           return button;
         });
-
-        el.parentNode.appendChild(pagination);
+        var target = (_mask || el).parentNode;
+        target.appendChild(pagination);
         this._pagination = pagination;
         this._paginationButtons = buttons;
 
@@ -423,10 +475,15 @@
           return;
         }
 
-        var _paginationButtons = this._paginationButtons;
+        var pages = this.pages,
+            _paginationButtons = this._paginationButtons;
+        var lastIndex = index[index.length - 1];
+        var selected = pages.findIndex(function (page) {
+          return page.includes(lastIndex);
+        });
 
         _paginationButtons.forEach(function (button, at) {
-          return button.disabled = index.includes(at);
+          return button.disabled = at === selected;
         });
       }
     }, {
@@ -467,7 +524,9 @@
 
         this._updateButtons(index);
 
-        this._updatePagination(index);
+        this._removePagination();
+
+        this._addPagination();
 
         this._updateScrollbars();
       }
@@ -546,7 +605,7 @@
         }
 
         var behavior = this._isSmooth ? 'smooth' : 'auto';
-        el.scrollTo(_objectSpread({}, to, {
+        el.scrollTo(_objectSpread(_objectSpread({}, to), {}, {
           behavior: behavior
         }));
       }
@@ -554,6 +613,27 @@
       key: "items",
       get: function get() {
         return this._items;
+      }
+    }, {
+      key: "pages",
+      get: function get() {
+        var el = this.el,
+            items = this.items;
+        var clientWidth = el.clientWidth;
+        var pages = [[]];
+        items.forEach(function (item, index) {
+          var offsetLeft = item.offsetLeft,
+              width = item.clientWidth; // at least 90% of the items needs to be in the page:
+
+          var page = Math.floor((offsetLeft + width * 0.9) / clientWidth);
+
+          if (!pages[page]) {
+            pages.push([]);
+          }
+
+          pages[page].push(index);
+        });
+        return pages;
       }
     }]);
 
