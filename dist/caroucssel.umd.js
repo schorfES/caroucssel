@@ -288,15 +288,23 @@
       value: function _updateScrollbars() {
         var _this2 = this;
 
-        var _this$_options = this._options,
-            hasScrollbars = _this$_options.hasScrollbars,
-            scrollbarsMaskClassName = _this$_options.scrollbarsMaskClassName;
+        var el = this.el,
+            _options = this._options;
+        var hasScrollbars = _options.hasScrollbars,
+            scrollbarsMaskClassName = _options.scrollbarsMaskClassName;
 
         if (hasScrollbars) {
           return;
         }
 
         var height = scrollbar.dimensions.height;
+
+        if (el.scrollWidth <= el.clientWidth) {
+          // If the contents are not scrollable because their width are less
+          // than the container, there will be no visible scrollbar. In this
+          // case, the scrollbar height is 0:
+          height = 0;
+        }
 
         if (height === this._scrollbarHeight) {
           return;
@@ -639,15 +647,6 @@
 
     return Carousel;
   }();
-  /**
-   * This can be used for testing purposes to reset the instance count which is
-   * used to create unique id's.
-   */
-
 
   _exports.Carousel = Carousel;
-
-  Carousel.resetInstanceCount = function () {
-    return instanceCount = 0;
-  };
 });

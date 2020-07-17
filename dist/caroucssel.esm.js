@@ -319,12 +319,21 @@ class Carousel {
 	}
 
 	_updateScrollbars() {
-		const {hasScrollbars, scrollbarsMaskClassName} = this._options;
+		const { el, _options } = this;
+		const {hasScrollbars, scrollbarsMaskClassName} = _options;
 		if (hasScrollbars) {
 			return;
 		}
 
-		const {height} = scrollbar.dimensions;
+		let {height} = scrollbar.dimensions;
+
+		if (el.scrollWidth <= el.clientWidth) {
+			// If the contents are not scrollable because their width are less
+			// than the container, there will be no visible scrollbar. In this
+			// case, the scrollbar height is 0:
+			height = 0;
+		}
+
 		if (height === this._scrollbarHeight) {
 			return;
 		}
@@ -486,11 +495,5 @@ class Carousel {
 	}
 
 }
-
-/**
- * This can be used for testing purposes to reset the instance count which is
- * used to create unique id's.
- */
-Carousel.resetInstanceCount = () => instanceCount = 0;
 
 export { Carousel };
