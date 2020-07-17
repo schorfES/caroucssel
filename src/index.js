@@ -432,8 +432,8 @@ export class Carousel {
 
 }
 
-/**
- * This can be used for testing purposes to reset the instance count which is
- * used to create unique id's.
- */
-Carousel.resetInstanceCount = () => instanceCount = 0;
+if (process.env.NODE_ENV === 'test') {
+	// This can be used for testing purposes to reset the instance count which is
+	// used to create unique id's.
+	Carousel.resetInstanceCount = () => instanceCount = 0;
+}

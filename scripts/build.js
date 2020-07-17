@@ -2,6 +2,7 @@ const path = require('path');
 const babel = require('babel-core');
 const fs = require('fs');
 const rollup = require('rollup');
+const replace = require('rollup-plugin-replace');
 const uglifyjs = require('uglify-js');
 
 
@@ -12,7 +13,12 @@ const TARGETS = [
 		file: path.join(__dirname, '../dist/caroucssel.esm.js'),
 		rollup: {
 			input: MODULE_ENTRY,
-			output: {format: 'es'}
+			output: {format: 'es'},
+			plugins: [
+				replace({
+					'process.env.NODE_ENV': JSON.stringify('production')
+				})
+			]
 		},
 		babel: false,
 		uglify: false
@@ -21,7 +27,12 @@ const TARGETS = [
 		file: path.join(__dirname, '../dist/caroucssel.umd.js'),
 		rollup: {
 			input: MODULE_ENTRY,
-			output: {format: 'es'}
+			output: {format: 'es'},
+			plugins: [
+				replace({
+					'process.env.NODE_ENV': JSON.stringify('production')
+				})
+			]
 		},
 		babel: {
 			filename: MODULE_ENTRY,
@@ -34,7 +45,12 @@ const TARGETS = [
 		file: path.join(__dirname, '../dist/caroucssel.min.js'),
 		rollup: {
 			input: MODULE_ENTRY,
-			output: {format: 'es'}
+			output: {format: 'es'},
+			plugins: [
+				replace({
+					'process.env.NODE_ENV': JSON.stringify('production')
+				})
+			]
 		},
 		babel: {
 			filename: MODULE_ENTRY,
