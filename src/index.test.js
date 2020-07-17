@@ -446,7 +446,10 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			const style = {};
+
 			Object.defineProperty(el, 'style', { value: style, writable: false });
+			Object.defineProperty(el, 'clientWidth', { value: 600, writable: false });
+			Object.defineProperty(el, 'scrollWidth', { value: 800, writable: false });
 
 			new Carousel(el);
 			expect(style).toEqual({
@@ -461,12 +464,33 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			const style = {};
+
 			Object.defineProperty(el, 'style', { value: style, writable: false });
+			Object.defineProperty(el, 'clientWidth', { value: 600, writable: false });
+			Object.defineProperty(el, 'scrollWidth', { value: 800, writable: false });
 
 			new Carousel(el);
 			expect(style).toEqual({
 				marginBottom: '-15px',
 				height: 'calc(100% + 15px)',
+			});
+		});
+
+		it('should detect not existing scrollbar (content is smaller than container)', () => {
+			mockScrollbarDimensions = {width: 15, height: 15};
+
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const style = {};
+
+			Object.defineProperty(el, 'style', { value: style, writable: false });
+			Object.defineProperty(el, 'clientWidth', { value: 800, writable: false });
+			Object.defineProperty(el, 'scrollWidth', { value: 200, writable: false });
+
+			new Carousel(el);
+			expect(style).toEqual({
+				marginBottom: '0px',
+				height: 'calc(100% + 0px)',
 			});
 		});
 
