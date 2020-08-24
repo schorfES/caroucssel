@@ -228,6 +228,18 @@ describe('Caroucssel', () => {
 			]);
 		});
 
+		it('should return pages when each item is at 120% width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 120);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0], [1], [2], [3], [4], [5], [6], [7], [8], [9],
+			]);
+		});
+
 		it('should return pages when item is at 0px width', () => {
 			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
 			const el = document.querySelector('.caroucssel');
