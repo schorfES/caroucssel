@@ -343,7 +343,16 @@ export class Carousel {
 			const item = index[0];
 			const at = pages.findIndex((page) => page.includes(item));
 			const page = pages[at + 1];
-			this.index = page;
+
+			// Pass the next page if available...
+			if (page) {
+				this.index = page;
+				return;
+			}
+
+			// ...otherwise pass the last item of the current page
+			const current = pages[at];
+			this.index = [current[current.length - 1]];
 		};
 		el.parentNode.appendChild(next);
 		this._next = next;
@@ -357,9 +366,15 @@ export class Carousel {
 			return;
 		}
 
-		const {items, _previous, _next} = this;
-		_previous.disabled = index[0] === 0;
-		_next.disabled = index[index.length - 1] === items.length - 1;
+		const {pages, _previous, _next} = this;
+
+		const firstPage = pages[0];
+		const isFirstPage = index[0] === firstPage[0];
+		_previous.disabled = isFirstPage;
+
+		const lastPage = pages[pages.length - 1];
+		const isLastPage = index[index.length - 1] === lastPage[lastPage.length - 1];
+		_next.disabled = isLastPage;
 	}
 
 	_removeButtons() {
