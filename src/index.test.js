@@ -240,6 +240,18 @@ describe('Caroucssel', () => {
 			]);
 		});
 
+		it('should return pages for each item when element width is 0px', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 0;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 100);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0], [1], [2], [3], [4], [5], [6], [7], [8], [9],
+			]);
+		});
+
 		it('should ignore <link> in items', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
