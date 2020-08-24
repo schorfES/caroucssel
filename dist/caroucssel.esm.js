@@ -280,14 +280,18 @@ class Carousel {
 			// at least 90% of the items needs to be in the page:
 			const page = Math.floor((offsetLeft +  width * 0.9) / clientWidth);
 
-			if (!pages[page]) {
+			// If items are wider than the container viewport or use a margin
+			// that causes the calculation to skip pages. We might need to create
+			// empty pages here. These empty pages need to be removed later on...
+			while (!pages[page]) {
 				pages.push([]);
 			}
 
 			pages[page].push(index);
 		});
 
-		return pages;
+		// ...remove empty pages:
+		return pages.filter((page) => page.length !== 0);
 	}
 
 	destroy() {

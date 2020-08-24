@@ -648,15 +648,20 @@
           var offsetLeft = item.offsetLeft,
               width = item.clientWidth; // at least 90% of the items needs to be in the page:
 
-          var page = Math.floor((offsetLeft + width * 0.9) / clientWidth);
+          var page = Math.floor((offsetLeft + width * 0.9) / clientWidth); // If items are wider than the container viewport or use a margin
+          // that causes the calculation to skip pages. We might need to create
+          // empty pages here. These empty pages need to be removed later on...
 
-          if (!pages[page]) {
+          while (!pages[page]) {
             pages.push([]);
           }
 
           pages[page].push(index);
+        }); // ...remove empty pages:
+
+        return pages.filter(function (page) {
+          return page.length !== 0;
         });
-        return pages;
       }
     }]);
 
