@@ -168,6 +168,78 @@ describe('Caroucssel', () => {
 			expect(carousel.index).toEqual([2, 3]);
 		});
 
+		it('should return pages when each item is at 100% width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 100);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0], [1], [2], [3], [4], [5], [6], [7], [8], [9],
+			]);
+		});
+
+		it('should return pages when each item is at 75% width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 75);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0], [1], [2, 3], [4], [5], [6, 7], [8], [9],
+			]);
+		});
+
+		it('should return pages when each item is at 66.66% width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 66.66);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0], [1, 2], [3], [4, 5], [6], [7, 8], [9],
+			]);
+		});
+
+		it('should return pages when each item is at 50% width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0, 1], [2, 3], [4, 5], [6, 7], [8, 9],
+			]);
+		});
+
+		it('should return pages when each item is at 33.33% width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 33.33);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0, 1, 2], [3, 4, 5], [6, 7, 8], [9],
+			]);
+		});
+
+		it('should return pages when item is at 0px width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 0);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+			]);
+		});
+
 		it('should ignore <link> in items', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
