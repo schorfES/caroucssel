@@ -264,9 +264,17 @@ class Carousel {
 
 	get pages() {
 		const {el, items} = this;
-		const {clientWidth} = el;
-		const pages = [[]];
 
+		const {clientWidth} = el;
+		if (clientWidth === 0) {
+			// if the width of the carousel element is zero, we can not calculate
+			// the pages properly and the carousel seems to be not visible. If
+			// this is the case, we assume that each item is placed on a
+			// separate page.
+			return items.map((item, index) => [index]);
+		}
+
+		const pages = [[]];
 		items.forEach((item, index) => {
 			const {offsetLeft, clientWidth: width} = item;
 			// at least 90% of the items needs to be in the page:
