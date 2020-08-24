@@ -395,8 +395,16 @@
           var at = pages.findIndex(function (page) {
             return page.includes(item);
           });
-          var page = pages[at + 1];
-          _this3.index = page;
+          var page = pages[at + 1]; // Pass the next page if available...
+
+          if (page) {
+            _this3.index = page;
+            return;
+          } // ...otherwise pass the last item of the current page
+
+
+          var current = pages[at];
+          _this3.index = [current[current.length - 1]];
         };
 
         el.parentNode.appendChild(next);
@@ -414,11 +422,15 @@
           return;
         }
 
-        var items = this.items,
+        var pages = this.pages,
             _previous = this._previous,
             _next = this._next;
-        _previous.disabled = index[0] === 0;
-        _next.disabled = index[index.length - 1] === items.length - 1;
+        var firstPage = pages[0];
+        var isFirstPage = index[0] === firstPage[0];
+        _previous.disabled = isFirstPage;
+        var lastPage = pages[pages.length - 1];
+        var isLastPage = index[index.length - 1] === lastPage[lastPage.length - 1];
+        _next.disabled = isLastPage;
       }
     }, {
       key: "_removeButtons",
