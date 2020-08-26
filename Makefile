@@ -59,6 +59,12 @@ web:
 		--indent-type space \
 		--output-style compressed
 
+	node_modules/.bin/node-sass \
+		./web/playground/styles.scss \
+		./web/playground/styles.min.css \
+		--indent-type space \
+		--output-style compressed
+
 
 ghpages: web
 	gh-pages -d ./web/
