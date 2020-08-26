@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" itemscope itemtype="http://schema.org/WebPage">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+		<title>Playground | CarouCSSel</title>
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Grand+Hotel|Vollkorn:400,600,700">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+		<link rel="stylesheet" href="../caroucssel.min.css">
+		<link rel="stylesheet" href="./styles.min.css">
+
+		<meta name="description" content="A lightweight dependency-free css carousel." />
+
+		<meta name="twitter:site" content="CarouCSSel" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content="https://schorfes.github.io/caroucssel/" />
+		<meta name="twitter:image" content="https://schorfes.github.io/caroucssel/img/sharing.jpg" />
+		<meta name="twitter:title" content="CarouCSSel" />
+		<meta name="twitter:description" content="A lightweight dependency-free css carousel." />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="CarouCSSel" />
+		<meta property="og:url" content="https://schorfes.github.io/caroucssel/" />
+		<meta property="og:image" content="https://schorfes.github.io/caroucssel/img/sharing.jpg" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:title" content="CarouCSSel" />
+		<meta property="og:description" content="A lightweight dependency-free css carousel." />
+
+		<meta itemprop="url" content="https://schorfes.github.io/caroucssel/" />
+		<meta itemprop="image" content="https://schorfes.github.io/caroucssel/img/sharing.jpg" />
+		<meta itemprop="name" content="CarouCSSel" />
+		<meta itemprop="description" content="A lightweight dependency-free css carousel." />
+	</head>
+	<body>
+		<h1>Playground</h1>
+
+		<div class="example">
+			<h2>Items using 100% width</h2>
+			<div class="container">
+				<div class="caroucssel use-snap" data-config="100%,100%,100%,100%"></div>
+			</div>
+		</div>
+
+		<div class="example">
+			<h2>Items using 50% width</h2>
+			<div class="container">
+				<div class="caroucssel use-snap" data-config="50%,50%,50%,50%,50%,50%,50%,50%,50%,50%"></div>
+			</div>
+		</div>
+
+		<div class="example">
+			<h2>Items using 40% width</h2>
+			<div class="container">
+				<div class="caroucssel use-snap" data-config="40%,40%,40%,40%,40%,40%,40%,40%,40%,40%"></div>
+			</div>
+		</div>
+
+		<div class="example">
+			<h2>Items using different widths</h2>
+			<div class="container">
+				<div class="caroucssel use-snap" data-config="100%,85%,55%,15%,55%,85%,100%"></div>
+			</div>
+		</div>
+
+		<div class="example">
+			<h2>Items using 120% width</h2>
+			<div class="container">
+				<div class="caroucssel use-snap" data-config="120%,120%,120%,120%,120%"></div>
+			</div>
+		</div>
+
+
+		<script src="../caroucssel.min.js"></script>
+		<script>
+			const elements = Array.from(document.querySelectorAll('.caroucssel'));
+			elements.forEach((el) => {
+				const config = el.dataset.config.split(',').map((size) => size.trim());
+
+				config.forEach((width, index) => {
+					const item = document.createElement('div');
+					item.className = 'item';
+					item.textContent = 'Item ' + (index + 1);
+					item.style.width = width;
+					el.appendChild(item);
+
+					const label = document.createElement('small');
+					label.className = 'item-label';
+					label.textContent = '(index: ' + index + ', width: ' + width + ')';
+					item.appendChild(label);
+				});
+
+				new window.caroucssel.Carousel(el, {
+					hasButtons: true,
+					hasPagination: true,
+					// onScroll: function(event) {
+					// 	console.log('INDEX', event.index);
+					// 	console.log('PAGES', event.target.pages);
+					// }
+				});
+			});
+		</script>
+	</body>
+</html>
