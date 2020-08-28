@@ -312,10 +312,6 @@ export class Carousel {
 			height = 0;
 		}
 
-		if (height === this._scrollbarHeight) {
-			return;
-		}
-
 		this._mask = this._mask || (() => {
 			const mask = document.createElement('div');
 			mask.className = scrollbarsMaskClassName;
@@ -325,6 +321,10 @@ export class Carousel {
 			mask.appendChild(this.el);
 			return mask;
 		})();
+
+		if (height === this._scrollbarHeight) {
+			return;
+		}
 
 		this.el.style.height = `calc(100% + ${height}px)`;
 		this.el.style.marginBottom = `${height * -1}px`;
