@@ -425,9 +425,42 @@ export class Carousel {
 			return;
 		}
 
-		const {pages, _paginationButtons} = this;
-		const lastIndex = index[index.length - 1];
-		const selected = pages.findIndex((page) => page.includes(lastIndex));
+		const {el, items, pages, _paginationButtons} = this;
+		const outerLeft = el.getBoundingClientRect().left;
+		const {clientWidth} = el;
+
+		// Find all possible items - possible items need to be fully visible...
+		let possibles = index.reduce((acc, at) => {
+			let {left, right} = items[at].getBoundingClientRect();
+			left = left - outerLeft;
+			right = right - outerLeft;
+
+			// Remove items that partially hidden to the left or right:
+			if (left < 0 || clientWidth < right) {
+				return acc;
+			}
+
+			return acc.concat([at]);
+		}, []);
+
+		// There might be no possible candidates. This is the case when items
+		// are wider than the element viewport. In this case we take the first
+		// item which is currently visible in general (might be the only one):
+		if (possibles.length === 0) {
+			possibles = [index[0]];
+		}
+
+		// Search for the current item that is most aligned to the right. The
+		// found item marks the current page...
+		const current = possibles.sort((a, b) => {
+			const rightA = items[a].getBoundingClientRect().right;
+			const rightB = items[b].getBoundingClientRect().right;
+			return rightB - rightA;
+		})[0];
+
+		// Find the page where the current item index is located and select
+		// (disable) the button...
+		const selected = pages.findIndex((page) => page.includes(current));
 		_paginationButtons.forEach((button, at) => button.disabled = (at === selected));
 	}
 
