@@ -222,6 +222,10 @@ Returns an array of all child dom elements of the carousel.
 
 Returns an array of all pages. Each page is a group of indexes that matches a page.
 
+#### `.pageIndex` (read only)
+
+Returns the index of the current page.
+
 #### `.id` (read only)
 
 Returns the id-attribute value of the carousel.

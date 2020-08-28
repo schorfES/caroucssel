@@ -146,7 +146,7 @@ describe('Caroucssel', () => {
 			expect(carousel.index).toEqual([2, 3, 4]);
 		});
 
-		it('should return current index(s) at expected bounds', () => {
+		it('should return current index(s) at expected bounds (using 25% rule)', () => {
 			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
 			const el = document.querySelector('.caroucssel');
 			el.mockWidth = 100;
@@ -155,17 +155,20 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el);
 			expect(carousel.index).toEqual([0, 1]);
 
-			el.scrollTo({left: 25});
+			el.scrollTo({left: 50 * 0.25});
 			expect(carousel.index).toEqual([0, 1]);
 
-			el.scrollTo({left: 26});
+			el.scrollTo({left: 50 * 0.25 + 1});
+			expect(carousel.index).toEqual([1]);
+
+			el.scrollTo({left: 50 * 0.75 - 1});
+			expect(carousel.index).toEqual([1]);
+
+			el.scrollTo({left: 50 * 0.75});
 			expect(carousel.index).toEqual([1, 2]);
 
-			el.scrollTo({left: 75});
+			el.scrollTo({left: 50 * 1});
 			expect(carousel.index).toEqual([1, 2]);
-
-			el.scrollTo({left: 76});
-			expect(carousel.index).toEqual([2, 3]);
 		});
 
 		it('should return pages when each item is at 100% width', () => {
