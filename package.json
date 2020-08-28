@@ -8,7 +8,20 @@
   "scripts": {
     "validate": "make validate",
     "test": "snyk test && make tests",
-    "coverage": "make coverage"
+    "coverage": "make coverage",
+    "web": "make web",
+    "build": "make build"
+  },
+  "watch": {
+    "web": {
+      "patterns": ["web", "dist"],
+      "extensions": "scss",
+      "delay": 10000
+    },
+    "build": {
+      "patterns": ["src"],
+      "extensions": "js"
+    }
   },
   "repository": {
     "type": "git",
@@ -40,6 +53,7 @@
     "live-server": "^1.2.1",
     "node-sass": "^4.13.1",
     "np": "^6.2.4",
+    "npm-watch": "^0.7.0",
     "rollup": "^2.1.0",
     "rollup-plugin-replace": "^2.2.0",
     "sass-lint": "^1.13.1",

@@ -1,4 +1,4 @@
-.PHONY:  validate tests coverage build web ghpages release
+.PHONY:  validate tests coverage build web ghpages release watch
 
 
 validate:
@@ -76,3 +76,9 @@ release: validate tests build ghpages
 		--no-tests \
 		--any-branch \
 		--tag
+
+watch: build web
+	# run em' all in parallel:
+	node_modules/.bin/live-server & \
+	node_modules/.bin/npm-watch web & \
+	node_modules/.bin/npm-watch build
