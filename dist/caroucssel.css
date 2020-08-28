@@ -9,12 +9,21 @@
   white-space: nowrap;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   -webkit-overflow-scrolling: touch;
+  /* For (webkit) browsers with scrollbars that only appear on scrolling */
 }
 
 .caroucssel > * {
   flex: 0 0 auto;
   outline: none;
   white-space: normal;
+}
+
+.caroucssel[style*='100% + 0px']::-webkit-scrollbar, .caroucssel[style*='100%+0px']::-webkit-scrollbar {
+  height: 0;
+}
+
+.caroucssel[style*='100% + 0px']::-webkit-scrollbar-thumb, .caroucssel[style*='100%+0px']::-webkit-scrollbar-thumb {
+  opacity: 0;
 }
 
 .caroucssel.use-snap {
