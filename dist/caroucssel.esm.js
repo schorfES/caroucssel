@@ -100,6 +100,8 @@ const
 	ID_NAME = (count) => `caroucssel-${count}`,
 	ID_MATCH = /^caroucssel-[0-9]*$/,
 
+	VISIBILITY_OFFSET = 0.25,
+
 	INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i,
 
 	EVENT_SCROLL = 'scroll',
@@ -213,20 +215,10 @@ class Carousel {
 			let {left, width} = item.getBoundingClientRect();
 			left = left - outerLeft;
 
-			// @TODO: This may not work properly when the item is larger than
-			// the clientWidth
-			if (left + width / 2 >= 0 && left < clientWidth - width / 2) {
+			if (left + width * VISIBILITY_OFFSET >= 0 &&
+				left + width * (1 - VISIBILITY_OFFSET) <= clientWidth) {
 				values.push(index);
 			}
-			// else if (values.length > 0) {
-			// 	If we already pushed an item trough this loop, we can break this
-			// 	loop, because all other items will be out of visibility.
-			//
-			// 	NOTE: Do not implement this, because if a flexbox ordering is
-			// 	attached to one of the items, this rule won't apply!
-			//
-			// 	break;
-			// }
 		}
 
 		if (values.length === 0) {
@@ -276,9 +268,9 @@ class Carousel {
 
 		const pages = [[]];
 		items.forEach((item, index) => {
-			const {offsetLeft, clientWidth: width} = item;
-			// at least 90% of the items needs to be in the page:
-			const page = Math.floor((offsetLeft +  width * 0.9) / clientWidth);
+			const {offsetLeft: left, clientWidth: width} = item;
+			// at least 75% of the items needs to be in the page:
+			const page = Math.floor((left + width * (1 - VISIBILITY_OFFSET)) / clientWidth);
 
 			// If items are wider than the container viewport or use a margin
 			// that causes the calculation to skip pages. We might need to create
@@ -292,6 +284,44 @@ class Carousel {
 
 		// ...remove empty pages:
 		return pages.filter((page) => page.length !== 0);
+	}
+
+	get pageIndex() {
+		const {el, items, index, pages} = this;
+		const outerLeft = el.getBoundingClientRect().left;
+		const {clientWidth} = el;
+
+		let visibles = index.reduce((acc, at) => {
+			let {left, right} = items[at].getBoundingClientRect();
+			left = left - outerLeft;
+			right = right - outerLeft;
+
+			// Remove items that partially hidden to the left or right:
+			if (left < 0 || clientWidth < right) {
+				return acc;
+			}
+
+			return acc.concat([at]);
+		}, []);
+
+		// There might be no possible candidates. This is the case when items
+		// are wider than the element viewport. In this case we take the first
+		// item which is currently visible in general (might be the only one):
+		if (visibles.length === 0) {
+			visibles = [index[0]];
+		}
+
+		// Search for the visible item that is most aligned to the right. The
+		// found item marks the current page...
+		const at = visibles.sort((a, b) => {
+			const rightA = items[a].getBoundingClientRect().right;
+			const rightB = items[b].getBoundingClientRect().right;
+			return rightB - rightA;
+		})[0];
+
+
+		// Find the page index where the current item index is located...
+		return pages.findIndex((page) => page.includes(at));
 	}
 
 	destroy() {
@@ -346,10 +376,6 @@ class Carousel {
 			height = 0;
 		}
 
-		if (height === this._scrollbarHeight) {
-			return;
-		}
-
 		this._mask = this._mask || (() => {
 			const mask = document.createElement('div');
 			mask.className = scrollbarsMaskClassName;
@@ -359,6 +385,10 @@ class Carousel {
 			mask.appendChild(this.el);
 			return mask;
 		})();
+
+		if (height === this._scrollbarHeight) {
+			return;
+		}
 
 		this.el.style.height = `calc(100% + ${height}px)`;
 		this.el.style.marginBottom = `${height * -1}px`;
@@ -393,30 +423,17 @@ class Carousel {
 			}));
 
 		previous.onclick = () => {
-			const { index, pages } = this;
-			const item = index[index.length - 1];
-			const at = pages.findIndex((page) => page.includes(item));
-			const page = pages[at - 1];
+			const {pages, pageIndex} = this;
+			const page = pages[pageIndex - 1] || pages[0];
 			this.index = page;
 		};
 		el.parentNode.appendChild(previous);
 		this._previous = previous;
 
 		next.onclick = () => {
-			const { index, pages } = this;
-			const item = index[0];
-			const at = pages.findIndex((page) => page.includes(item));
-			const page = pages[at + 1];
-
-			// Pass the next page if available...
-			if (page) {
-				this.index = page;
-				return;
-			}
-
-			// ...otherwise pass the last item of the current page
-			const current = pages[at];
-			this.index = [current[current.length - 1]];
+			const { pages, pageIndex } = this;
+			const page = pages[pageIndex + 1] || pages[pages.length - 1];
+			this.index = page;
 		};
 		el.parentNode.appendChild(next);
 		this._next = next;
@@ -424,20 +441,20 @@ class Carousel {
 		this._updateButtons();
 	}
 
-	_updateButtons(index = this.index) {
+	_updateButtons() {
 		const {_options} = this;
 		if (!_options.hasButtons) {
 			return;
 		}
 
-		const {pages, _previous, _next} = this;
+		const {pages, pageIndex, _previous, _next} = this;
 
-		const firstPage = pages[0];
-		const isFirstPage = index[0] === firstPage[0];
+		const firstPage = pages[pageIndex - 1];
+		const isFirstPage = firstPage === undefined;
 		_previous.disabled = isFirstPage;
 
-		const lastPage = pages[pages.length - 1];
-		const isLastPage = index[index.length - 1] === lastPage[lastPage.length - 1];
+		const lastPage = pages[pageIndex + 1];
+		const isLastPage = lastPage === undefined;
 		_next.disabled = isLastPage;
 	}
 
@@ -483,16 +500,14 @@ class Carousel {
 		this._updatePagination();
 	}
 
-	_updatePagination(index = this.index) {
+	_updatePagination() {
 		const {_options} = this;
 		if (!_options.hasPagination) {
 			return;
 		}
 
-		const {pages, _paginationButtons} = this;
-		const lastIndex = index[index.length - 1];
-		const selected = pages.findIndex((page) => page.includes(lastIndex));
-		_paginationButtons.forEach((button, at) => button.disabled = (at === selected));
+		const { pageIndex, _paginationButtons } = this;
+		_paginationButtons.forEach((button, at) => button.disabled = (at === pageIndex));
 	}
 
 	_removePagination() {
@@ -506,16 +521,15 @@ class Carousel {
 
 	_onScroll(event) {
 		const {index, _options} = this;
-		this._updateButtons(index);
-		this._updatePagination(index);
+		this._updateButtons();
+		this._updatePagination();
 
 		const {onScroll} = _options;
 		onScroll && onScroll({index, type: EVENT_SCROLL, target: this, originalEvent: event});
 	}
 
 	_onResize() {
-		const {index} = this;
-		this._updateButtons(index);
+		this._updateButtons();
 		this._removePagination();
 		this._addPagination();
 		this._updateScrollbars();

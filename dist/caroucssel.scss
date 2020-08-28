@@ -15,6 +15,18 @@
 		outline: none;
 		white-space: normal;
 	}
+
+	/* For (webkit) browsers with scrollbars that only appear on scrolling */
+	&[style*='100% + 0px'],
+	&[style*='100%+0px'] {
+		&::-webkit-scrollbar {
+			height: 0;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			opacity: 0;
+		}
+	}
 }
 
 @mixin caroucssel-snap($at: 100%) {
