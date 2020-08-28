@@ -157,6 +157,7 @@
     return "caroucssel-".concat(count);
   },
       ID_MATCH = /^caroucssel-[0-9]*$/,
+      VISIBILITY_OFFSET = 0.25,
       INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i,
       EVENT_SCROLL = 'scroll',
       EVENT_RESIZE = 'resize',
@@ -310,10 +311,6 @@
           height = 0;
         }
 
-        if (height === this._scrollbarHeight) {
-          return;
-        }
-
         this._mask = this._mask || function () {
           var mask = document.createElement('div');
           mask.className = scrollbarsMaskClassName;
@@ -325,6 +322,10 @@
           mask.appendChild(_this2.el);
           return mask;
         }();
+
+        if (height === this._scrollbarHeight) {
+          return;
+        }
 
         this.el.style.height = "calc(100% + ".concat(height, "px)");
         this.el.style.marginBottom = "".concat(height * -1, "px");
@@ -375,13 +376,9 @@
             next = _map2[1];
 
         previous.onclick = function () {
-          var index = _this3.index,
-              pages = _this3.pages;
-          var item = index[index.length - 1];
-          var at = pages.findIndex(function (page) {
-            return page.includes(item);
-          });
-          var page = pages[at - 1];
+          var pages = _this3.pages,
+              pageIndex = _this3.pageIndex;
+          var page = pages[pageIndex - 1] || pages[0];
           _this3.index = page;
         };
 
@@ -389,22 +386,10 @@
         this._previous = previous;
 
         next.onclick = function () {
-          var index = _this3.index,
-              pages = _this3.pages;
-          var item = index[0];
-          var at = pages.findIndex(function (page) {
-            return page.includes(item);
-          });
-          var page = pages[at + 1]; // Pass the next page if available...
-
-          if (page) {
-            _this3.index = page;
-            return;
-          } // ...otherwise pass the last item of the current page
-
-
-          var current = pages[at];
-          _this3.index = [current[current.length - 1]];
+          var pages = _this3.pages,
+              pageIndex = _this3.pageIndex;
+          var page = pages[pageIndex + 1] || pages[pages.length - 1];
+          _this3.index = page;
         };
 
         el.parentNode.appendChild(next);
@@ -415,7 +400,6 @@
     }, {
       key: "_updateButtons",
       value: function _updateButtons() {
-        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.index;
         var _options = this._options;
 
         if (!_options.hasButtons) {
@@ -423,13 +407,14 @@
         }
 
         var pages = this.pages,
+            pageIndex = this.pageIndex,
             _previous = this._previous,
             _next = this._next;
-        var firstPage = pages[0];
-        var isFirstPage = index[0] === firstPage[0];
+        var firstPage = pages[pageIndex - 1];
+        var isFirstPage = firstPage === undefined;
         _previous.disabled = isFirstPage;
-        var lastPage = pages[pages.length - 1];
-        var isLastPage = index[index.length - 1] === lastPage[lastPage.length - 1];
+        var lastPage = pages[pageIndex + 1];
+        var isLastPage = lastPage === undefined;
         _next.disabled = isLastPage;
       }
     }, {
@@ -492,22 +477,17 @@
     }, {
       key: "_updatePagination",
       value: function _updatePagination() {
-        var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.index;
         var _options = this._options;
 
         if (!_options.hasPagination) {
           return;
         }
 
-        var pages = this.pages,
+        var pageIndex = this.pageIndex,
             _paginationButtons = this._paginationButtons;
-        var lastIndex = index[index.length - 1];
-        var selected = pages.findIndex(function (page) {
-          return page.includes(lastIndex);
-        });
 
         _paginationButtons.forEach(function (button, at) {
-          return button.disabled = at === selected;
+          return button.disabled = at === pageIndex;
         });
       }
     }, {
@@ -529,9 +509,9 @@
         var index = this.index,
             _options = this._options;
 
-        this._updateButtons(index);
+        this._updateButtons();
 
-        this._updatePagination(index);
+        this._updatePagination();
 
         var onScroll = _options.onScroll;
         onScroll && onScroll({
@@ -544,9 +524,7 @@
     }, {
       key: "_onResize",
       value: function _onResize() {
-        var index = this.index;
-
-        this._updateButtons(index);
+        this._updateButtons();
 
         this._removePagination();
 
@@ -582,21 +560,11 @@
               left = _item$getBoundingClie.left,
               width = _item$getBoundingClie.width;
 
-          left = left - outerLeft; // @TODO: This may not work properly when the item is larger than
-          // the clientWidth
+          left = left - outerLeft;
 
-          if (left + width / 2 >= 0 && left < clientWidth - width / 2) {
+          if (left + width * VISIBILITY_OFFSET >= 0 && left + width * (1 - VISIBILITY_OFFSET) <= clientWidth) {
             values.push(index);
-          } // else if (values.length > 0) {
-          // 	If we already pushed an item trough this loop, we can break this
-          // 	loop, because all other items will be out of visibility.
-          //
-          // 	NOTE: Do not implement this, because if a flexbox ordering is
-          // 	attached to one of the items, this rule won't apply!
-          //
-          // 	break;
-          // }
-
+          }
         }
 
         if (values.length === 0) {
@@ -657,10 +625,10 @@
 
         var pages = [[]];
         items.forEach(function (item, index) {
-          var offsetLeft = item.offsetLeft,
-              width = item.clientWidth; // at least 90% of the items needs to be in the page:
+          var left = item.offsetLeft,
+              width = item.clientWidth; // at least 75% of the items needs to be in the page:
 
-          var page = Math.floor((offsetLeft + width * 0.9) / clientWidth); // If items are wider than the container viewport or use a margin
+          var page = Math.floor((left + width * (1 - VISIBILITY_OFFSET)) / clientWidth); // If items are wider than the container viewport or use a margin
           // that causes the calculation to skip pages. We might need to create
           // empty pages here. These empty pages need to be removed later on...
 
@@ -673,6 +641,48 @@
 
         return pages.filter(function (page) {
           return page.length !== 0;
+        });
+      }
+    }, {
+      key: "pageIndex",
+      get: function get() {
+        var el = this.el,
+            items = this.items,
+            index = this.index,
+            pages = this.pages;
+        var outerLeft = el.getBoundingClientRect().left;
+        var clientWidth = el.clientWidth;
+        var visibles = index.reduce(function (acc, at) {
+          var _items$at$getBounding = items[at].getBoundingClientRect(),
+              left = _items$at$getBounding.left,
+              right = _items$at$getBounding.right;
+
+          left = left - outerLeft;
+          right = right - outerLeft; // Remove items that partially hidden to the left or right:
+
+          if (left < 0 || clientWidth < right) {
+            return acc;
+          }
+
+          return acc.concat([at]);
+        }, []); // There might be no possible candidates. This is the case when items
+        // are wider than the element viewport. In this case we take the first
+        // item which is currently visible in general (might be the only one):
+
+        if (visibles.length === 0) {
+          visibles = [index[0]];
+        } // Search for the visible item that is most aligned to the right. The
+        // found item marks the current page...
+
+
+        var at = visibles.sort(function (a, b) {
+          var rightA = items[a].getBoundingClientRect().right;
+          var rightB = items[b].getBoundingClientRect().right;
+          return rightB - rightA;
+        })[0]; // Find the page index where the current item index is located...
+
+        return pages.findIndex(function (page) {
+          return page.includes(at);
         });
       }
     }]);

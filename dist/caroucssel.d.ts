@@ -83,6 +83,7 @@ export class Carousel {
 	public set index(values: number[]);
 	public get items(): Element[];
 	public get pages(): number[][];
+	public get pageIndex(): number;
 	public destroy(): void;
 	public update(): void;
 
