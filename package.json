@@ -1,6 +1,6 @@
 {
   "name": "caroucssel",
-  "version": "0.6.4",
+  "version": "0.7.0-0",
   "description": "A lightweight dependency-free css carousel.",
   "main": "dist/caroucssel.umd.js",
   "module": "dist/caroucssel.esm.js",
@@ -14,12 +14,17 @@
   },
   "watch": {
     "web": {
-      "patterns": ["web", "dist"],
+      "patterns": [
+        "web",
+        "dist"
+      ],
       "extensions": "scss",
       "delay": 10000
     },
     "build": {
-      "patterns": ["src"],
+      "patterns": [
+        "src"
+      ],
       "extensions": "js"
     }
   },
