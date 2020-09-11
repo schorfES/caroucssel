@@ -396,13 +396,17 @@ export class Carousel {
 
 		const {_mask, el, id, pages} = this;
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
-		const pagination = __render(paginationTemplate, {
-			pages,
-			controls: id,
-			className: paginationClassName,
-			label: paginationLabel,
-			title: paginationTitle,
-		});
+		if (pages.length > 1) {
+			const pagination = __render(hasPagination, {
+				pages,
+				controls: id,
+				className: paginationClassName,
+				label: paginationLabel,
+				title: paginationTitle,
+			});
+		} else {
+			return;
+		}
 
 		// @TODO: Add template for buttons:
 		const buttons = Array.from(pagination.querySelectorAll('button'))
