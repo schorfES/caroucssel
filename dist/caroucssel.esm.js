@@ -69,7 +69,13 @@ function debounce(func, delay) {
 function __render(template, data) {
 	const el = document.createElement('div');
 	el.innerHTML = template(data);
-	return el.firstChild;
+
+	const ref = el.firstChild;
+	if (!(ref instanceof HTMLElement)) {
+		return null;
+	}
+
+	return ref;
 }
 
 
@@ -292,6 +298,10 @@ class Carousel {
 		const {clientWidth} = el;
 
 		let visibles = index.reduce((acc, at) => {
+			if (!items[at]) {
+				return acc;
+			}
+
 			let {left, right} = items[at].getBoundingClientRect();
 			left = left - outerLeft;
 			right = right - outerLeft;
@@ -422,20 +432,28 @@ class Carousel {
 				className: `${buttonClassName} ${data.className}`
 			}));
 
-		previous.onclick = () => {
-			const {pages, pageIndex} = this;
-			const page = pages[pageIndex - 1] || pages[0];
-			this.index = page;
-		};
-		el.parentNode.appendChild(previous);
+		if (previous) {
+			const onPrevious = () => {
+				const {pages, pageIndex} = this;
+				const page = pages[pageIndex - 1] || pages[0];
+				this.index = page;
+			};
+
+			previous.onclick = onPrevious;
+			el.parentNode.appendChild(previous);
+		}
 		this._previous = previous;
 
-		next.onclick = () => {
-			const { pages, pageIndex } = this;
-			const page = pages[pageIndex + 1] || pages[pages.length - 1];
-			this.index = page;
-		};
-		el.parentNode.appendChild(next);
+		if (next) {
+			const onNext = () => {
+				const { pages, pageIndex } = this;
+				const page = pages[pageIndex + 1] || pages[pages.length - 1];
+				this.index = page;
+			};
+
+			next.onclick = onNext;
+			el.parentNode.appendChild(next);
+		}
 		this._next = next;
 
 		this._updateButtons();
@@ -449,13 +467,17 @@ class Carousel {
 
 		const {pages, pageIndex, _previous, _next} = this;
 
-		const firstPage = pages[pageIndex - 1];
-		const isFirstPage = firstPage === undefined;
-		_previous.disabled = isFirstPage;
+		if (_previous) {
+			const firstPage = pages[pageIndex - 1];
+			const isFirstPage = firstPage === undefined;
+			_previous.disabled = isFirstPage;
+		}
 
-		const lastPage = pages[pageIndex + 1];
-		const isLastPage = lastPage === undefined;
-		_next.disabled = isLastPage;
+		if (_next) {
+			const lastPage = pages[pageIndex + 1];
+			const isLastPage = lastPage === undefined;
+			_next.disabled = isLastPage;
+		}
 	}
 
 	_removeButtons() {
@@ -476,6 +498,10 @@ class Carousel {
 		}
 
 		const {_mask, el, id, pages} = this;
+		if (pages.length < 2) {
+			return;
+		}
+
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
 		const pagination = __render(paginationTemplate, {
 			pages,
@@ -484,6 +510,10 @@ class Carousel {
 			label: paginationLabel,
 			title: paginationTitle,
 		});
+
+		if (!pagination) {
+			return;
+		}
 
 		// @TODO: Add template for buttons:
 		const buttons = Array.from(pagination.querySelectorAll('button'))
@@ -516,7 +546,10 @@ class Carousel {
 			button.onclick = null;
 			button.parentNode.removeChild(button);
 		});
+		this._paginationButtons = null;
+
 		_pagination && _pagination.parentNode.removeChild(_pagination);
+		this._pagination = null;
 	}
 
 	_onScroll(event) {
