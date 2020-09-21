@@ -412,18 +412,18 @@ export class Carousel {
 		}
 
 		const {_mask, el, id, pages} = this;
-		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
-		if (pages.length > 1) {
-			const pagination = __render(hasPagination, {
-				pages,
-				controls: id,
-				className: paginationClassName,
-				label: paginationLabel,
-				title: paginationTitle,
-			});
-		} else {
+		if (pages.length < 2) {
 			return;
 		}
+
+		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
+		const pagination = __render(paginationTemplate, {
+			pages,
+			controls: id,
+			className: paginationClassName,
+			label: paginationLabel,
+			title: paginationTitle,
+		});
 
 		// @TODO: Add template for buttons:
 		const buttons = Array.from(pagination.querySelectorAll('button'))
@@ -456,7 +456,10 @@ export class Carousel {
 			button.onclick = null;
 			button.parentNode.removeChild(button);
 		});
+		this._paginationButtons = null;
+
 		_pagination && _pagination.parentNode.removeChild(_pagination);
+		this._pagination = null;
 	}
 
 	_onScroll(event) {
