@@ -10,7 +10,7 @@ jest.mock('./utils/Scrollbar', () => {
 				return mockScrollbarDimensions;
 			}
 		}
-	}
+	};
 });
 
 function __fixture(count, options = null) {
@@ -24,7 +24,7 @@ function __fixture(count, options = null) {
 				`).join('')}
 			</div>
 		</div>
-	`
+	`;
 }
 
 function __triggerResize() {
@@ -37,6 +37,13 @@ function __triggerResize() {
 function __triggerScroll(element) {
 	const event = document.createEvent('Event');
 	event.initEvent('scroll');
+	element.dispatchEvent(event);
+	jest.runAllTimers();
+}
+
+function __triggerClick(element) {
+	const event = document.createEvent('Event');
+	event.initEvent('click');
 	element.dispatchEvent(event);
 	jest.runAllTimers();
 }
@@ -539,6 +546,46 @@ describe('Caroucssel', () => {
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
 		});
 
+		it('should handle clicks', () => {
+			document.body.innerHTML = __fixture(6);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			new Carousel(el, { hasButtons: true });
+
+
+			const callback = jest.spyOn(el, 'scrollTo');
+			const buttons = document.querySelectorAll('.button');
+
+			__triggerClick(buttons[1]); // navigate forwards
+			__triggerScroll(el);
+			el.scrollLeft = 100;
+			expect(callback).toHaveBeenCalledTimes(1);
+			expect(callback).toHaveBeenNthCalledWith(1, { left: 100, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
+
+			__triggerClick(buttons[1]); // navigate forwards
+			__triggerScroll(el);
+			el.scrollLeft = 200;
+			expect(callback).toHaveBeenCalledTimes(2);
+			expect(callback).toHaveBeenNthCalledWith(2, { left: 200, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
+
+			__triggerClick(buttons[0]); // navigate backwards
+			__triggerScroll(el);
+			el.scrollLeft = 100;
+			expect(callback).toHaveBeenCalledTimes(3);
+			expect(callback).toHaveBeenNthCalledWith(3, { left: 100, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
+
+			__triggerClick(buttons[0]); // navigate backwards
+			__triggerScroll(el);
+			el.scrollLeft = 0;
+			expect(callback).toHaveBeenCalledTimes(4);
+			expect(callback).toHaveBeenNthCalledWith(4, { left: 0, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
+		});
+
 	});
 
 
@@ -771,6 +818,39 @@ describe('Caroucssel', () => {
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 		});
 
+		it('should handle clicks', () => {
+			document.body.innerHTML = __fixture(6);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			new Carousel(el, { hasPagination: true });
+
+
+			const callback = jest.spyOn(el, 'scrollTo');
+			const pagination = document.querySelectorAll('.pagination > li > button');
+
+			__triggerClick(pagination[1]);
+			__triggerScroll(el);
+			el.scrollLeft = 100;
+			expect(callback).toHaveBeenCalledTimes(1);
+			expect(callback).toHaveBeenNthCalledWith(1, { left: 100, behavior: 'smooth' });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
+
+			__triggerClick(pagination[0]);
+			__triggerScroll(el);
+			el.scrollLeft = 0;
+			expect(callback).toHaveBeenCalledTimes(2);
+			expect(callback).toHaveBeenNthCalledWith(2, { left: 0, behavior: 'smooth' });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
+
+			__triggerClick(pagination[2]);
+			__triggerScroll(el);
+			el.scrollLeft = 200;
+			expect(callback).toHaveBeenCalledTimes(3);
+			expect(callback).toHaveBeenNthCalledWith(3, { left: 200, behavior: 'smooth' });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
+		});
+
 	});
 
 
@@ -863,6 +943,20 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el, {
 				hasButtons: true,
 				hasPagination: true
+			});
+
+			carousel.destroy();
+			expect(document.body.innerHTML).toBe(structure);
+		});
+
+		it('should cleanup dom without scrollbars mask', () => {
+			const structure = __fixture(3);
+			document.body.innerHTML = structure;
+			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el, {
+				hasButtons: true,
+				hasPagination: true,
+				hasScrollbars: true,
 			});
 
 			carousel.destroy();
