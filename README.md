@@ -138,7 +138,7 @@ The pagination can be customized by additional options. The following options ar
 * `paginationClassName` – a string which represents the class name for the `<ul>` element of the pagination – Default value is: `'pagination'`
 * `paginationLabel` – a function which returns a string for the label of each button inside the pagination. A data object is passed as param into the invoked function, containing information about:
     * `index` – a number of the current item index
-	* `pages` – all existing pages, a list of grouped indexes
+    * `pages` – all existing pages, a list of grouped indexes
     * `page` – the current page
 * `paginationTitle` – a function which returns a string for the title of each button inside the pagination. A data object is passed as param into the invoked function, containing information about:
     * `index` – a number of the current item index
@@ -175,6 +175,15 @@ To enable the default rendering of the CSS property `overflow: auto`, set the op
 ```javascript
 const carousel = new Carousel(el, {
     hasScrollbars: true
+});
+```
+
+CarouCSSel will wrap a mask element around the passed element that contains the scrollable items. This wrapper is used to hide the scrollbar. This element has a default class name `caroucssel-mask`. To change this class name set the option `scrollbarsMaskClassName`.
+
+```javascript
+const carousel = new Carousel(el, {
+    hasScrollbars: true,
+    scrollbarsMaskClassName: 'my-scroll-mask'
 });
 ```
 
