@@ -5,7 +5,13 @@ import {debounce} from './utils/debounce';
 function __render(template, data) {
 	const el = document.createElement('div');
 	el.innerHTML = template(data);
-	return el.firstChild;
+
+	const ref = el.firstChild;
+	if (!(ref instanceof HTMLElement)) {
+		return null;
+	}
+
+	return ref;
 }
 
 
@@ -362,20 +368,28 @@ export class Carousel {
 				className: `${buttonClassName} ${data.className}`
 			}));
 
-		previous.onclick = () => {
-			const {pages, pageIndex} = this;
-			const page = pages[pageIndex - 1] || pages[0];
-			this.index = page;
-		};
-		el.parentNode.appendChild(previous);
+		if (previous) {
+			const onPrevious = () => {
+				const {pages, pageIndex} = this;
+				const page = pages[pageIndex - 1] || pages[0];
+				this.index = page;
+			};
+
+			previous.onclick = onPrevious;
+			el.parentNode.appendChild(previous);
+		}
 		this._previous = previous;
 
-		next.onclick = () => {
-			const { pages, pageIndex } = this;
-			const page = pages[pageIndex + 1] || pages[pages.length - 1];
-			this.index = page;
-		};
-		el.parentNode.appendChild(next);
+		if (next) {
+			const onNext = () => {
+				const { pages, pageIndex } = this;
+				const page = pages[pageIndex + 1] || pages[pages.length - 1];
+				this.index = page;
+			};
+
+			next.onclick = onNext;
+			el.parentNode.appendChild(next);
+		}
 		this._next = next;
 
 		this._updateButtons();
@@ -389,13 +403,17 @@ export class Carousel {
 
 		const {pages, pageIndex, _previous, _next} = this;
 
-		const firstPage = pages[pageIndex - 1];
-		const isFirstPage = firstPage === undefined;
-		_previous.disabled = isFirstPage;
+		if (_previous) {
+			const firstPage = pages[pageIndex - 1];
+			const isFirstPage = firstPage === undefined;
+			_previous.disabled = isFirstPage;
+		}
 
-		const lastPage = pages[pageIndex + 1];
-		const isLastPage = lastPage === undefined;
-		_next.disabled = isLastPage;
+		if (_next) {
+			const lastPage = pages[pageIndex + 1];
+			const isLastPage = lastPage === undefined;
+			_next.disabled = isLastPage;
+		}
 	}
 
 	_removeButtons() {
@@ -428,6 +446,10 @@ export class Carousel {
 			label: paginationLabel,
 			title: paginationTitle,
 		});
+
+		if (!pagination) {
+			return;
+		}
 
 		// @TODO: Add template for buttons:
 		const buttons = Array.from(pagination.querySelectorAll('button'))

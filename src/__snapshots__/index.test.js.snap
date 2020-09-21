@@ -70,6 +70,54 @@ exports[`Caroucssel buttons should add disabled buttons without items 1`] = `
 	"
 `;
 
+exports[`Caroucssel buttons should handle buttons with custom template that returns empty string 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div></div>
+		</div>
+	"
+`;
+
+exports[`Caroucssel buttons should handle buttons with custom template that returns null 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div></div>
+		</div>
+	"
+`;
+
+exports[`Caroucssel buttons should handle buttons with custom template that returns undefined 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div></div>
+		</div>
+	"
+`;
+
 exports[`Caroucssel pagination should add pagination 1`] = `
 "
 		<div class=\\"container\\">
@@ -154,5 +202,53 @@ exports[`Caroucssel pagination should add pagination with custom template 1`] = 
 								third
 							</div>
 					</div></div>
+	"
+`;
+
+exports[`Caroucssel pagination should handle pagination with custom template that returns empty string 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div></div>
+		</div>
+	"
+`;
+
+exports[`Caroucssel pagination should handle pagination with custom template that returns null 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div></div>
+		</div>
+	"
+`;
+
+exports[`Caroucssel pagination should handle pagination with custom template that returns undefined 1`] = `
+"
+		<div class=\\"container\\">
+			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
+				
+					<div class=\\"item item-0\\">Item 0</div>
+				
+					<div class=\\"item item-1\\">Item 1</div>
+				
+					<div class=\\"item item-2\\">Item 2</div>
+				
+			</div></div>
+		</div>
 	"
 `;

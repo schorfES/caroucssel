@@ -431,6 +431,46 @@ describe('Caroucssel', () => {
 			});
 		});
 
+		it('should handle buttons with custom template that returns empty string', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasButtons: true,
+				buttonTemplate: jest.fn(() => '')
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(options.buttonTemplate).toHaveBeenCalledTimes(2);
+		});
+
+		it('should handle buttons with custom template that returns null', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasButtons: true,
+				buttonTemplate: jest.fn(() => null)
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(options.buttonTemplate).toHaveBeenCalledTimes(2);
+		});
+
+		it('should handle buttons with custom template that returns undefined', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasButtons: true,
+				buttonTemplate: jest.fn(() => undefined)
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(options.buttonTemplate).toHaveBeenCalledTimes(2);
+		});
+
+
 		it('should add disabled buttons without items', () => {
 			document.body.innerHTML = __fixture(0);
 			const el = document.querySelector('.caroucssel');
@@ -532,6 +572,45 @@ describe('Caroucssel', () => {
 							</div>`
 						).join('')}
 					</div>`)
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(options.paginationTemplate).toHaveBeenCalledTimes(1);
+		});
+
+		it('should handle pagination with custom template that returns empty string', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasPagination: true,
+				paginationTemplate: jest.fn(() => '')
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(options.paginationTemplate).toHaveBeenCalledTimes(1);
+		});
+
+		it('should handle pagination with custom template that returns null', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasPagination: true,
+				paginationTemplate: jest.fn(() => null)
+			};
+			new Carousel(el, options);
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(options.paginationTemplate).toHaveBeenCalledTimes(1);
+		});
+
+		it('should handle pagination with custom template that returns undefined', () => {
+			document.body.innerHTML = __fixture(3);
+			const el = document.querySelector('.caroucssel');
+			const options = {
+				hasPagination: true,
+				paginationTemplate: jest.fn(() => undefined)
 			};
 			new Carousel(el, options);
 
