@@ -412,6 +412,10 @@ export class Carousel {
 		}
 
 		const {_mask, el, id, pages} = this;
+		if (pages.length < 2) {
+			return;
+		}
+
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
 		const pagination = __render(paginationTemplate, {
 			pages,
@@ -452,7 +456,10 @@ export class Carousel {
 			button.onclick = null;
 			button.parentNode.removeChild(button);
 		});
+		this._paginationButtons = null;
+
 		_pagination && _pagination.parentNode.removeChild(_pagination);
+		this._pagination = null;
 	}
 
 	_onScroll(event) {
