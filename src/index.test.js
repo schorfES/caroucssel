@@ -940,9 +940,32 @@ describe('Caroucssel', () => {
 			const structure = __fixture(3);
 			document.body.innerHTML = structure;
 			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el);
+
+			carousel.destroy();
+			expect(document.body.innerHTML).toBe(structure);
+		});
+
+		it('should cleanup dom without buttons', () => {
+			const structure = __fixture(3);
+			document.body.innerHTML = structure;
+			const el = document.querySelector('.caroucssel');
+			const carousel = new Carousel(el, {
+				hasButtons: false,
+				hasPagination: true
+			});
+
+			carousel.destroy();
+			expect(document.body.innerHTML).toBe(structure);
+		});
+
+		it('should cleanup dom without pagiantion', () => {
+			const structure = __fixture(3);
+			document.body.innerHTML = structure;
+			const el = document.querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
 				hasButtons: true,
-				hasPagination: true
+				hasPagination: false
 			});
 
 			carousel.destroy();
