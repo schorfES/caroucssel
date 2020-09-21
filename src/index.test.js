@@ -13,7 +13,6 @@ jest.mock('./utils/Scrollbar', () => {
 	}
 });
 
-
 function __fixture(count, options = null) {
 	options = {id: null, ...options};
 
@@ -28,10 +27,18 @@ function __fixture(count, options = null) {
 	`
 }
 
+function __triggerResize() {
+	const event = document.createEvent('UIEvents');
+	event.initUIEvent('resize', true, false, window, 0);
+	window.dispatchEvent(event);
+	jest.runAllTimers();
+}
+
 
 describe('Caroucssel', () => {
 
 	beforeEach(() => {
+		jest.useFakeTimers();
 		mockScrollbarDimensions = {width: 0, height: 0};
 	});
 
@@ -521,6 +528,60 @@ describe('Caroucssel', () => {
 
 			expect(document.body.innerHTML).toMatchSnapshot();
 			expect(options.paginationTemplate).toHaveBeenCalledTimes(1);
+		});
+
+		it('should not add pagination without items', () => {
+			document.body.innerHTML = __fixture(0);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 100);
+			new Carousel(el, { hasPagination: true });
+
+			const pagination = document.querySelectorAll('.pagination');
+			expect(pagination).toHaveLength(0);
+		});
+
+		it('should not add pagination with single item', () => {
+			document.body.innerHTML = __fixture(1);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 100);
+			new Carousel(el, { hasPagination: true });
+
+			const pagination = document.querySelectorAll('.pagination');
+			expect(pagination).toHaveLength(0);
+		});
+
+		it('should update pagination on resize', () => {
+			document.body.innerHTML = __fixture(4);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			new Carousel(el, { hasPagination: true });
+
+			let pagination = document.querySelectorAll('.pagination');
+			let pages = pagination[0].querySelectorAll('li');
+			expect(pagination).toHaveLength(1);
+			expect(pages).toHaveLength(2);
+
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 100);
+			__triggerResize();
+			pagination = document.querySelectorAll('.pagination');
+			pages = pagination[0].querySelectorAll('li');
+			expect(pagination).toHaveLength(1);
+			expect(pages).toHaveLength(4);
+
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 25);
+			__triggerResize();
+			pagination = document.querySelectorAll('.pagination');
+			expect(pagination).toHaveLength(0);
+
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			__triggerResize();
+			pagination = document.querySelectorAll('.pagination');
+			pages = pagination[0].querySelectorAll('li');
+			expect(pagination).toHaveLength(1);
+			expect(pages).toHaveLength(2);
 		});
 
 	});
