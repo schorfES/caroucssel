@@ -34,6 +34,13 @@ function __triggerResize() {
 	jest.runAllTimers();
 }
 
+function __triggerScroll(element) {
+	const event = document.createEvent('Event');
+	event.initEvent('scroll');
+	element.dispatchEvent(event);
+	jest.runAllTimers();
+}
+
 
 describe('Caroucssel', () => {
 
@@ -480,6 +487,58 @@ describe('Caroucssel', () => {
 			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(2);
 		});
 
+		it('should re-render buttons on resize', () => {
+			document.body.innerHTML = __fixture(4);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			new Carousel(el, { hasButtons: true });
+
+			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(1);
+
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 25);
+			__triggerResize();
+			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(2);
+		});
+
+		it('should update buttons on scroll', () => {
+			document.body.innerHTML = __fixture(6);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			new Carousel(el, { hasButtons: true });
+
+			const buttons = document.querySelectorAll('.button');
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
+
+			el.scrollTo({left: 100});
+			__triggerScroll(el);
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
+
+			el.scrollTo({left: 200});
+			__triggerScroll(el);
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
+		});
+
+		it('should update buttons manually', () => {
+			document.body.innerHTML = __fixture(6);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			const carousel = new Carousel(el, { hasButtons: true });
+
+			const buttons = document.querySelectorAll('.button');
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
+
+			el.scrollTo({left: 100});
+			carousel.update();
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
+
+			el.scrollTo({left: 200});
+			carousel.update();
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
+		});
+
 	});
 
 
@@ -640,7 +699,7 @@ describe('Caroucssel', () => {
 			expect(pagination).toHaveLength(0);
 		});
 
-		it('should update pagination on resize', () => {
+		it('should re-render pagination on resize', () => {
 			document.body.innerHTML = __fixture(4);
 			const el = document.querySelector('.caroucssel');
 			el.mockWidth = 100;
@@ -670,6 +729,46 @@ describe('Caroucssel', () => {
 			pages = pagination[0].querySelectorAll('li');
 			expect(pagination).toHaveLength(1);
 			expect(pages).toHaveLength(2);
+		});
+
+		it('should update pagination on scroll', () => {
+			document.body.innerHTML = __fixture(6);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			new Carousel(el, { hasPagination: true });
+
+			let pagination = document.querySelectorAll('.pagination > li > button');
+			expect(pagination).toHaveLength(3);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
+
+			el.scrollTo({left: 100});
+			__triggerScroll(el);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
+
+			el.scrollTo({left: 200});
+			__triggerScroll(el);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
+		});
+
+		it('should update pagination manually', () => {
+			document.body.innerHTML = __fixture(6);
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			const carousel = new Carousel(el, { hasPagination: true });
+
+			let pagination = document.querySelectorAll('.pagination > li > button');
+			expect(pagination).toHaveLength(3);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
+
+			el.scrollTo({left: 100});
+			carousel.update()
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
+
+			el.scrollTo({left: 200});
+			carousel.update()
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 		});
 
 	});
