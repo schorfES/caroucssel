@@ -228,6 +228,10 @@ export class Carousel {
 		const {clientWidth} = el;
 
 		let visibles = index.reduce((acc, at) => {
+			if (!items[at]) {
+				return acc;
+			}
+
 			let {left, right} = items[at].getBoundingClientRect();
 			left = left - outerLeft;
 			right = right - outerLeft;

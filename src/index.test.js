@@ -431,6 +431,15 @@ describe('Caroucssel', () => {
 			});
 		});
 
+		it('should add disabled buttons without items', () => {
+			document.body.innerHTML = __fixture(0);
+			const el = document.querySelector('.caroucssel');
+			new Carousel(el, { hasButtons: true });
+
+			expect(document.body.innerHTML).toMatchSnapshot();
+			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(2);
+		});
+
 	});
 
 
