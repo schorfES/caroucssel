@@ -124,7 +124,13 @@
   function __render(template, data) {
     var el = document.createElement('div');
     el.innerHTML = template(data);
-    return el.firstChild;
+    var ref = el.firstChild;
+
+    if (!(ref instanceof HTMLElement)) {
+      return null;
+    }
+
+    return ref;
   }
 
   function __templateButton(_ref) {
@@ -375,24 +381,32 @@
             previous = _map2[0],
             next = _map2[1];
 
-        previous.onclick = function () {
-          var pages = _this3.pages,
-              pageIndex = _this3.pageIndex;
-          var page = pages[pageIndex - 1] || pages[0];
-          _this3.index = page;
-        };
+        if (previous) {
+          var onPrevious = function onPrevious() {
+            var pages = _this3.pages,
+                pageIndex = _this3.pageIndex;
+            var page = pages[pageIndex - 1] || pages[0];
+            _this3.index = page;
+          };
 
-        el.parentNode.appendChild(previous);
+          previous.onclick = onPrevious;
+          el.parentNode.appendChild(previous);
+        }
+
         this._previous = previous;
 
-        next.onclick = function () {
-          var pages = _this3.pages,
-              pageIndex = _this3.pageIndex;
-          var page = pages[pageIndex + 1] || pages[pages.length - 1];
-          _this3.index = page;
-        };
+        if (next) {
+          var onNext = function onNext() {
+            var pages = _this3.pages,
+                pageIndex = _this3.pageIndex;
+            var page = pages[pageIndex + 1] || pages[pages.length - 1];
+            _this3.index = page;
+          };
 
-        el.parentNode.appendChild(next);
+          next.onclick = onNext;
+          el.parentNode.appendChild(next);
+        }
+
         this._next = next;
 
         this._updateButtons();
@@ -410,12 +424,18 @@
             pageIndex = this.pageIndex,
             _previous = this._previous,
             _next = this._next;
-        var firstPage = pages[pageIndex - 1];
-        var isFirstPage = firstPage === undefined;
-        _previous.disabled = isFirstPage;
-        var lastPage = pages[pageIndex + 1];
-        var isLastPage = lastPage === undefined;
-        _next.disabled = isLastPage;
+
+        if (_previous) {
+          var firstPage = pages[pageIndex - 1];
+          var isFirstPage = firstPage === undefined;
+          _previous.disabled = isFirstPage;
+        }
+
+        if (_next) {
+          var lastPage = pages[pageIndex + 1];
+          var isLastPage = lastPage === undefined;
+          _next.disabled = isLastPage;
+        }
       }
     }, {
       key: "_removeButtons",
@@ -446,6 +466,11 @@
             el = this.el,
             id = this.id,
             pages = this.pages;
+
+        if (pages.length < 2) {
+          return;
+        }
+
         var paginationTemplate = _options.paginationTemplate,
             paginationClassName = _options.paginationClassName,
             paginationLabel = _options.paginationLabel,
@@ -457,7 +482,11 @@
           className: paginationClassName,
           label: paginationLabel,
           title: paginationTitle
-        }); // @TODO: Add template for buttons:
+        });
+
+        if (!pagination) {
+          return;
+        } // @TODO: Add template for buttons:
 
 
         var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
@@ -501,7 +530,9 @@
           button.parentNode.removeChild(button);
         });
 
+        this._paginationButtons = null;
         _pagination && _pagination.parentNode.removeChild(_pagination);
+        this._pagination = null;
       }
     }, {
       key: "_onScroll",
@@ -653,6 +684,10 @@
         var outerLeft = el.getBoundingClientRect().left;
         var clientWidth = el.clientWidth;
         var visibles = index.reduce(function (acc, at) {
+          if (!items[at]) {
+            return acc;
+          }
+
           var _items$at$getBounding = items[at].getBoundingClientRect(),
               left = _items$at$getBounding.left,
               right = _items$at$getBounding.right;
