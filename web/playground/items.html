@@ -54,7 +54,19 @@
 		<div class="example">
 			<h2>Items using 40% width</h2>
 			<div class="container">
-				<div class="caroucssel use-snap" data-config="40%,40%,40%,40%,40%,40%,40%,40%,40%,40%"></div>
+				<div class="caroucssel use-snap" data-config="40%,40%,40%,40%,40%,40%,40%,40%,40%,40%,40%"></div>
+			</div>
+		</div>
+
+		<div class="example">
+			<h2>Items using 40% width, reversed</h2>
+			<div class="container">
+				<div
+					class="caroucssel use-snap"
+					data-config="40%,40%,40%,40%,40%,40%,40%,40%,40%,40%,40%"
+					data-order="0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10"
+				>
+				</div>
 			</div>
 		</div>
 
@@ -72,18 +84,19 @@
 			</div>
 		</div>
 
-
 		<script src="../caroucssel.min.js"></script>
 		<script>
 			const elements = Array.from(document.querySelectorAll('.caroucssel'));
 			elements.forEach((el) => {
 				const config = el.dataset.config.split(',').map((size) => size.trim());
+				const orders = (el.dataset.order || '').split(',');
 
 				config.forEach((width, index) => {
 					const item = document.createElement('div');
 					item.className = 'item';
 					item.textContent = 'Item ' + (index + 1);
 					item.style.width = width;
+					item.style.order = orders[index] || '';
 					el.appendChild(item);
 
 					const label = document.createElement('small');
