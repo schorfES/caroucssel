@@ -84,8 +84,14 @@
 			</div>
 		</div>
 
+		<script src="//polyfill.io/v3/polyfill.min.js?features=smoothscroll"></script>
 		<script src="../caroucssel.min.js"></script>
 		<script>
+			let start = 0;
+			document.addEventListener('click', () => {
+				start = Date.now();
+			});
+
 			const elements = Array.from(document.querySelectorAll('.caroucssel'));
 			elements.forEach((el) => {
 				const config = el.dataset.config.split(',').map((size) => size.trim());
@@ -108,10 +114,12 @@
 				new window.caroucssel.Carousel(el, {
 					hasButtons: true,
 					hasPagination: true,
-					// onScroll: function(event) {
-					// 	console.log('INDEX', event.index);
-					// 	console.log('PAGES', event.target.pages);
-					// }
+					onScroll: function(event) {
+						const duration = Date.now() - start;
+						console.log('DURATION', duration);
+						console.log('INDEX', event.index);
+						console.log('PAGES', event.target.pages);
+					}
 				});
 			});
 		</script>

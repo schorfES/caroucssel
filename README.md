@@ -251,6 +251,9 @@ Enforces an update of all enabled components of the carousel. This is, for examp
 
 This completely deconstructs the carousel and returns the dom to its initial state.
 
+## Polyfills
+
+CarouCSSel is using [scroll-`behavior: 'smooth'`](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) which is [supported](https://caniuse.com/css-scroll-behavior) in most modern browsers. For non-supporting browsers, there is a [polyfill by Dustan Kasten](https://github.com/iamdustan/smoothscroll).
 
 ## License
 
