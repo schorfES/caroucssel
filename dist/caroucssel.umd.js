@@ -44,6 +44,34 @@
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+  var NAMESPACE = '__cache__';
+
+  var fromCache = function fromCache(instance, key, calculate) {
+    instance[NAMESPACE] = instance[NAMESPACE] || {};
+
+    if (key in instance[NAMESPACE]) {
+      return instance[NAMESPACE][key];
+    }
+
+    var value = calculate();
+    instance[NAMESPACE][key] = value;
+    return value;
+  };
+
+  var clearCache = function clearCache(instance, key) {
+    var cache = instance[NAMESPACE];
+
+    if (!cache) {
+      return;
+    }
+
+    delete cache[key];
+  };
+
+  var clearFullCache = function clearFullCache(instance) {
+    return delete instance[NAMESPACE];
+  };
+
   var Scrollbar = /*#__PURE__*/function () {
     function Scrollbar() {
       var _this = this;
@@ -163,11 +191,16 @@
     return "caroucssel-".concat(count);
   },
       ID_MATCH = /^caroucssel-[0-9]*$/,
+      CACHE_KEY_INDEX = 'index',
+      CACHE_KEY_ITEMS = 'items',
+      CACHE_KEY_PAGES = 'pages',
+      CACHE_KEY_PAGE_INDEX = 'page-index',
       VISIBILITY_OFFSET = 0.25,
       INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i,
       EVENT_SCROLL = 'scroll',
       EVENT_RESIZE = 'resize',
       DEFAULTS = {
+    index: undefined,
     // Buttons:
     hasButtons: false,
     buttonClassName: 'button',
@@ -231,10 +264,7 @@
 
       this._options = _objectSpread(_objectSpread({}, DEFAULTS), options);
       this._options.buttonPrevious = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_PREVIOUS), options.buttonPrevious);
-      this._options.buttonNext = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_NEXT), options.buttonNext); // Receive all items:
-
-      this._updateItems(); // Render:
-
+      this._options.buttonNext = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_NEXT), options.buttonNext); // Render:
 
       this._addButtons();
 
@@ -244,7 +274,7 @@
 
 
       this._isSmooth = false;
-      this.index = this._options.index || [0];
+      this.index = this._options.index || this.pages[0];
       this._isSmooth = true; // Events:
 
       this._onScroll = debounce(this._onScroll.bind(this), 25);
@@ -270,29 +300,20 @@
 
 
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
-        window.removeEventListener(EVENT_RESIZE, this._onResize);
+        window.removeEventListener(EVENT_RESIZE, this._onResize); // Clear cache:
+
+        clearFullCache(this);
       }
     }, {
       key: "update",
       value: function update() {
-        var index = this.index;
+        clearFullCache(this);
 
-        this._updateItems();
+        this._updateButtons();
 
-        this._updateButtons(index);
-
-        this._updatePagination(index);
+        this._updatePagination();
 
         this._updateScrollbars();
-      }
-    }, {
-      key: "_updateItems",
-      value: function _updateItems() {
-        var el = this.el,
-            _options = this._options;
-        this._items = Array.from(el.children).filter(function (item) {
-          return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
-        }).filter(_options.filterItem);
       }
     }, {
       key: "_updateScrollbars",
@@ -537,14 +558,15 @@
     }, {
       key: "_onScroll",
       value: function _onScroll(event) {
-        var index = this.index,
-            _options = this._options;
+        clearCache(this, CACHE_KEY_INDEX);
+        clearCache(this, CACHE_KEY_PAGE_INDEX);
 
         this._updateButtons();
 
         this._updatePagination();
 
-        var onScroll = _options.onScroll;
+        var index = this.index,
+            onScroll = this._options.onScroll;
         onScroll && onScroll({
           index: index,
           type: EVENT_SCROLL,
@@ -555,6 +577,10 @@
     }, {
       key: "_onResize",
       value: function _onResize() {
+        clearCache(this, CACHE_KEY_PAGES);
+        clearCache(this, CACHE_KEY_INDEX);
+        clearCache(this, CACHE_KEY_PAGE_INDEX);
+
         this._updateButtons();
 
         this._removePagination();
@@ -576,33 +602,37 @@
     }, {
       key: "index",
       get: function get() {
-        var el = this.el,
-            items = this.items;
-        var length = items.length;
-        var clientWidth = el.clientWidth;
-        var outerLeft = el.getBoundingClientRect().left;
-        var values = [];
-        var index = 0;
+        var _this5 = this;
 
-        for (; index < length; index++) {
-          var item = items[index];
+        return fromCache(this, CACHE_KEY_INDEX, function () {
+          var el = _this5.el,
+              items = _this5.items;
+          var length = items.length;
+          var clientWidth = el.clientWidth;
+          var outerLeft = el.getBoundingClientRect().left;
+          var values = [];
+          var index = 0;
 
-          var _item$getBoundingClie = item.getBoundingClientRect(),
-              left = _item$getBoundingClie.left,
-              width = _item$getBoundingClie.width;
+          for (; index < length; index++) {
+            var item = items[index];
 
-          left = left - outerLeft;
+            var _item$getBoundingClie = item.getBoundingClientRect(),
+                left = _item$getBoundingClie.left,
+                width = _item$getBoundingClie.width;
 
-          if (left + width * VISIBILITY_OFFSET >= 0 && left + width * (1 - VISIBILITY_OFFSET) <= clientWidth) {
-            values.push(index);
+            left = left - outerLeft;
+
+            if (left + width * VISIBILITY_OFFSET >= 0 && left + width * (1 - VISIBILITY_OFFSET) <= clientWidth) {
+              values.push(index);
+            }
           }
-        }
 
-        if (values.length === 0) {
-          return [0];
-        }
+          if (values.length === 0) {
+            return [0];
+          }
 
-        return values;
+          return values;
+        });
       },
       set: function set(values) {
         var el = this.el,
@@ -627,6 +657,7 @@
           return;
         }
 
+        clearCache(this, CACHE_KEY_INDEX);
         var behavior = this._isSmooth ? 'smooth' : 'auto';
         el.scrollTo(_objectSpread(_objectSpread({}, to), {}, {
           behavior: behavior
@@ -635,89 +666,147 @@
     }, {
       key: "items",
       get: function get() {
-        return this._items;
+        var _this6 = this;
+
+        return fromCache(this, CACHE_KEY_ITEMS, function () {
+          var el = _this6.el,
+              filterItem = _this6._options.filterItem;
+          return Array.from(el.children).filter(function (item) {
+            return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
+          }).filter(filterItem);
+        });
       }
     }, {
       key: "pages",
       get: function get() {
-        var el = this.el,
-            items = this.items;
-        var clientWidth = el.clientWidth;
+        var _this7 = this;
 
-        if (clientWidth === 0) {
-          // if the width of the carousel element is zero, we can not calculate
-          // the pages properly and the carousel seems to be not visible. If
-          // this is the case, we assume that each item is placed on a
-          // separate page.
-          return items.map(function (item, index) {
-            return [index];
-          });
-        }
+        return fromCache(this, CACHE_KEY_PAGES, function () {
+          var el = _this7.el,
+              items = _this7.items;
+          var viewport = el.clientWidth;
 
-        var pages = [[]];
-        items.forEach(function (item, index) {
-          var left = item.offsetLeft,
-              width = item.clientWidth; // at least 75% of the items needs to be in the page:
-
-          var page = Math.floor((left + width * (1 - VISIBILITY_OFFSET)) / clientWidth); // If items are wider than the container viewport or use a margin
-          // that causes the calculation to skip pages. We might need to create
-          // empty pages here. These empty pages need to be removed later on...
-
-          while (!pages[page]) {
-            pages.push([]);
+          if (viewport === 0) {
+            // if the width of the carousel element is zero, we can not calculate
+            // the pages properly and the carousel seems to be not visible. If
+            // this is the case, we assume that each item is placed on a
+            // separate page.
+            return items.map(function (item, index) {
+              return [index];
+            });
           }
 
-          pages[page].push(index);
-        }); // ...remove empty pages:
+          var pages = [[]];
+          items.map(function (item, index) {
+            // Create a re-usable dataset for each item:
+            var left = item.offsetLeft,
+                width = item.clientWidth;
+            return {
+              left: left,
+              width: width,
+              item: item,
+              index: index
+            };
+          }).sort(function (a, b) {
+            // Create ordered list of items based on their visual ordering.
+            // This may differ from the DOM ordering unsing css properties
+            // like `order` in  flexbox or grid:
+            return a.left - b.left;
+          }).forEach(function (item) {
+            // Calculate pages / page indexes for each item:
+            //
+            // The idea behind the calculation of the pages is to separate
+            // the items by fitting them into the viewport of the carousel.
+            // To behave correctly, we cannot divide the total length of the
+            // carousel by the viewport to get the page indexes (naive approach).
+            // However, since there may be items that are partially visible
+            // on a page, but mathematically create a new page. The calculation
+            // must start from this item again. This means that always the
+            // first item on a page sets the basis for the calculation of
+            // the following item and its belonging to the current or next
+            // page:
+            var left = item.left,
+                width = item.width;
+            var prevPage = pages[pages.length - 1];
+            var firstItem = prevPage[0] ? prevPage[0] : {
+              left: 0
+            };
+            var start = firstItem.left; // At least 75% of the items needs to be in the page. Calculate
+            // the amount of new pages to add. If value is 0, the current
+            // item fits into the previous page:
 
-        return pages.filter(function (page) {
-          return page.length !== 0;
+            var add = Math.floor((left - start + width * (1 - VISIBILITY_OFFSET)) / viewport);
+
+            while (add > 0) {
+              pages.push([]);
+              add--;
+            }
+
+            var page = pages[pages.length - 1];
+            page.push(item);
+          }); // Remove empty pages: this might happen if items are wider than the
+          // carousel viewport:
+
+          pages = pages.filter(function (page) {
+            return page.length !== 0;
+          }); // Restructure pages to only contain the index of each item:
+
+          return pages.map(function (page) {
+            return page.map(function (_ref5) {
+              var index = _ref5.index;
+              return index;
+            });
+          });
         });
       }
     }, {
       key: "pageIndex",
       get: function get() {
-        var el = this.el,
-            items = this.items,
-            index = this.index,
-            pages = this.pages;
-        var outerLeft = el.getBoundingClientRect().left;
-        var clientWidth = el.clientWidth;
-        var visibles = index.reduce(function (acc, at) {
-          if (!items[at]) {
-            return acc;
-          }
+        var _this8 = this;
 
-          var _items$at$getBounding = items[at].getBoundingClientRect(),
-              left = _items$at$getBounding.left,
-              right = _items$at$getBounding.right;
+        return fromCache(this, CACHE_KEY_PAGE_INDEX, function () {
+          var el = _this8.el,
+              items = _this8.items,
+              index = _this8.index,
+              pages = _this8.pages;
+          var outerLeft = el.getBoundingClientRect().left;
+          var clientWidth = el.clientWidth;
+          var visibles = index.reduce(function (acc, at) {
+            if (!items[at]) {
+              return acc;
+            }
 
-          left = left - outerLeft;
-          right = right - outerLeft; // Remove items that partially hidden to the left or right:
+            var _items$at$getBounding = items[at].getBoundingClientRect(),
+                left = _items$at$getBounding.left,
+                right = _items$at$getBounding.right;
 
-          if (left < 0 || clientWidth < right) {
-            return acc;
-          }
+            left = left - outerLeft;
+            right = right - outerLeft; // Remove items that partially hidden to the left or right:
 
-          return acc.concat([at]);
-        }, []); // There might be no possible candidates. This is the case when items
-        // are wider than the element viewport. In this case we take the first
-        // item which is currently visible in general (might be the only one):
+            if (left < 0 || clientWidth < right) {
+              return acc;
+            }
 
-        if (visibles.length === 0) {
-          visibles = [index[0]];
-        } // Search for the visible item that is most aligned to the right. The
-        // found item marks the current page...
+            return acc.concat([at]);
+          }, []); // There might be no possible candidates. This is the case when items
+          // are wider than the element viewport. In this case we take the first
+          // item which is currently visible in general (might be the only one):
+
+          if (visibles.length === 0) {
+            visibles = [index[0]];
+          } // Search for the visible item that is most aligned to the right. The
+          // found item marks the current page...
 
 
-        var at = visibles.sort(function (a, b) {
-          var rightA = items[a].getBoundingClientRect().right;
-          var rightB = items[b].getBoundingClientRect().right;
-          return rightB - rightA;
-        })[0]; // Find the page index where the current item index is located...
+          var at = visibles.sort(function (a, b) {
+            var rightA = items[a].getBoundingClientRect().right;
+            var rightB = items[b].getBoundingClientRect().right;
+            return rightB - rightA;
+          })[0]; // Find the page index where the current item index is located...
 
-        return pages.findIndex(function (page) {
-          return page.includes(at);
+          return pages.findIndex(function (page) {
+            return page.includes(at);
+          });
         });
       }
     }]);
