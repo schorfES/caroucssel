@@ -50,6 +50,8 @@ const
 	EVENT_RESIZE = 'resize',
 
 	DEFAULTS = {
+		index: undefined,
+
 		// Buttons:
 		hasButtons: false,
 		buttonClassName: 'button',
@@ -126,7 +128,7 @@ export class Carousel {
 
 		// Set index:
 		this._isSmooth = false;
-		this.index = this._options.index || [0];
+		this.index = this._options.index || this.pages[0];
 		this._isSmooth = true;
 
 		// Events:
@@ -199,8 +201,8 @@ export class Carousel {
 	get pages() {
 		const {el, items} = this;
 
-		const {clientWidth} = el;
-		if (clientWidth === 0) {
+		const {clientWidth: viewport} = el;
+		if (viewport === 0) {
 			// if the width of the carousel element is zero, we can not calculate
 			// the pages properly and the carousel seems to be not visible. If
 			// this is the case, we assume that each item is placed on a
@@ -208,24 +210,58 @@ export class Carousel {
 			return items.map((item, index) => [index]);
 		}
 
-		const pages = [[]];
-		items.forEach((item, index) => {
-			const {offsetLeft: left, clientWidth: width} = item;
-			// at least 75% of the items needs to be in the page:
-			const page = Math.floor((left + width * (1 - VISIBILITY_OFFSET)) / clientWidth);
+		let pages = [[]];
+		items
+			.map((item, index) => {
+				// Create a re-usable dataset for each item:
+				const {offsetLeft: left, clientWidth: width} = item;
+				return { left, width, item, index };
+			})
+			.sort((a, b) => {
+				// Create ordered list of items based on their visual ordering.
+				// This may differ from the DOM ordering unsing css properties
+				// like `order` in  flexbox or grid:
+				return a.left - b.left;
+			})
+			.forEach((item) => {
+				// Calculate pages / page indexes for each item:
+				//
+				// The idea behind the calculation of the pages is to separate
+				// the items by fitting them into the viewport of the carousel.
+				// To behave correctly, we cannot divide the total length of the
+				// carousel by the viewport to get the page indexes (naive approach).
+				// However, since there may be items that are partially visible
+				// on a page, but mathematically create a new page. The calculation
+				// must start from this item again. This means that always the
+				// first item on a page sets the basis for the calculation of
+				// the following item and its belonging to the current or next
+				// page:
+				const { left, width } = item;
 
-			// If items are wider than the container viewport or use a margin
-			// that causes the calculation to skip pages. We might need to create
-			// empty pages here. These empty pages need to be removed later on...
-			while (!pages[page]) {
-				pages.push([]);
-			}
+				const prevPage = pages[pages.length - 1];
+				const firstItem = prevPage[0] ? prevPage[0] : { left: 0 };
+				const start = firstItem.left;
 
-			pages[page].push(index);
-		});
+				// At least 75% of the items needs to be in the page. Calculate
+				// the amount of new pages to add. If value is 0, the current
+				// item fits into the previous page:
+				let add = Math.floor(((left - start) + width * (1 - VISIBILITY_OFFSET)) / viewport);
 
-		// ...remove empty pages:
-		return pages.filter((page) => page.length !== 0);
+				while(add > 0) {
+					pages.push([]);
+					add--;
+				}
+
+				const page = pages[pages.length - 1];
+				page.push(item);
+			});
+
+		// Remove empty pages: this might happen if items are wider than the
+		// carousel viewport:
+		pages = pages.filter((page) => page.length !== 0);
+
+		// Restructure pages to only contain the index of each item:
+		return pages.map((page) => page.map(({ index }) => index));
 	}
 
 	get pageIndex() {
@@ -264,7 +300,6 @@ export class Carousel {
 			const rightB = items[b].getBoundingClientRect().right;
 			return rightB - rightA;
 		})[0];
-
 
 		// Find the page index where the current item index is located...
 		return pages.findIndex((page) => page.includes(at));

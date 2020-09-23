@@ -212,19 +212,31 @@ describe('Caroucssel', () => {
 
 			const carousel = new Carousel(el);
 			expect(carousel.pages).toEqual([
-				[0], [1], [2, 3], [4], [5], [6, 7], [8], [9],
+				[0], [1], [2], [3], [4], [5], [6], [7], [8], [9],
 			]);
 		});
 
-		it('should return pages when each item is at 66.66% width', () => {
+		it('should return pages when each item is at 58% width', () => {
 			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
 			const el = document.querySelector('.caroucssel');
 			el.mockWidth = 100;
-			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 66.66);
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 58);
 
 			const carousel = new Carousel(el);
 			expect(carousel.pages).toEqual([
-				[0], [1, 2], [3], [4, 5], [6], [7, 8], [9],
+				[0], [1], [2], [3], [4], [5], [6], [7], [8], [9],
+			]);
+		});
+
+		it('should return pages when each item is at 57% width', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 57);
+
+			const carousel = new Carousel(el);
+			expect(carousel.pages).toEqual([
+				[0, 1], [2, 3], [4, 5], [6, 7], [8, 9],
 			]);
 		});
 
