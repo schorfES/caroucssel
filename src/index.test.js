@@ -34,7 +34,10 @@ function __triggerResize() {
 	jest.runAllTimers();
 }
 
-function __triggerScroll(element) {
+function __triggerScroll(element, position) {
+	element.mockTop = position.top || 0;
+	element.mockLeft = position.left || 0;
+
 	const event = document.createEvent('Event');
 	event.initEvent('scroll');
 	element.dispatchEvent(event);
@@ -125,7 +128,7 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el);
 			expect(carousel.index).toEqual([0]);
 
-			el.scrollTo({left: 120});
+			__triggerScroll(el, {left: 120});
 			expect(carousel.index).toEqual([1]);
 		});
 
@@ -138,7 +141,7 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el);
 			expect(carousel.index).toEqual([0, 1, 2]);
 
-			el.scrollTo({left: 120});
+			__triggerScroll(el, {left: 120});
 			expect(carousel.index).toEqual([3, 4, 5]);
 		});
 
@@ -176,19 +179,19 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el);
 			expect(carousel.index).toEqual([0, 1]);
 
-			el.scrollTo({left: 50 * 0.25});
+			__triggerScroll(el, {left: 50 * 0.25});
 			expect(carousel.index).toEqual([0, 1]);
 
-			el.scrollTo({left: 50 * 0.25 + 1});
+			__triggerScroll(el, {left: 50 * 0.25 + 1});
 			expect(carousel.index).toEqual([1]);
 
-			el.scrollTo({left: 50 * 0.75 - 1});
+			__triggerScroll(el, {left: 50 * 0.75 - 1});
 			expect(carousel.index).toEqual([1]);
 
-			el.scrollTo({left: 50 * 0.75});
+			__triggerScroll(el, {left: 50 * 0.75});
 			expect(carousel.index).toEqual([1, 2]);
 
-			el.scrollTo({left: 50 * 1});
+			__triggerScroll(el, {left: 50 * 1});
 			expect(carousel.index).toEqual([1, 2]);
 		});
 
@@ -530,12 +533,10 @@ describe('Caroucssel', () => {
 			const buttons = document.querySelectorAll('.button');
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
 
-			el.scrollTo({left: 100});
-			__triggerScroll(el);
+			__triggerScroll(el, {left: 100});
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
 
-			el.scrollTo({left: 200});
-			__triggerScroll(el);
+			__triggerScroll(el, {left: 200});
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
 		});
 
@@ -559,43 +560,40 @@ describe('Caroucssel', () => {
 		});
 
 		it('should handle clicks', () => {
-			document.body.innerHTML = __fixture(6);
+			document.body.innerHTML = __fixture(3);
 			const el = document.querySelector('.caroucssel');
 			el.mockWidth = 100;
-			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 50);
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockWidth = 100);
 			new Carousel(el, { hasButtons: true });
-
 
 			const callback = jest.spyOn(el, 'scrollTo');
 			const buttons = document.querySelectorAll('.button');
 
 			__triggerClick(buttons[1]); // navigate forwards
-			__triggerScroll(el);
-			el.scrollLeft = 100;
 			expect(callback).toHaveBeenCalledTimes(1);
 			expect(callback).toHaveBeenNthCalledWith(1, { left: 100, behavior: 'smooth' });
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
 
 			__triggerClick(buttons[1]); // navigate forwards
-			__triggerScroll(el);
-			el.scrollLeft = 200;
 			expect(callback).toHaveBeenCalledTimes(2);
 			expect(callback).toHaveBeenNthCalledWith(2, { left: 200, behavior: 'smooth' });
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
 
+			__triggerClick(buttons[1]); // navigate forwards (doesn't work, disabled)
+			expect(callback).toHaveBeenCalledTimes(2);
+
 			__triggerClick(buttons[0]); // navigate backwards
-			__triggerScroll(el);
-			el.scrollLeft = 100;
 			expect(callback).toHaveBeenCalledTimes(3);
 			expect(callback).toHaveBeenNthCalledWith(3, { left: 100, behavior: 'smooth' });
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
 
 			__triggerClick(buttons[0]); // navigate backwards
-			__triggerScroll(el);
-			el.scrollLeft = 0;
 			expect(callback).toHaveBeenCalledTimes(4);
 			expect(callback).toHaveBeenNthCalledWith(4, { left: 0, behavior: 'smooth' });
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
+
+			__triggerClick(buttons[0]); // navigate backwards (doesn't work, disabled)
+			expect(callback).toHaveBeenCalledTimes(4);
 		});
 
 	});
@@ -801,12 +799,10 @@ describe('Caroucssel', () => {
 			expect(pagination).toHaveLength(3);
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
 
-			el.scrollTo({left: 100});
-			__triggerScroll(el);
+			__triggerScroll(el, {left: 100});
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
 
-			el.scrollTo({left: 200});
-			__triggerScroll(el);
+			__triggerScroll(el, {left: 200});
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 		});
 
@@ -842,25 +838,22 @@ describe('Caroucssel', () => {
 			const pagination = document.querySelectorAll('.pagination > li > button');
 
 			__triggerClick(pagination[1]);
-			__triggerScroll(el);
-			el.scrollLeft = 100;
 			expect(callback).toHaveBeenCalledTimes(1);
 			expect(callback).toHaveBeenNthCalledWith(1, { left: 100, behavior: 'smooth' });
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
 
 			__triggerClick(pagination[0]);
-			__triggerScroll(el);
-			el.scrollLeft = 0;
 			expect(callback).toHaveBeenCalledTimes(2);
 			expect(callback).toHaveBeenNthCalledWith(2, { left: 0, behavior: 'smooth' });
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
 
 			__triggerClick(pagination[2]);
-			__triggerScroll(el);
-			el.scrollLeft = 200;
 			expect(callback).toHaveBeenCalledTimes(3);
 			expect(callback).toHaveBeenNthCalledWith(3, { left: 200, behavior: 'smooth' });
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
+
+			__triggerClick(pagination[2]); // doesn't work, disabled
+			expect(callback).toHaveBeenCalledTimes(3);
 		});
 
 	});

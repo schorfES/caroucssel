@@ -11,6 +11,11 @@ HTMLElement.prototype.mockHeight = 50;
 HTMLElement.prototype.scrollTo = function({top, left}) {
 	this.mockTop = top;
 	this.mockLeft = left;
+
+	const event = document.createEvent('Event');
+	event.initEvent('scroll');
+	this.dispatchEvent(event);
+	jest.runAllTimers();
 };
 
 HTMLElement.prototype.getBoundingClientRect = function() {
@@ -29,6 +34,18 @@ HTMLElement.prototype.getBoundingClientRect = function() {
 
 	return {width, height, top, right, bottom, left};
 };
+
+Object.defineProperty(HTMLElement.prototype, 'scrollTop', {
+	get: function() {
+		return this.mockTop;
+	}
+});
+
+Object.defineProperty(HTMLElement.prototype, 'scrollLeft', {
+	get: function() {
+		return this.mockLeft;
+	}
+});
 
 Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
 	get: function() {

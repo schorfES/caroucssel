@@ -1,3 +1,4 @@
+import {clearCache, clearFullCache, fromCache} from './utils/cache';
 import {Scrollbar} from './utils/Scrollbar';
 import {debounce} from './utils/debounce';
 
@@ -41,6 +42,11 @@ function __templatePagination({className, controls, pages, label, title}) {
 const
 	ID_NAME = (count) => `caroucssel-${count}`,
 	ID_MATCH = /^caroucssel-[0-9]*$/,
+
+	CACHE_KEY_INDEX = 'index',
+	CACHE_KEY_ITEMS = 'items',
+	CACHE_KEY_PAGES = 'pages',
+	CACHE_KEY_PAGE_INDEX = 'page-index',
 
 	VISIBILITY_OFFSET = 0.25,
 
@@ -118,9 +124,6 @@ export class Carousel {
 		this._options.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
 		this._options.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
 
-		// Receive all items:
-		this._updateItems();
-
 		// Render:
 		this._addButtons();
 		this._addPagination();
@@ -147,29 +150,32 @@ export class Carousel {
 	}
 
 	get index() {
-		const {el, items} = this;
-		const {length} = items;
-		const {clientWidth} = el;
-		const outerLeft = el.getBoundingClientRect().left;
-		let values = [];
-		let index = 0;
+		return fromCache(this, CACHE_KEY_INDEX, () => {
+			const {el, items} = this;
+			const {length} = items;
+			const {clientWidth} = el;
+			const outerLeft = el.getBoundingClientRect().left;
 
-		for (;index < length; index++) {
-			const item = items[index];
-			let {left, width} = item.getBoundingClientRect();
-			left = left - outerLeft;
+			let values = [];
+			let index = 0;
 
-			if (left + width * VISIBILITY_OFFSET >= 0 &&
-				left + width * (1 - VISIBILITY_OFFSET) <= clientWidth) {
-				values.push(index)
+			for (;index < length; index++) {
+				const item = items[index];
+				let {left, width} = item.getBoundingClientRect();
+				left = left - outerLeft;
+
+				if (left + width * VISIBILITY_OFFSET >= 0 &&
+					left + width * (1 - VISIBILITY_OFFSET) <= clientWidth) {
+					values.push(index)
+				}
 			}
-		}
 
-		if (values.length === 0) {
-			return [0];
-		}
+			if (values.length === 0) {
+				return [0];
+			}
 
-		return values;
+			return values;
+		});
 	}
 
 	set index(values) {
@@ -190,119 +196,131 @@ export class Carousel {
 			return;
 		}
 
+		clearCache(this, CACHE_KEY_INDEX);
+
 		const behavior = this._isSmooth ? 'smooth' : 'auto';
 		el.scrollTo({...to, behavior});
 	}
 
 	get items() {
-		return this._items;
+		return fromCache(this, CACHE_KEY_ITEMS, () => {
+			const { el, _options: { filterItem } } = this;
+
+			return Array.from(el.children)
+				.filter((item) => !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden)
+				.filter(filterItem);
+		});
 	}
 
 	get pages() {
-		const {el, items} = this;
+		return fromCache(this, CACHE_KEY_PAGES, () => {
+			const {el, items} = this;
+			const {clientWidth: viewport} = el;
 
-		const {clientWidth: viewport} = el;
-		if (viewport === 0) {
-			// if the width of the carousel element is zero, we can not calculate
-			// the pages properly and the carousel seems to be not visible. If
-			// this is the case, we assume that each item is placed on a
-			// separate page.
-			return items.map((item, index) => [index]);
-		}
+			if (viewport === 0) {
+				// if the width of the carousel element is zero, we can not calculate
+				// the pages properly and the carousel seems to be not visible. If
+				// this is the case, we assume that each item is placed on a
+				// separate page.
+				return items.map((item, index) => [index]);
+			}
 
-		let pages = [[]];
-		items
-			.map((item, index) => {
-				// Create a re-usable dataset for each item:
-				const {offsetLeft: left, clientWidth: width} = item;
-				return { left, width, item, index };
-			})
-			.sort((a, b) => {
-				// Create ordered list of items based on their visual ordering.
-				// This may differ from the DOM ordering unsing css properties
-				// like `order` in  flexbox or grid:
-				return a.left - b.left;
-			})
-			.forEach((item) => {
-				// Calculate pages / page indexes for each item:
-				//
-				// The idea behind the calculation of the pages is to separate
-				// the items by fitting them into the viewport of the carousel.
-				// To behave correctly, we cannot divide the total length of the
-				// carousel by the viewport to get the page indexes (naive approach).
-				// However, since there may be items that are partially visible
-				// on a page, but mathematically create a new page. The calculation
-				// must start from this item again. This means that always the
-				// first item on a page sets the basis for the calculation of
-				// the following item and its belonging to the current or next
-				// page:
-				const { left, width } = item;
+			let pages = [[]];
+			items
+				.map((item, index) => {
+					// Create a re-usable dataset for each item:
+					const {offsetLeft: left, clientWidth: width} = item;
+					return { left, width, item, index };
+				})
+				.sort((a, b) => {
+					// Create ordered list of items based on their visual ordering.
+					// This may differ from the DOM ordering unsing css properties
+					// like `order` in  flexbox or grid:
+					return a.left - b.left;
+				})
+				.forEach((item) => {
+					// Calculate pages / page indexes for each item:
+					//
+					// The idea behind the calculation of the pages is to separate
+					// the items by fitting them into the viewport of the carousel.
+					// To behave correctly, we cannot divide the total length of the
+					// carousel by the viewport to get the page indexes (naive approach).
+					// However, since there may be items that are partially visible
+					// on a page, but mathematically create a new page. The calculation
+					// must start from this item again. This means that always the
+					// first item on a page sets the basis for the calculation of
+					// the following item and its belonging to the current or next
+					// page:
+					const { left, width } = item;
 
-				const prevPage = pages[pages.length - 1];
-				const firstItem = prevPage[0] ? prevPage[0] : { left: 0 };
-				const start = firstItem.left;
+					const prevPage = pages[pages.length - 1];
+					const firstItem = prevPage[0] ? prevPage[0] : { left: 0 };
+					const start = firstItem.left;
 
-				// At least 75% of the items needs to be in the page. Calculate
-				// the amount of new pages to add. If value is 0, the current
-				// item fits into the previous page:
-				let add = Math.floor(((left - start) + width * (1 - VISIBILITY_OFFSET)) / viewport);
+					// At least 75% of the items needs to be in the page. Calculate
+					// the amount of new pages to add. If value is 0, the current
+					// item fits into the previous page:
+					let add = Math.floor(((left - start) + width * (1 - VISIBILITY_OFFSET)) / viewport);
 
-				while(add > 0) {
-					pages.push([]);
-					add--;
-				}
+					while(add > 0) {
+						pages.push([]);
+						add--;
+					}
 
-				const page = pages[pages.length - 1];
-				page.push(item);
-			});
+					const page = pages[pages.length - 1];
+					page.push(item);
+				});
 
-		// Remove empty pages: this might happen if items are wider than the
-		// carousel viewport:
-		pages = pages.filter((page) => page.length !== 0);
+			// Remove empty pages: this might happen if items are wider than the
+			// carousel viewport:
+			pages = pages.filter((page) => page.length !== 0);
 
-		// Restructure pages to only contain the index of each item:
-		return pages.map((page) => page.map(({ index }) => index));
+			// Restructure pages to only contain the index of each item:
+			return pages.map((page) => page.map(({ index }) => index));
+		});
 	}
 
 	get pageIndex() {
-		const {el, items, index, pages} = this;
-		const outerLeft = el.getBoundingClientRect().left;
-		const {clientWidth} = el;
+		return fromCache(this, CACHE_KEY_PAGE_INDEX, () => {
+			const {el, items, index, pages} = this;
+			const outerLeft = el.getBoundingClientRect().left;
+			const {clientWidth} = el;
 
-		let visibles = index.reduce((acc, at) => {
-			if (!items[at]) {
-				return acc;
+			let visibles = index.reduce((acc, at) => {
+				if (!items[at]) {
+					return acc;
+				}
+
+				let {left, right} = items[at].getBoundingClientRect();
+				left = left - outerLeft;
+				right = right - outerLeft;
+
+				// Remove items that partially hidden to the left or right:
+				if (left < 0 || clientWidth < right) {
+					return acc;
+				}
+
+				return acc.concat([at]);
+			}, []);
+
+			// There might be no possible candidates. This is the case when items
+			// are wider than the element viewport. In this case we take the first
+			// item which is currently visible in general (might be the only one):
+			if (visibles.length === 0) {
+				visibles = [index[0]];
 			}
 
-			let {left, right} = items[at].getBoundingClientRect();
-			left = left - outerLeft;
-			right = right - outerLeft;
+			// Search for the visible item that is most aligned to the right. The
+			// found item marks the current page...
+			const at = visibles.sort((a, b) => {
+				const rightA = items[a].getBoundingClientRect().right;
+				const rightB = items[b].getBoundingClientRect().right;
+				return rightB - rightA;
+			})[0];
 
-			// Remove items that partially hidden to the left or right:
-			if (left < 0 || clientWidth < right) {
-				return acc;
-			}
-
-			return acc.concat([at]);
-		}, []);
-
-		// There might be no possible candidates. This is the case when items
-		// are wider than the element viewport. In this case we take the first
-		// item which is currently visible in general (might be the only one):
-		if (visibles.length === 0) {
-			visibles = [index[0]];
-		}
-
-		// Search for the visible item that is most aligned to the right. The
-		// found item marks the current page...
-		const at = visibles.sort((a, b) => {
-			const rightA = items[a].getBoundingClientRect().right;
-			const rightB = items[b].getBoundingClientRect().right;
-			return rightB - rightA;
-		})[0];
-
-		// Find the page index where the current item index is located...
-		return pages.findIndex((page) => page.includes(at));
+			// Find the page index where the current item index is located...
+			return pages.findIndex((page) => page.includes(at));
+		});
 	}
 
 	destroy() {
@@ -323,22 +341,17 @@ export class Carousel {
 		// Remove events:
 		el.removeEventListener(EVENT_SCROLL, this._onScroll);
 		window.removeEventListener(EVENT_RESIZE, this._onResize);
+
+		// Clear cache:
+		clearFullCache(this);
 	}
 
 	update() {
-		const {index} = this;
-		this._updateItems();
-		this._updateButtons(index);
-		this._updatePagination(index);
-		this._updateScrollbars();
-	}
+		clearFullCache(this);
 
-	_updateItems() {
-		const { el, _options } = this;
-		this._items = Array
-			.from(el.children)
-			.filter((item) => !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden)
-			.filter(_options.filterItem);
+		this._updateButtons();
+		this._updatePagination();
+		this._updateScrollbars();
 	}
 
 	_updateScrollbars() {
@@ -524,15 +537,21 @@ export class Carousel {
 	}
 
 	_onScroll(event) {
-		const {index, _options} = this;
+		clearCache(this, CACHE_KEY_INDEX);
+		clearCache(this, CACHE_KEY_PAGE_INDEX);
+
 		this._updateButtons();
 		this._updatePagination();
 
-		const {onScroll} = _options;
+		const {index, _options: { onScroll }} = this;
 		onScroll && onScroll({index, type: EVENT_SCROLL, target: this, originalEvent: event});
 	}
 
 	_onResize() {
+		clearCache(this, CACHE_KEY_PAGES);
+		clearCache(this, CACHE_KEY_INDEX);
+		clearCache(this, CACHE_KEY_PAGE_INDEX);
+
 		this._updateButtons();
 		this._removePagination();
 		this._addPagination();
