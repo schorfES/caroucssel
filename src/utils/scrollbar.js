@@ -1,18 +1,22 @@
+import {clearCache, fromCache} from './cache';
+
 export class Scrollbar {
 
 	constructor() {
-		this._d = null;
-		window.addEventListener('resize', () => this._d = null);
+		window.addEventListener('resize', () => {
+			clearCache(this, 'dimensions');
+		});
 	}
 
+	// Inspired by https://gist.github.com/kflorence/3086552
 	get dimensions() {
-		this._d = this._d || (() => {
+		return fromCache(this, 'dimensions', () => {
 			const
 				inner = document.createElement('div'),
 				outer = document.createElement('div')
 			;
 			let
-				width, w1, w2,
+				// width, w1, w2,
 				height, h1, h2
 			;
 
@@ -23,17 +27,19 @@ export class Scrollbar {
 			outer.style.visibility = 'hidden';
 			outer.appendChild(inner);
 
+			// Disabled, not needed for current feature set.
+			//
 			// Calculate width:
-			inner.style.width = '100%';
-			inner.style.height = '200px';
-			outer.style.width = '200px';
-			outer.style.height = '150px';
-			outer.style.overflow = 'hidden';
-			w1 = inner.offsetWidth;
-			outer.style.overflow = 'scroll';
-			w2 = inner.offsetWidth;
-			w2 = (w1 === w2) ? outer.clientWidth : w2;
-			width = w1 - w2;
+			// inner.style.width = '100%';
+			// inner.style.height = '200px';
+			// outer.style.width = '200px';
+			// outer.style.height = '150px';
+			// outer.style.overflow = 'hidden';
+			// w1 = inner.offsetWidth;
+			// outer.style.overflow = 'scroll';
+			// w2 = inner.offsetWidth;
+			// w2 = (w1 === w2) ? outer.clientWidth : w2;
+			// width = w1 - w2;
 
 			// Calculate height:
 			inner.style.width = '200px';
@@ -48,10 +54,9 @@ export class Scrollbar {
 			height = h1 - h2;
 
 			document.body.removeChild(outer);
-			return {width, height};
-		})();
 
-		return this._d;
+			return {height};
+		});
 	}
 
 }
