@@ -1,5 +1,5 @@
 import {clearCache, clearFullCache, fromCache} from './utils/cache';
-import {Scrollbar} from './utils/Scrollbar';
+import {Scrollbar} from './utils/scrollbar';
 import {debounce} from './utils/debounce';
 
 
