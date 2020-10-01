@@ -5,8 +5,10 @@ function __getSiblings(el) {
 
 HTMLElement.prototype.mockTop = null;
 HTMLElement.prototype.mockLeft = null;
-HTMLElement.prototype.mockWidth = 120;
-HTMLElement.prototype.mockHeight = 50;
+HTMLElement.prototype.mockClientWidth = 120;
+HTMLElement.prototype.mockOffsetWidth = 120;
+HTMLElement.prototype.mockClientHeight = 50;
+HTMLElement.prototype.mockOffsetHeight = 50;
 
 HTMLElement.prototype.scrollTo = function({top, left}) {
 	this.mockTop = top;
@@ -21,8 +23,8 @@ HTMLElement.prototype.scrollTo = function({top, left}) {
 HTMLElement.prototype.getBoundingClientRect = function() {
 	const siblings = __getSiblings(this);
 	const index = siblings.indexOf(this);
-	const width = this.mockWidth;
-	const height = this.mockHeight;
+	const width = this.mockClientWidth;
+	const height = this.mockClientHeight;
 	const top = this.mockTop;
 	const right = 0;
 	const bottom = 0;
@@ -49,7 +51,31 @@ Object.defineProperty(HTMLElement.prototype, 'scrollLeft', {
 
 Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
 	get: function() {
-		return this.getBoundingClientRect().width;
+		return this.mockClientWidth;
+	}
+});
+
+Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
+	get: function() {
+		return this.mockOffsetWidth;
+	}
+});
+
+Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+	get: function() {
+		return this.mockClientHeight;
+	}
+});
+
+Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+	get: function() {
+		return this.mockOffsetHeight;
+	}
+});
+
+Object.defineProperty(HTMLElement.prototype, 'offsetTop', {
+	get: function() {
+		return this.getBoundingClientRect().top;
 	}
 });
 
