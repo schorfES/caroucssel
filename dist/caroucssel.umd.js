@@ -78,36 +78,39 @@
 
       _classCallCheck(this, Scrollbar);
 
-      this._d = null;
       window.addEventListener('resize', function () {
-        return _this._d = null;
+        clearCache(_this, 'dimensions');
       });
-    }
+    } // Inspired by https://gist.github.com/kflorence/3086552
+
 
     _createClass(Scrollbar, [{
       key: "dimensions",
       get: function get() {
-        this._d = this._d || function () {
+        return fromCache(this, 'dimensions', function () {
           var inner = document.createElement('div'),
               outer = document.createElement('div');
-          var width, w1, w2, height, h1, h2;
+          var // width, w1, w2,
+          height, h1, h2;
           document.body.appendChild(outer);
           outer.style.position = 'absolute';
           outer.style.top = '0px';
           outer.style.left = '0px';
           outer.style.visibility = 'hidden';
-          outer.appendChild(inner); // Calculate width:
-
-          inner.style.width = '100%';
-          inner.style.height = '200px';
-          outer.style.width = '200px';
-          outer.style.height = '150px';
-          outer.style.overflow = 'hidden';
-          w1 = inner.offsetWidth;
-          outer.style.overflow = 'scroll';
-          w2 = inner.offsetWidth;
-          w2 = w1 === w2 ? outer.clientWidth : w2;
-          width = w1 - w2; // Calculate height:
+          outer.appendChild(inner); // Disabled, not needed for current feature set.
+          //
+          // Calculate width:
+          // inner.style.width = '100%';
+          // inner.style.height = '200px';
+          // outer.style.width = '200px';
+          // outer.style.height = '150px';
+          // outer.style.overflow = 'hidden';
+          // w1 = inner.offsetWidth;
+          // outer.style.overflow = 'scroll';
+          // w2 = inner.offsetWidth;
+          // w2 = (w1 === w2) ? outer.clientWidth : w2;
+          // width = w1 - w2;
+          // Calculate height:
 
           inner.style.width = '200px';
           inner.style.height = '100%';
@@ -121,12 +124,9 @@
           height = h1 - h2;
           document.body.removeChild(outer);
           return {
-            width: width,
             height: height
           };
-        }();
-
-        return this._d;
+        });
       }
     }]);
 
@@ -135,16 +135,17 @@
 
 
   function debounce(func, delay) {
-    var inDebounce;
+    var timeout;
     return function () {
+      var _this2 = this;
+
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
 
-      var self = this;
-      window.clearTimeout(inDebounce);
-      inDebounce = setTimeout(function () {
-        return func.apply(self, args);
+      clearTimeout(timeout);
+      timeout = setTimeout(function () {
+        return func.apply(_this2, args);
       }, delay);
     };
   }
@@ -318,7 +319,7 @@
     }, {
       key: "_updateScrollbars",
       value: function _updateScrollbars() {
-        var _this2 = this;
+        var _this3 = this;
 
         var el = this.el,
             _options = this._options;
@@ -344,9 +345,9 @@
           mask.style.overflow = 'hidden';
           mask.style.height = '100%';
 
-          _this2.el.parentNode.insertBefore(mask, _this2.el);
+          _this3.el.parentNode.insertBefore(mask, _this3.el);
 
-          mask.appendChild(_this2.el);
+          mask.appendChild(_this3.el);
           return mask;
         }();
 
@@ -377,7 +378,7 @@
     }, {
       key: "_addButtons",
       value: function _addButtons() {
-        var _this3 = this;
+        var _this4 = this;
 
         var el = this.el,
             id = this.id,
@@ -404,10 +405,10 @@
 
         if (previous) {
           var onPrevious = function onPrevious() {
-            var pages = _this3.pages,
-                pageIndex = _this3.pageIndex;
+            var pages = _this4.pages,
+                pageIndex = _this4.pageIndex;
             var page = pages[pageIndex - 1] || pages[0];
-            _this3.index = page;
+            _this4.index = page;
           };
 
           previous.onclick = onPrevious;
@@ -418,10 +419,10 @@
 
         if (next) {
           var onNext = function onNext() {
-            var pages = _this3.pages,
-                pageIndex = _this3.pageIndex;
+            var pages = _this4.pages,
+                pageIndex = _this4.pageIndex;
             var page = pages[pageIndex + 1] || pages[pages.length - 1];
-            _this3.index = page;
+            _this4.index = page;
           };
 
           next.onclick = onNext;
@@ -475,7 +476,7 @@
     }, {
       key: "_addPagination",
       value: function _addPagination() {
-        var _this4 = this;
+        var _this5 = this;
 
         var _options = this._options;
 
@@ -512,7 +513,7 @@
 
         var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
           button.onclick = function () {
-            return _this4.index = pages[index];
+            return _this5.index = pages[index];
           };
 
           return button;
@@ -602,11 +603,11 @@
     }, {
       key: "index",
       get: function get() {
-        var _this5 = this;
+        var _this6 = this;
 
         return fromCache(this, CACHE_KEY_INDEX, function () {
-          var el = _this5.el,
-              items = _this5.items;
+          var el = _this6.el,
+              items = _this6.items;
           var length = items.length;
           var clientWidth = el.clientWidth;
           var outerLeft = el.getBoundingClientRect().left;
@@ -666,11 +667,11 @@
     }, {
       key: "items",
       get: function get() {
-        var _this6 = this;
+        var _this7 = this;
 
         return fromCache(this, CACHE_KEY_ITEMS, function () {
-          var el = _this6.el,
-              filterItem = _this6._options.filterItem;
+          var el = _this7.el,
+              filterItem = _this7._options.filterItem;
           return Array.from(el.children).filter(function (item) {
             return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
           }).filter(filterItem);
@@ -679,11 +680,11 @@
     }, {
       key: "pages",
       get: function get() {
-        var _this7 = this;
+        var _this8 = this;
 
         return fromCache(this, CACHE_KEY_PAGES, function () {
-          var el = _this7.el,
-              items = _this7.items;
+          var el = _this8.el,
+              items = _this8.items;
           var viewport = el.clientWidth;
 
           if (viewport === 0) {
@@ -762,13 +763,13 @@
     }, {
       key: "pageIndex",
       get: function get() {
-        var _this8 = this;
+        var _this9 = this;
 
         return fromCache(this, CACHE_KEY_PAGE_INDEX, function () {
-          var el = _this8.el,
-              items = _this8.items,
-              index = _this8.index,
-              pages = _this8.pages;
+          var el = _this9.el,
+              items = _this9.items,
+              index = _this9.index,
+              pages = _this9.pages;
           var outerLeft = el.getBoundingClientRect().left;
           var clientWidth = el.clientWidth;
           var visibles = index.reduce(function (acc, at) {
