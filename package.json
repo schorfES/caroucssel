@@ -56,7 +56,7 @@
     "gh-pages": "^3.1.0",
     "jest": "^26.1.0",
     "live-server": "^1.2.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^5.0.0",
     "np": "^6.2.4",
     "npm-watch": "^0.7.0",
     "rollup": "^2.1.0",
