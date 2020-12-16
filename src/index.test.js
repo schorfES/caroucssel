@@ -153,11 +153,64 @@ describe('Caroucssel', () => {
 			expect(carousel.index).toEqual([0]);
 		});
 
-		it('should set initial index as option', () => {
+		it('should not set initial index when option is undefined (default)', () => {
 			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
 			const el = document.querySelector('.caroucssel');
+			el.mockClientWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockClientWidth = 100);
+
+			const scrollTo = jest.spyOn(el, 'scrollTo');
+			const carousel = new Carousel(el, {index: undefined});
+			expect(carousel.index).toEqual([0]);
+			expect(scrollTo).not.toHaveBeenCalled();
+		});
+
+		it('should not set initial index when option is an empty array', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockClientWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockClientWidth = 100);
+
+			const scrollTo = jest.spyOn(el, 'scrollTo');
+			const carousel = new Carousel(el, {index: []});
+			expect(carousel.index).toEqual([0]);
+			expect(scrollTo).not.toHaveBeenCalled();
+		});
+
+		it('should not set initial index when option is a number', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockClientWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockClientWidth = 100);
+
+			const scrollTo = jest.spyOn(el, 'scrollTo');
+			const carousel = new Carousel(el, {index: 4});
+			expect(carousel.index).toEqual([0]);
+			expect(scrollTo).not.toHaveBeenCalled();
+		});
+
+		it('should set initial index by option', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockClientWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockClientWidth = 100);
+
+			const scrollTo = jest.spyOn(el, 'scrollTo');
 			const carousel = new Carousel(el, {index: [2]});
 			expect(carousel.index).toEqual([2]);
+			expect(scrollTo).toHaveBeenCalled();
+		});
+
+		it('should set initial index when option is [0]', () => {
+			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			const el = document.querySelector('.caroucssel');
+			el.mockClientWidth = 100;
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockClientWidth = 100);
+
+			const scrollTo = jest.spyOn(el, 'scrollTo');
+			const carousel = new Carousel(el, {index: [0]});
+			expect(carousel.index).toEqual([0]);
+			expect(scrollTo).toHaveBeenCalled();
 		});
 
 		it('should set initial index as option when multiple items are visible', () => {

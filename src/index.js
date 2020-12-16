@@ -120,18 +120,19 @@ export class Carousel {
 		this._id = el.id;
 
 		// "deep" extend options and defaults:
-		this._options = {...DEFAULTS, ...options};
-		this._options.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
-		this._options.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
+		const opts = { ...DEFAULTS, ...options };
+		opts.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
+		opts.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
+		this._options = opts;
 
 		// Render:
 		this._addButtons();
 		this._addPagination();
 		this._updateScrollbars();
 
-		// Set index:
+		// Set initial index and set smooth scrolling:
 		this._isSmooth = false;
-		this.index = this._options.index || this.pages[0];
+		this.index = options.index;
 		this._isSmooth = true;
 
 		// Events:
@@ -181,6 +182,10 @@ export class Carousel {
 	set index(values) {
 		const {el, items} = this;
 		const {length} = items;
+
+		if (!Array.isArray(values) || !values.length) {
+			return;
+		}
 
 		if (length === 0) {
 			return;
