@@ -263,19 +263,21 @@
       el.id = el.id || ID_NAME(instanceCount);
       this._id = el.id; // "deep" extend options and defaults:
 
-      this._options = _objectSpread(_objectSpread({}, DEFAULTS), options);
-      this._options.buttonPrevious = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_PREVIOUS), options.buttonPrevious);
-      this._options.buttonNext = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_NEXT), options.buttonNext); // Render:
+      var opts = _objectSpread(_objectSpread({}, DEFAULTS), options);
+
+      opts.buttonPrevious = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_PREVIOUS), options.buttonPrevious);
+      opts.buttonNext = _objectSpread(_objectSpread({}, DEFAULTS_BUTTON_NEXT), options.buttonNext);
+      this._options = opts; // Render:
 
       this._addButtons();
 
       this._addPagination();
 
-      this._updateScrollbars(); // Set index:
+      this._updateScrollbars(); // Set initial index and set smooth scrolling:
 
 
       this._isSmooth = false;
-      this.index = this._options.index || this.pages[0];
+      this.index = options.index;
       this._isSmooth = true; // Events:
 
       this._onScroll = debounce(this._onScroll.bind(this), 25);
@@ -639,6 +641,10 @@
         var el = this.el,
             items = this.items;
         var length = items.length;
+
+        if (!Array.isArray(values) || !values.length) {
+          return;
+        }
 
         if (length === 0) {
           return;
