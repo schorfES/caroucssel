@@ -3,8 +3,7 @@
 
 validate:
 	./node_modules/.bin/audit-ci  \
-		--moderate \
-		--whitelist=acorn
+		--moderate
 
 	./node_modules/.bin/eslint \
 		. \
