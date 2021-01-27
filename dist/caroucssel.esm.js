@@ -615,6 +615,10 @@ class Carousel {
 		}
 
 		const { pageIndex, _paginationButtons } = this;
+		if (!_paginationButtons) {
+			return;
+		}
+
 		_paginationButtons.forEach((button, at) => button.disabled = (at === pageIndex));
 	}
 

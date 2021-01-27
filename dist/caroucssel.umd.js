@@ -539,6 +539,10 @@
         var pageIndex = this.pageIndex,
             _paginationButtons = this._paginationButtons;
 
+        if (!_paginationButtons) {
+          return;
+        }
+
         _paginationButtons.forEach(function (button, at) {
           return button.disabled = at === pageIndex;
         });
