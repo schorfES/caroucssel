@@ -61,6 +61,7 @@ describe('Caroucssel', () => {
 
 
 	afterEach(() => {
+		jest.clearAllTimers();
 		document.body.innerHTML = '';
 		Carousel.resetInstanceCount();
 	});
@@ -829,6 +830,11 @@ describe('Caroucssel', () => {
 			expect(pages).toHaveLength(4);
 
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockClientWidth = 25);
+			__triggerResize();
+			pagination = document.querySelectorAll('.pagination');
+			expect(pagination).toHaveLength(0);
+
+			[...document.querySelectorAll('.item')].forEach((item) => item.mockClientWidth = 10);
 			__triggerResize();
 			pagination = document.querySelectorAll('.pagination');
 			expect(pagination).toHaveLength(0);
