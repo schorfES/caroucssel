@@ -297,8 +297,12 @@ export class Carousel {
 				}
 
 				let {left, right} = items[at].getBoundingClientRect();
-				left = left - outerLeft;
-				right = right - outerLeft;
+				// "getBoundingClientRect()" can return float numbers which
+				// lead to an unwanted behavior when in the calculation with
+				// "clientWidth" (not using floats). We use round here to
+				// normalize those values...
+				left = Math.round(left - outerLeft);
+				right = Math.round(right - outerLeft);
 
 				// Remove items that partially hidden to the left or right:
 				if (left < 0 || clientWidth < right) {
