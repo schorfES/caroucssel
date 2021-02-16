@@ -7,6 +7,7 @@
   transform: translate3d(0, 0, 0);
   width: 100%;
   white-space: nowrap;
+  scroll-behavior: smooth;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   -webkit-overflow-scrolling: touch;
   /* For (webkit) browsers with scrollbars that only appear on scrolling */
@@ -27,7 +28,6 @@
 }
 
 .caroucssel.use-snap {
-  scroll-behavior: smooth;
   scroll-snap-type: mandatory;
   scroll-snap-type: x mandatory;
   scroll-snap-destination: 100% 100%;

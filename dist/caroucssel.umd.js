@@ -789,10 +789,14 @@
 
             var _items$at$getBounding = items[at].getBoundingClientRect(),
                 left = _items$at$getBounding.left,
-                right = _items$at$getBounding.right;
+                right = _items$at$getBounding.right; // "getBoundingClientRect()" can return float numbers which
+            // lead to an unwanted behavior when in the calculation with
+            // "clientWidth" (not using floats). We use round here to
+            // normalize those values...
 
-            left = left - outerLeft;
-            right = right - outerLeft; // Remove items that partially hidden to the left or right:
+
+            left = Math.round(left - outerLeft);
+            right = Math.round(right - outerLeft); // Remove items that partially hidden to the left or right:
 
             if (left < 0 || clientWidth < right) {
               return acc;

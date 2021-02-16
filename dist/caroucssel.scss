@@ -7,6 +7,7 @@
 	transform: translate3d(0, 0, 0);
 	width: 100%;
 	white-space: nowrap;
+	scroll-behavior: smooth;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 	-webkit-overflow-scrolling: touch;
 
@@ -31,7 +32,6 @@
 
 @mixin caroucssel-snap($at: 100%) {
 	// See: https://medium.com/@OneBitAhead/detecting-css-features-with-supports-1fb9c04c56c0
-	scroll-behavior: smooth;
 	scroll-snap-type: mandatory;
 	scroll-snap-type: x mandatory; // sass-lint:disable-line no-duplicate-properties
 	scroll-snap-destination: $at $at;
