@@ -61,6 +61,14 @@ h2 {
 	position: relative;
 }
 
+.caroucssel {
+	&::before { /* spacer that is required to generate offset of first item */
+		content: '';
+		speak: never;
+		scroll-snap-align: start;
+	}
+}
+
 .item {
 	padding: 2rem 1rem;
 	font-family: 'Pacifico', cursive;
