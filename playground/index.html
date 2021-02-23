@@ -84,6 +84,18 @@
 			</div>
 		</div>
 
+		<div class="example">
+			<h2>Items using 40% width + offset</h2>
+			<div class="container">
+				<div
+					class="caroucssel use-snap"
+					data-config="40%,40%,40%,40%,40%,40%,40%,40%,40%,40%,40%"
+					data-offset-left="25%,25%,25%,25%,25%,25%,25%,25%,25%,25%,25%"
+				>
+				</div>
+			</div>
+		</div>
+
 		<script src="//polyfill.io/v3/polyfill.min.js?features=smoothscroll"></script>
 		<script src="../caroucssel.min.js"></script>
 		<script>
@@ -96,6 +108,7 @@
 			elements.forEach((el) => {
 				const config = el.dataset.config.split(',').map((size) => size.trim());
 				const orders = (el.dataset.order || '').split(',');
+				const offsetsLeft = (el.dataset.offsetLeft || '').split(',');
 
 				config.forEach((width, index) => {
 					const item = document.createElement('div');
@@ -103,6 +116,7 @@
 					item.textContent = 'Item ' + (index + 1);
 					item.style.width = width;
 					item.style.order = orders[index] || '';
+					item.style.marginLeft = offsetsLeft[index] || '';
 					el.appendChild(item);
 
 					const label = document.createElement('small');
