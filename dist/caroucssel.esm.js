@@ -286,6 +286,13 @@ class Carousel {
 		const {scrollLeft} = el;
 		const from = {left: scrollLeft};
 		const to = {left: items[value].offsetLeft};
+
+		// If the target item is the first visible element in the list, ignore
+		// the possible offset to the left and scroll to the beginning of the list:
+		if (value === this.pages[0][0]) {
+			to.left = 0;
+		}
+
 		if (from.left === to.left) {
 			return;
 		}
@@ -349,7 +356,15 @@ class Carousel {
 
 					const prevPage = pages[pages.length - 1];
 					const firstItem = prevPage[0] ? prevPage[0] : { left: 0 };
-					const start = firstItem.left;
+					let start = firstItem.left;
+
+					// This is required for the first page. The first page always
+					// needs to start from the left=0. Any offset from the
+					// left of the first visual item needs to be ignored, otherwise
+					// the calculation of visual pages is incorrect:
+					if (prevPage === pages[0]) {
+						start = 0;
+					}
 
 					// At least 75% of the items needs to be in the page. Calculate
 					// the amount of new pages to add. If value is 0, the current
