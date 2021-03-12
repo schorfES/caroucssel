@@ -15,6 +15,12 @@ CarouCSSel is available on [NPM](https://www.npmjs.com/package/caroucssel):
 npm install caroucssel --save
 ```
 
+or
+
+```bash
+yarn add caroucssel
+```
+
 ## Usage
 
 The carousel is based on two elements. The most important part is the styling. CarouCSSel is shipped with a prebuild CSS-file (for basic usage) and an SCSS-file which contains mixins to set up the carousel. On the other hand, there is a  JavaScript class which enhances the carousel by adding controls.
@@ -126,7 +132,7 @@ const carousel = new Carousel(el, {
 
 ##### Pagination
 
-A pagination (or dots) is a list of buttons which allow navigating directly to a specific item/index inside the carousel. By default, the pagination is rendered with required WIA-ARIA attributes. To enable the pagination, set `hasPagination` to `true` inside the options object:
+The pagination (or dots) is a list of buttons that allow navigating directly to a specific item/index inside the carousel. By default, the pagination is rendered with required WIA-ARIA attributes. To enable the pagination, set `hasPagination` to `true` inside the options object:
 
 ```javascript
 const carousel = new Carousel(el, {
