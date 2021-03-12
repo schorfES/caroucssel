@@ -287,316 +287,6 @@
     }
 
     _createClass(Carousel, [{
-      key: "destroy",
-      value: function destroy() {
-        var el = this.el; // Remove created id if it was created by carousel:
-
-        ID_MATCH.test(el.id) && el.removeAttribute('id'); // Remove buttons:
-
-        this._removeButtons(); // Remove pagination:
-
-
-        this._removePagination(); // Remove scrollbars:
-
-
-        this._removeScrollbars(); // Remove events:
-
-
-        el.removeEventListener(EVENT_SCROLL, this._onScroll);
-        window.removeEventListener(EVENT_RESIZE, this._onResize); // Clear cache:
-
-        clearFullCache(this);
-      }
-    }, {
-      key: "update",
-      value: function update() {
-        clearFullCache(this);
-
-        this._updateButtons();
-
-        this._updatePagination();
-
-        this._updateScrollbars();
-      }
-    }, {
-      key: "_updateScrollbars",
-      value: function _updateScrollbars() {
-        var _this3 = this;
-
-        var el = this.el,
-            _options = this._options;
-        var hasScrollbars = _options.hasScrollbars,
-            scrollbarsMaskClassName = _options.scrollbarsMaskClassName;
-
-        if (hasScrollbars) {
-          return;
-        }
-
-        var height = scrollbar.dimensions.height;
-
-        if (el.scrollWidth <= el.clientWidth) {
-          // If the contents are not scrollable because their width are less
-          // than the container, there will be no visible scrollbar. In this
-          // case, the scrollbar height is 0:
-          height = 0;
-        }
-
-        this._mask = this._mask || function () {
-          var mask = document.createElement('div');
-          mask.className = scrollbarsMaskClassName;
-          mask.style.overflow = 'hidden';
-          mask.style.height = '100%';
-
-          _this3.el.parentNode.insertBefore(mask, _this3.el);
-
-          mask.appendChild(_this3.el);
-          return mask;
-        }();
-
-        if (height === this._scrollbarHeight) {
-          return;
-        }
-
-        this.el.style.height = "calc(100% + ".concat(height, "px)");
-        this.el.style.marginBottom = "".concat(height * -1, "px");
-        this._scrollbarHeight = height;
-      }
-    }, {
-      key: "_removeScrollbars",
-      value: function _removeScrollbars() {
-        var _mask = this._mask,
-            el = this.el;
-
-        if (!this._mask) {
-          return;
-        }
-
-        _mask.parentNode.insertBefore(el, _mask);
-
-        _mask.parentNode.removeChild(_mask);
-
-        el.removeAttribute('style');
-      }
-    }, {
-      key: "_addButtons",
-      value: function _addButtons() {
-        var _this4 = this;
-
-        var el = this.el,
-            id = this.id,
-            _options = this._options;
-
-        if (!_options.hasButtons) {
-          return;
-        }
-
-        var buttonTemplate = _options.buttonTemplate,
-            buttonClassName = _options.buttonClassName,
-            buttonPrevious = _options.buttonPrevious,
-            buttonNext = _options.buttonNext; // Create previous buttons:
-
-        var _map = [buttonPrevious, buttonNext].map(function (data) {
-          return __render(buttonTemplate, _objectSpread(_objectSpread({}, data), {}, {
-            controls: id,
-            className: "".concat(buttonClassName, " ").concat(data.className)
-          }));
-        }),
-            _map2 = _slicedToArray(_map, 2),
-            previous = _map2[0],
-            next = _map2[1];
-
-        if (previous) {
-          var onPrevious = function onPrevious() {
-            var pages = _this4.pages,
-                pageIndex = _this4.pageIndex;
-            var page = pages[pageIndex - 1] || pages[0];
-            _this4.index = page;
-          };
-
-          previous.onclick = onPrevious;
-          el.parentNode.appendChild(previous);
-        }
-
-        this._previous = previous;
-
-        if (next) {
-          var onNext = function onNext() {
-            var pages = _this4.pages,
-                pageIndex = _this4.pageIndex;
-            var page = pages[pageIndex + 1] || pages[pages.length - 1];
-            _this4.index = page;
-          };
-
-          next.onclick = onNext;
-          el.parentNode.appendChild(next);
-        }
-
-        this._next = next;
-
-        this._updateButtons();
-      }
-    }, {
-      key: "_updateButtons",
-      value: function _updateButtons() {
-        var _options = this._options;
-
-        if (!_options.hasButtons) {
-          return;
-        }
-
-        var pages = this.pages,
-            pageIndex = this.pageIndex,
-            _previous = this._previous,
-            _next = this._next;
-
-        if (_previous) {
-          var firstPage = pages[pageIndex - 1];
-          var isFirstPage = firstPage === undefined;
-          _previous.disabled = isFirstPage;
-        }
-
-        if (_next) {
-          var lastPage = pages[pageIndex + 1];
-          var isLastPage = lastPage === undefined;
-          _next.disabled = isLastPage;
-        }
-      }
-    }, {
-      key: "_removeButtons",
-      value: function _removeButtons() {
-        var _previous = this._previous,
-            _next = this._next;
-        [_previous, _next].forEach(function (button) {
-          if (!button) {
-            return;
-          }
-
-          button.onclick = null;
-          button.parentNode.removeChild(button);
-        });
-      }
-    }, {
-      key: "_addPagination",
-      value: function _addPagination() {
-        var _this5 = this;
-
-        var _options = this._options;
-
-        if (!_options.hasPagination) {
-          return;
-        }
-
-        var _mask = this._mask,
-            el = this.el,
-            id = this.id,
-            pages = this.pages;
-
-        if (pages.length < 2) {
-          return;
-        }
-
-        var paginationTemplate = _options.paginationTemplate,
-            paginationClassName = _options.paginationClassName,
-            paginationLabel = _options.paginationLabel,
-            paginationTitle = _options.paginationTitle;
-
-        var pagination = __render(paginationTemplate, {
-          pages: pages,
-          controls: id,
-          className: paginationClassName,
-          label: paginationLabel,
-          title: paginationTitle
-        });
-
-        if (!pagination) {
-          return;
-        } // @TODO: Add template for buttons:
-
-
-        var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
-          button.onclick = function () {
-            return _this5.index = pages[index];
-          };
-
-          return button;
-        });
-        var target = (_mask || el).parentNode;
-        target.appendChild(pagination);
-        this._pagination = pagination;
-        this._paginationButtons = buttons;
-
-        this._updatePagination();
-      }
-    }, {
-      key: "_updatePagination",
-      value: function _updatePagination() {
-        var _options = this._options;
-
-        if (!_options.hasPagination) {
-          return;
-        }
-
-        var pageIndex = this.pageIndex,
-            _paginationButtons = this._paginationButtons;
-
-        if (!_paginationButtons) {
-          return;
-        }
-
-        _paginationButtons.forEach(function (button, at) {
-          return button.disabled = at === pageIndex;
-        });
-      }
-    }, {
-      key: "_removePagination",
-      value: function _removePagination() {
-        var _pagination = this._pagination,
-            _paginationButtons = this._paginationButtons;
-
-        (_paginationButtons || []).forEach(function (button) {
-          button.onclick = null;
-          button.parentNode.removeChild(button);
-        });
-
-        this._paginationButtons = null;
-        _pagination && _pagination.parentNode.removeChild(_pagination);
-        this._pagination = null;
-      }
-    }, {
-      key: "_onScroll",
-      value: function _onScroll(event) {
-        clearCache(this, CACHE_KEY_INDEX);
-        clearCache(this, CACHE_KEY_PAGE_INDEX);
-
-        this._updateButtons();
-
-        this._updatePagination();
-
-        var index = this.index,
-            onScroll = this._options.onScroll;
-        onScroll && onScroll({
-          index: index,
-          type: EVENT_SCROLL,
-          target: this,
-          originalEvent: event
-        });
-      }
-    }, {
-      key: "_onResize",
-      value: function _onResize() {
-        clearCache(this, CACHE_KEY_PAGES);
-        clearCache(this, CACHE_KEY_INDEX);
-        clearCache(this, CACHE_KEY_PAGE_INDEX);
-
-        this._updateButtons();
-
-        this._removePagination();
-
-        this._addPagination();
-
-        this._updateScrollbars();
-      }
-    }, {
       key: "el",
       get: function get() {
         return this._el;
@@ -609,11 +299,11 @@
     }, {
       key: "index",
       get: function get() {
-        var _this6 = this;
+        var _this3 = this;
 
         return fromCache(this, CACHE_KEY_INDEX, function () {
-          var el = _this6.el,
-              items = _this6.items;
+          var el = _this3.el,
+              items = _this3.items;
           var length = items.length;
           var clientWidth = el.clientWidth;
           var outerLeft = el.getBoundingClientRect().left;
@@ -682,11 +372,11 @@
     }, {
       key: "items",
       get: function get() {
-        var _this7 = this;
+        var _this4 = this;
 
         return fromCache(this, CACHE_KEY_ITEMS, function () {
-          var el = _this7.el,
-              filterItem = _this7._options.filterItem;
+          var el = _this4.el,
+              filterItem = _this4._options.filterItem;
           return Array.from(el.children).filter(function (item) {
             return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
           }).filter(filterItem);
@@ -695,11 +385,11 @@
     }, {
       key: "pages",
       get: function get() {
-        var _this8 = this;
+        var _this5 = this;
 
         return fromCache(this, CACHE_KEY_PAGES, function () {
-          var el = _this8.el,
-              items = _this8.items;
+          var el = _this5.el,
+              items = _this5.items;
           var viewport = el.clientWidth;
 
           if (viewport === 0) {
@@ -786,13 +476,13 @@
     }, {
       key: "pageIndex",
       get: function get() {
-        var _this9 = this;
+        var _this6 = this;
 
         return fromCache(this, CACHE_KEY_PAGE_INDEX, function () {
-          var el = _this9.el,
-              items = _this9.items,
-              index = _this9.index,
-              pages = _this9.pages;
+          var el = _this6.el,
+              items = _this6.items,
+              index = _this6.index,
+              pages = _this6.pages;
           var outerLeft = el.getBoundingClientRect().left;
           var clientWidth = el.clientWidth;
           var visibles = index.reduce(function (acc, at) {
@@ -836,6 +526,316 @@
             return page.includes(at);
           });
         });
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        var el = this.el; // Remove created id if it was created by carousel:
+
+        ID_MATCH.test(el.id) && el.removeAttribute('id'); // Remove buttons:
+
+        this._removeButtons(); // Remove pagination:
+
+
+        this._removePagination(); // Remove scrollbars:
+
+
+        this._removeScrollbars(); // Remove events:
+
+
+        el.removeEventListener(EVENT_SCROLL, this._onScroll);
+        window.removeEventListener(EVENT_RESIZE, this._onResize); // Clear cache:
+
+        clearFullCache(this);
+      }
+    }, {
+      key: "update",
+      value: function update() {
+        clearFullCache(this);
+
+        this._updateButtons();
+
+        this._updatePagination();
+
+        this._updateScrollbars();
+      }
+    }, {
+      key: "_updateScrollbars",
+      value: function _updateScrollbars() {
+        var _this7 = this;
+
+        var el = this.el,
+            _options = this._options;
+        var hasScrollbars = _options.hasScrollbars,
+            scrollbarsMaskClassName = _options.scrollbarsMaskClassName;
+
+        if (hasScrollbars) {
+          return;
+        }
+
+        var height = scrollbar.dimensions.height;
+
+        if (el.scrollWidth <= el.clientWidth) {
+          // If the contents are not scrollable because their width are less
+          // than the container, there will be no visible scrollbar. In this
+          // case, the scrollbar height is 0:
+          height = 0;
+        }
+
+        this._mask = this._mask || function () {
+          var mask = document.createElement('div');
+          mask.className = scrollbarsMaskClassName;
+          mask.style.overflow = 'hidden';
+          mask.style.height = '100%';
+
+          _this7.el.parentNode.insertBefore(mask, _this7.el);
+
+          mask.appendChild(_this7.el);
+          return mask;
+        }();
+
+        if (height === this._scrollbarHeight) {
+          return;
+        }
+
+        this.el.style.height = "calc(100% + ".concat(height, "px)");
+        this.el.style.marginBottom = "".concat(height * -1, "px");
+        this._scrollbarHeight = height;
+      }
+    }, {
+      key: "_removeScrollbars",
+      value: function _removeScrollbars() {
+        var _mask = this._mask,
+            el = this.el;
+
+        if (!this._mask) {
+          return;
+        }
+
+        _mask.parentNode.insertBefore(el, _mask);
+
+        _mask.parentNode.removeChild(_mask);
+
+        el.removeAttribute('style');
+      }
+    }, {
+      key: "_addButtons",
+      value: function _addButtons() {
+        var _this8 = this;
+
+        var el = this.el,
+            id = this.id,
+            _options = this._options;
+
+        if (!_options.hasButtons) {
+          return;
+        }
+
+        var buttonTemplate = _options.buttonTemplate,
+            buttonClassName = _options.buttonClassName,
+            buttonPrevious = _options.buttonPrevious,
+            buttonNext = _options.buttonNext; // Create previous buttons:
+
+        var _map = [buttonPrevious, buttonNext].map(function (data) {
+          return __render(buttonTemplate, _objectSpread(_objectSpread({}, data), {}, {
+            controls: id,
+            className: "".concat(buttonClassName, " ").concat(data.className)
+          }));
+        }),
+            _map2 = _slicedToArray(_map, 2),
+            previous = _map2[0],
+            next = _map2[1];
+
+        if (previous) {
+          var onPrevious = function onPrevious() {
+            var pages = _this8.pages,
+                pageIndex = _this8.pageIndex;
+            var page = pages[pageIndex - 1] || pages[0];
+            _this8.index = page;
+          };
+
+          previous.onclick = onPrevious;
+          el.parentNode.appendChild(previous);
+        }
+
+        this._previous = previous;
+
+        if (next) {
+          var onNext = function onNext() {
+            var pages = _this8.pages,
+                pageIndex = _this8.pageIndex;
+            var page = pages[pageIndex + 1] || pages[pages.length - 1];
+            _this8.index = page;
+          };
+
+          next.onclick = onNext;
+          el.parentNode.appendChild(next);
+        }
+
+        this._next = next;
+
+        this._updateButtons();
+      }
+    }, {
+      key: "_updateButtons",
+      value: function _updateButtons() {
+        var _options = this._options;
+
+        if (!_options.hasButtons) {
+          return;
+        }
+
+        var pages = this.pages,
+            pageIndex = this.pageIndex,
+            _previous = this._previous,
+            _next = this._next;
+
+        if (_previous) {
+          var firstPage = pages[pageIndex - 1];
+          var isFirstPage = firstPage === undefined;
+          _previous.disabled = isFirstPage;
+        }
+
+        if (_next) {
+          var lastPage = pages[pageIndex + 1];
+          var isLastPage = lastPage === undefined;
+          _next.disabled = isLastPage;
+        }
+      }
+    }, {
+      key: "_removeButtons",
+      value: function _removeButtons() {
+        var _previous = this._previous,
+            _next = this._next;
+        [_previous, _next].forEach(function (button) {
+          if (!button) {
+            return;
+          }
+
+          button.onclick = null;
+          button.parentNode.removeChild(button);
+        });
+      }
+    }, {
+      key: "_addPagination",
+      value: function _addPagination() {
+        var _this9 = this;
+
+        var _options = this._options;
+
+        if (!_options.hasPagination) {
+          return;
+        }
+
+        var _mask = this._mask,
+            el = this.el,
+            id = this.id,
+            pages = this.pages;
+
+        if (pages.length < 2) {
+          return;
+        }
+
+        var paginationTemplate = _options.paginationTemplate,
+            paginationClassName = _options.paginationClassName,
+            paginationLabel = _options.paginationLabel,
+            paginationTitle = _options.paginationTitle;
+
+        var pagination = __render(paginationTemplate, {
+          pages: pages,
+          controls: id,
+          className: paginationClassName,
+          label: paginationLabel,
+          title: paginationTitle
+        });
+
+        if (!pagination) {
+          return;
+        } // @TODO: Add template for buttons:
+
+
+        var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
+          button.onclick = function () {
+            return _this9.index = pages[index];
+          };
+
+          return button;
+        });
+        var target = (_mask || el).parentNode;
+        target.appendChild(pagination);
+        this._pagination = pagination;
+        this._paginationButtons = buttons;
+
+        this._updatePagination();
+      }
+    }, {
+      key: "_updatePagination",
+      value: function _updatePagination() {
+        var _options = this._options;
+
+        if (!_options.hasPagination) {
+          return;
+        }
+
+        var pageIndex = this.pageIndex,
+            _paginationButtons = this._paginationButtons;
+
+        if (!_paginationButtons) {
+          return;
+        }
+
+        _paginationButtons.forEach(function (button, at) {
+          return button.disabled = at === pageIndex;
+        });
+      }
+    }, {
+      key: "_removePagination",
+      value: function _removePagination() {
+        var _pagination = this._pagination,
+            _paginationButtons = this._paginationButtons;
+
+        (_paginationButtons || []).forEach(function (button) {
+          button.onclick = null;
+          button.parentNode.removeChild(button);
+        });
+
+        this._paginationButtons = null;
+        _pagination && _pagination.parentNode.removeChild(_pagination);
+        this._pagination = null;
+      }
+    }, {
+      key: "_onScroll",
+      value: function _onScroll(event) {
+        clearCache(this, CACHE_KEY_INDEX);
+        clearCache(this, CACHE_KEY_PAGE_INDEX);
+
+        this._updateButtons();
+
+        this._updatePagination();
+
+        var index = this.index,
+            onScroll = this._options.onScroll;
+        onScroll && onScroll({
+          index: index,
+          type: EVENT_SCROLL,
+          target: this,
+          originalEvent: event
+        });
+      }
+    }, {
+      key: "_onResize",
+      value: function _onResize() {
+        clearCache(this, CACHE_KEY_PAGES);
+        clearCache(this, CACHE_KEY_INDEX);
+        clearCache(this, CACHE_KEY_PAGE_INDEX);
+
+        this._updateButtons();
+
+        this._removePagination();
+
+        this._addPagination();
+
+        this._updateScrollbars();
       }
     }]);
 
