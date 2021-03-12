@@ -59,8 +59,8 @@ web:
 		--output-style compressed
 
 	node_modules/.bin/node-sass \
-		./web/playground/styles.scss \
-		./web/playground/styles.min.css \
+		./web/demo/styles.scss \
+		./web/demo/styles.min.css \
 		--indent-type space \
 		--output-style compressed
 
@@ -75,6 +75,7 @@ release: validate tests build ghpages
 		--no-tests \
 		--any-branch \
 		--tag
+
 
 watch: build web
 	# run em' all in parallel:
