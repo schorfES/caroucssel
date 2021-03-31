@@ -1,3 +1,5 @@
+.git/
+.github/
 coverage/
 scripts/
 src/
@@ -5,8 +7,11 @@ web/
 .editorconfig
 .eslintignore
 .eslintrc
+.gitattributes
+.gitignore
 .nvmrc
 .sass-lint.yml
-.travis.yml
 babel.config.js
+codecov.yml
+jest.config.js
 Makefile
