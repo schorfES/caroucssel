@@ -43,8 +43,8 @@ export type ScrollHook = (event: {
 }) => any;
 
 export type FilterItemFn =
-	((item: Element) => boolean) |
-	((item: Element, index: number) => boolean);
+	((item: HTMLOrSVGElement) => boolean) |
+	((item: HTMLOrSVGElement, index: number) => boolean);
 
 export type Options = {
 	// Settings:
@@ -76,12 +76,12 @@ export type Options = {
 };
 
 export class Carousel {
-	constructor(el: Element, options: Options);
-	public get el(): Element;
+	constructor(el: HTMLOrSVGElement, options: Options);
+	public get el(): HTMLOrSVGElement;
 	public get id(): string;
 	public get index(): number[];
 	public set index(values: number[]);
-	public get items(): Element[];
+	public get items(): HTMLOrSVGElement[];
 	public get pages(): number[][];
 	public get pageIndex(): number;
 	public destroy(): void;
