@@ -3,7 +3,8 @@
 
 validate:
 	./node_modules/.bin/audit-ci  \
-		--moderate
+		--moderate \
+		--allowlist "merge" # ignoring sass-lint>merge (https://github.com/sasstools/sass-lint/pull/1321)
 
 	./node_modules/.bin/eslint \
 		. \
