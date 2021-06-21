@@ -155,7 +155,11 @@ rules:
   # of unknown CSS properties.
   no-misspelled-properties:
     - 2
-    - extra-properties: ['animation-', 'overflow-scrolling', 'touch-callout']
+    - extra-properties:
+      - animation-
+      - overflow-scrolling
+      - scrollbar-width
+      - touch-callout
 
   # Rule will enforce that selectors are not allowed to have qualifying elements.
   no-qualifying-elements:
@@ -327,6 +331,9 @@ rules:
         - word-break
         - word-spacing
         - word-wrap
+
+        - scroll-behavior
+        - scrollbar-width
 
   # Rule will disallow the use of units not specified in global or per-property.
   # Units specified per-property will override the global units for that property.
