@@ -30,17 +30,19 @@ coverage:
 build:
 	rm -rf dist/ && mkdir dist/
 
-	./node_modules/.bin/node-sass \
+	./node_modules/.bin/sass \
 		./src/caroucssel.css.scss \
 		./dist/caroucssel.css \
-		--indent-type space \
-		--output-style expanded
+		--style expanded \
+		--no-source-map \
+		--trace
 
-	./node_modules/.bin/node-sass \
+	./node_modules/.bin/sass \
 		./src/caroucssel.css.scss \
 		./dist/caroucssel.min.css \
-		--indent-type space \
-		--output-style compressed
+		--style compressed \
+		--no-source-map \
+		--trace
 
 	cp ./src/caroucssel.scss ./dist/caroucssel.scss
 
