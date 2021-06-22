@@ -2,9 +2,12 @@
 
 
 validate:
+	# 1666: ignoring sass-lint>merge (https://github.com/sasstools/sass-lint/pull/1321)
+	# 1751: is caused by live-server, is out of maintainance and should be replaced in the future
+	# 1755: is caused by np, no relevant dependency for build
 	./node_modules/.bin/audit-ci  \
 		--moderate \
-		--allowlist "merge" # ignoring sass-lint>merge (https://github.com/sasstools/sass-lint/pull/1321)
+		--allowlist 1666 1751 1755
 
 	./node_modules/.bin/eslint \
 		. \
