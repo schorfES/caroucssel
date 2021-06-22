@@ -1,6 +1,6 @@
 {
   "name": "caroucssel",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "A lightweight dependency-free css carousel.",
   "main": "dist/caroucssel.umd.js",
   "module": "dist/caroucssel.esm.js",
