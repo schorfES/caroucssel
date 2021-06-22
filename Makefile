@@ -58,17 +58,19 @@ web:
 	cp ./dist/caroucssel.min.css ./web/caroucssel.min.css
 	cp ./dist/caroucssel.min.js ./web/caroucssel.min.js
 
-	node_modules/.bin/node-sass \
+	node_modules/.bin/sass \
 		./web/styles.scss \
 		./web/styles.min.css \
-		--indent-type space \
-		--output-style compressed
+		--style compressed \
+		--no-source-map \
+		--trace
 
-	node_modules/.bin/node-sass \
+	node_modules/.bin/sass \
 		./web/demo/styles.scss \
 		./web/demo/styles.min.css \
-		--indent-type space \
-		--output-style compressed
+		--style compressed \
+		--no-source-map \
+		--trace
 
 
 ghpages: web
