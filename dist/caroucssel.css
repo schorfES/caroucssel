@@ -10,23 +10,21 @@
   scroll-behavior: smooth;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   -webkit-overflow-scrolling: touch;
-  /* For (webkit) browsers with scrollbars that only appear on scrolling */
+  /* browsers with scrollbars that only appear on scrolling */
+  /* @FIXME: Is the spaceless variant required? */
 }
-
 .caroucssel > * {
   flex: 0 0 auto;
   outline: none;
   white-space: normal;
 }
-
-.caroucssel[style*='100% + 0px']::-webkit-scrollbar, .caroucssel[style*='100%+0px']::-webkit-scrollbar {
-  height: 0;
+.caroucssel[style*="margin-bottom: 0px"], .caroucssel[style*="margin-bottom:0px"] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
-.caroucssel[style*='100% + 0px']::-webkit-scrollbar-thumb, .caroucssel[style*='100%+0px']::-webkit-scrollbar-thumb {
-  opacity: 0;
+.caroucssel[style*="margin-bottom: 0px"]::-webkit-scrollbar, .caroucssel[style*="margin-bottom:0px"]::-webkit-scrollbar {
+  display: none;
 }
-
 .caroucssel.use-snap {
   scroll-snap-type: mandatory;
   scroll-snap-type: x mandatory;
@@ -34,7 +32,6 @@
   scroll-snap-points-x: snapInterval(0, 100%);
   scroll-snap-points-x: repeat(100%);
 }
-
 .caroucssel.use-snap > * {
   scroll-snap-align: start;
 }

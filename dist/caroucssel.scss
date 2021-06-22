@@ -17,15 +17,15 @@
 		white-space: normal;
 	}
 
-	/* For (webkit) browsers with scrollbars that only appear on scrolling */
-	&[style*='100% + 0px'],
-	&[style*='100%+0px'] {
-		&::-webkit-scrollbar {
-			height: 0;
-		}
+	/* browsers with scrollbars that only appear on scrolling */
+	/* @FIXME: Is the spaceless variant required? */
+	&[style*='margin-bottom: 0px'],
+	&[style*='margin-bottom:0px'] {
+		scrollbar-width: none;
+		-ms-overflow-style: none;
 
-		&::-webkit-scrollbar-thumb {
-			opacity: 0;
+		&::-webkit-scrollbar {
+			display: none;
 		}
 	}
 }
