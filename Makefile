@@ -2,12 +2,7 @@
 
 
 validate:
-	# 1666: ignoring sass-lint>merge (https://github.com/sasstools/sass-lint/pull/1321)
-	# 1751: is caused by live-server, is out of maintainance and should be replaced in the future
-	# 1755: is caused by np, no relevant dependency for build
-	./node_modules/.bin/audit-ci  \
-		--moderate \
-		--allowlist 1666 1751 1755
+	./node_modules/.bin/tsc --noEmit
 
 	./node_modules/.bin/eslint \
 		. \
@@ -17,6 +12,13 @@ validate:
 		--verbose \
 		--no-exit \
 		"./src/**/*.scss"
+
+	# 1666: ignoring sass-lint>merge (https://github.com/sasstools/sass-lint/pull/1321)
+	# 1751: is caused by live-server, is out of maintainance and should be replaced in the future
+	# 1755: is caused by np, no relevant dependency for build
+	./node_modules/.bin/audit-ci  \
+		--moderate \
+		--allowlist 1666 1751 1755
 
 
 tests:
@@ -45,7 +47,9 @@ build:
 
 	cp ./src/caroucssel.scss ./dist/caroucssel.scss
 
-	cp ./src/index.d.ts ./dist/caroucssel.d.ts
+	./node_modules/.bin/tsc
+
+	cp ./build/index.d.ts ./dist/caroucssel.d.ts
 
 	node ./scripts/build.js
 

@@ -1,6 +1,6 @@
 const NAMESPACE = '__cache__';
 
-export const fromCache = (instance, key, calculate) => {
+export function fromCache<T>(instance: any, key: string, calculate: () => T): T {
 	instance[NAMESPACE] = instance[NAMESPACE] || {};
 	if (key in instance[NAMESPACE]) {
 		return instance[NAMESPACE][key];
@@ -9,15 +9,17 @@ export const fromCache = (instance, key, calculate) => {
 	const value = calculate();
 	instance[NAMESPACE][key] = value;
 	return value;
-};
+}
 
-export const clearCache = (instance, key) => {
+export function clearCache(instance: any, key: string): void {
 	const cache = instance[NAMESPACE];
 	if (!cache) {
 		return;
 	}
 
 	delete(cache[key]);
-};
+}
 
-export const clearFullCache = (instance) => delete(instance[NAMESPACE]);
+export function clearFullCache(instance: any): void {
+	delete(instance[NAMESPACE]);
+}

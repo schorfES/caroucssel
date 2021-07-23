@@ -44,17 +44,38 @@ describe('Debounce util', () => {
 	});
 
 	it('should call function within correct scope', () => {
-		const scope = { value: 0 };
-		const callback = function() { this.value++; };
-		const debounced = debounce(callback, 25).bind(scope);
+		class Scoped {
+			value = 0;
+			debounced: () => void;
 
-		debounced();
+			constructor() {
+				this.debounced = debounce(this.callback, 25);
+			}
+
+			callback() {
+				this.value++;
+			}
+		}
+
+		const scope = new Scoped();
+		scope.debounced();
+
 		jest.advanceTimersByTime(10);
 
-		debounced();
+		scope.debounced();
 		jest.advanceTimersByTime(25);
 
 		expect(scope.value).toBe(1);
+	});
+
+	it('should call function with correct parameters', () => {
+		const callback = jest.fn();
+		const debounced = debounce(callback, 25);
+
+		debounced(42, 'foo', 'bar');
+		jest.advanceTimersByTime(25);
+		expect(callback).toHaveBeenCalledTimes(1);
+		expect(callback).toBeCalledWith(42, 'foo', 'bar');
 	});
 
 });
