@@ -3,7 +3,103 @@ import {Scrollbar} from './utils/scrollbar';
 import {debounce} from './utils/debounce';
 
 
-function __render(template, data) {
+
+
+
+
+
+
+
+export type Index = [number, ...number[]];
+export type Pages = [Index, ...Index[]];
+
+export type ButtonParams = {
+	controls: string;
+	className: string;
+	label: string;
+	title: string;
+};
+
+export type ButtonTemplate = (params: ButtonParams) => string;
+
+export type ButtonOptions = {
+	className?: string;
+	label?: string;
+	title?: string;
+};
+
+export type PaginationTextParams = {
+	index: number;
+	page: number[];
+	pages: number[][];
+};
+
+export type PaginationText = (params: PaginationTextParams) => string;
+
+export type PaginationParams = {
+	controls: string;
+	className: string;
+	label: PaginationText;
+	title: PaginationText;
+	pages: number[][];
+};
+
+export type PaginationTemplate = (params: PaginationParams) => string;
+
+export type PaginationLabelTemplate = PaginationText;
+
+export type PaginationTitleTemplate = PaginationText;
+
+export type ScrollHook = (event: {
+	index: number[];
+	type: 'scroll';
+	target: Carousel;
+	originalEvent: Event;
+}) => any;
+
+export type FilterItemFn =
+	((item: HTMLElement) => boolean) |
+	((item: HTMLElement, index: number) => boolean) |
+	((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
+
+export type Options = {
+	// Settings:
+	index?: Index | number;
+
+	// Buttons:
+	hasButtons: boolean;
+	buttonClassName: string;
+	buttonTemplate: ButtonTemplate;
+	buttonPrevious: ButtonOptions;
+	buttonNext: ButtonOptions;
+
+	// Pagination:
+	hasPagination: boolean;
+	paginationClassName: string;
+	paginationTemplate: PaginationTemplate;
+	paginationLabel: PaginationLabelTemplate;
+	paginationTitle: PaginationTitleTemplate;
+
+	// Scrollbars:
+	hasScrollbars: boolean;
+	scrollbarsMaskClassName: string;
+
+	// Filter:
+	filterItem: FilterItemFn;
+
+	// Hooks:
+	onScroll: ScrollHook;
+};
+
+
+
+
+
+
+
+
+
+function __render<T = HTMLElement>(template: (...args: any[]) => string, data: {}): T | null {
 	const el = document.createElement('div');
 	el.innerHTML = template(data);
 
@@ -12,18 +108,18 @@ function __render(template, data) {
 		return null;
 	}
 
-	return ref;
+	return ref as unknown as T;
 }
 
 
-function __templateButton({className, controls, label, title}) {
+function __templateButton({className, controls, label, title}: ButtonParams): string {
 	return `<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
 		<span>${label}</span>
 	</button>`;
 }
 
 
-function __templatePagination({className, controls, pages, label, title}) {
+function __templatePagination({className, controls, pages, label, title}: PaginationParams): string {
 	return `<ul class="${className}">
 		${pages.map((page, index) => {
 			const data = {index, page, pages};
@@ -39,85 +135,112 @@ function __templatePagination({className, controls, pages, label, title}) {
 }
 
 
-const
-	ID_NAME = (count) => `caroucssel-${count}`,
-	ID_MATCH = /^caroucssel-[0-9]*$/,
+const ID_NAME = (count: number) => `caroucssel-${count}`;
+const ID_MATCH = /^caroucssel-[0-9]*$/;
 
-	CACHE_KEY_INDEX = 'index',
-	CACHE_KEY_ITEMS = 'items',
-	CACHE_KEY_PAGES = 'pages',
-	CACHE_KEY_PAGE_INDEX = 'page-index',
+const CACHE_KEY_INDEX = 'index';
+const CACHE_KEY_ITEMS = 'items';
+const CACHE_KEY_PAGES = 'pages';
+const CACHE_KEY_PAGE_INDEX = 'page-index';
 
-	VISIBILITY_OFFSET = 0.25,
+const VISIBILITY_OFFSET = 0.25;
 
-	INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i,
+const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
 
-	EVENT_SCROLL = 'scroll',
-	EVENT_RESIZE = 'resize',
+const EVENT_SCROLL = 'scroll';
+const EVENT_RESIZE = 'resize';
 
-	DEFAULTS = {
-		index: undefined,
+const DEFAULTS_BUTTON_PREVIOUS: ButtonOptions = {
+	className: 'is-previous',
+	label: 'Previous',
+	title: 'Go to previous'
+};
 
-		// Buttons:
-		hasButtons: false,
-		buttonClassName: 'button',
-		buttonTemplate: __templateButton,
-		buttonPrevious: null,
-		buttonNext: null,
+const DEFAULTS_BUTTON_NEXT: ButtonOptions = {
+	className: 'is-next',
+	label: 'Next',
+	title: 'Go to next'
+};
 
-		// Pagination:
-		hasPagination: false,
-		paginationClassName: 'pagination',
-		paginationLabel: ({index}) => `${index + 1}`,
-		paginationTitle: ({index}) => `Go to ${index + 1}. page`,
-		paginationTemplate: __templatePagination,
+const DEFAULTS: Options = {
+	// Buttons:
+	hasButtons: false,
+	buttonClassName: 'button',
+	buttonTemplate: __templateButton,
+	buttonPrevious: DEFAULTS_BUTTON_PREVIOUS,
+	buttonNext: DEFAULTS_BUTTON_PREVIOUS,
 
-		// Scrollbars, set to true when use default scrolling behaviour
-		hasScrollbars: false,
-		scrollbarsMaskClassName: 'caroucssel-mask',
+	// Pagination:
+	hasPagination: false,
+	paginationClassName: 'pagination',
+	paginationLabel: ({index}) => `${index + 1}`,
+	paginationTitle: ({index}) => `Go to ${index + 1}. page`,
+	paginationTemplate: __templatePagination,
 
-		// filter
-		filterItem: () => true,
+	// Scrollbars, set to true when use default scrolling behaviour
+	hasScrollbars: false,
+	scrollbarsMaskClassName: 'caroucssel-mask',
 
-		// Hooks:
-		onScroll: null
-	},
-	DEFAULTS_BUTTON_PREVIOUS = {
-		className: 'is-previous',
-		label: 'Previous',
-		title: 'Go to previous'
-	},
-	DEFAULTS_BUTTON_NEXT = {
-		className: 'is-next',
-		label: 'Next',
-		title: 'Go to next'
-	}
-;
+	// filter
+	filterItem: () => true,
+
+	// Hooks:
+	onScroll: () => {},
+};
 
 
-let
-	instanceCount = 0,
-	scrollbar = null
-;
+let __instanceCount = 0;
+let __scrollbar: Scrollbar;
 
 
 export class Carousel {
 
-	constructor(el, options = {}) {
-		if (!el || !(el instanceof HTMLElement)) {
+	public static resetInstanceCount() {
+		// This can be used for testing purposes to reset the instance count which is
+		// used to create unique id's.
+		if (process.env.NODE_ENV === 'test') {
+			__instanceCount = 0;
+		}
+	}
+
+	protected _el: Element;
+
+	protected _id: string;
+
+	protected _options: Options;
+
+	protected _mask: HTMLDivElement | null = null;
+
+	protected _isSmooth: boolean = false;
+
+	protected _scrollbarHeight: number | undefined = undefined;
+
+	protected _previous: HTMLButtonElement | null = null;
+
+	protected _next: HTMLButtonElement | null = null;
+
+	protected _pagination: HTMLElement | null = null;
+
+	protected _paginationButtons: HTMLButtonElement[] | null = null;
+
+	constructor(el: Element, options: Partial<Options> = {}) {
+		if (!el || !(el instanceof Element)) {
 			throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
 		}
 
 		this._el = el;
 
 		// Create a singleton instance of scrollbar for all carousel instances:
-		scrollbar = scrollbar || new Scrollbar();
+		__scrollbar = __scrollbar || new Scrollbar();
 
 		// Count all created instances to create unique id, if given dom element
 		// has no id-attribute:
-		instanceCount++;
-		el.id = el.id || ID_NAME(instanceCount);
+		__instanceCount++;
+		el.id = el.id || ID_NAME(__instanceCount);
 		this._id = el.id;
+
+		// Mask will be rendered after scrollbar detection.
+		this._mask = null;
 
 		// "deep" extend options and defaults:
 		const opts = { ...DEFAULTS, ...options };
@@ -131,8 +254,16 @@ export class Carousel {
 		this._updateScrollbars();
 
 		// Set initial index and set smooth scrolling:
-		this._isSmooth = false;
-		this.index = options.index;
+		switch (true) {
+			// When index is a list:
+			case Array.isArray(options.index):
+				this.index = options.index as Index;
+				break;
+			// When index is a number, transfrom to list:
+			case !isNaN(options.index as number):
+				this.index = [options.index as number];
+				break;
+		}
 		this._isSmooth = true;
 
 		// Events:
@@ -142,44 +273,48 @@ export class Carousel {
 		window.addEventListener(EVENT_RESIZE, this._onResize);
 	}
 
-	get el() {
+	get el(): Element {
 		return this._el;
 	}
 
-	get id() {
+	get id(): string {
 		return this._id;
 	}
 
-	get index() {
+	get index(): Index {
 		return fromCache(this, CACHE_KEY_INDEX, () => {
 			const {el, items} = this;
 			const {length} = items;
 			const {clientWidth} = el;
 			const outerLeft = el.getBoundingClientRect().left;
 
-			let values = [];
-			let index = 0;
+			const index: number[] = [];
+			let at = 0;
 
-			for (;index < length; index++) {
-				const item = items[index];
-				let {left, width} = item.getBoundingClientRect();
+			for (;at < length; at++) {
+				const item = items[at];
+				const rect = item.getBoundingClientRect();
+				const { width } = rect;
+				let { left } = rect;
 				left = left - outerLeft;
 
 				if (left + width * VISIBILITY_OFFSET >= 0 &&
 					left + width * (1 - VISIBILITY_OFFSET) <= clientWidth) {
-					values.push(index)
+					index.push(at);
 				}
 			}
 
-			if (values.length === 0) {
+			if (index.length === 0) {
+				// If no index found, we return a [0] as default. This possibly happens
+				// when the carousel is not attached to the DOM or is visually hidden (display: none).
 				return [0];
 			}
 
-			return values;
+			return index as Index;
 		});
 	}
 
-	set index(values) {
+	set index(values: Index) {
 		const {el, items} = this;
 		const {length} = items;
 
@@ -214,17 +349,19 @@ export class Carousel {
 		el.scrollTo({...to, behavior});
 	}
 
-	get items() {
+	get items(): HTMLElement[] {
 		return fromCache(this, CACHE_KEY_ITEMS, () => {
 			const { el, _options: { filterItem } } = this;
+			// @FIXME: This is only for casting Element[] to HTMLElement[]. Is this save?
+			const children = Array.from(el.children) as HTMLElement[];
 
-			return Array.from(el.children)
+			return children
 				.filter((item) => !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden)
 				.filter(filterItem);
 		});
 	}
 
-	get pages() {
+	get pages(): number[][] {
 		return fromCache(this, CACHE_KEY_PAGES, () => {
 			const {el, items} = this;
 			const {clientWidth: viewport} = el;
@@ -237,9 +374,17 @@ export class Carousel {
 				return items.map((item, index) => [index]);
 			}
 
-			let pages = [[]];
+			type Dataset = {
+				item: HTMLElement;
+				left: number;
+				width: number;
+				index: number;
+			};
+
+			let pages: Dataset[][] = [[]];
+
 			items
-				.map((item, index) => {
+				.map((item, index): Dataset => {
 					// Create a re-usable dataset for each item:
 					const {offsetLeft: left, clientWidth: width} = item;
 					return { left, width, item, index };
@@ -266,8 +411,8 @@ export class Carousel {
 					const { left, width } = item;
 
 					const prevPage = pages[pages.length - 1];
-					const firstItem = prevPage[0] ? prevPage[0] : { left: 0 };
-					let start = firstItem.left;
+					const firstItem = prevPage[0];
+					let start = firstItem?.left || 0;
 
 					// This is required for the first page. The first page always
 					// needs to start from the left=0. Any offset from the
@@ -300,13 +445,13 @@ export class Carousel {
 		});
 	}
 
-	get pageIndex() {
+	get pageIndex(): number {
 		return fromCache(this, CACHE_KEY_PAGE_INDEX, () => {
 			const {el, items, index, pages} = this;
 			const outerLeft = el.getBoundingClientRect().left;
 			const {clientWidth} = el;
 
-			let visibles = index.reduce((acc, at) => {
+			let visibles: number[] = index.reduce<number []>((acc, at) => {
 				if (!items[at]) {
 					return acc;
 				}
@@ -347,7 +492,7 @@ export class Carousel {
 		});
 	}
 
-	destroy() {
+	destroy(): void {
 		const {el} = this;
 
 		// Remove created id if it was created by carousel:
@@ -370,7 +515,7 @@ export class Carousel {
 		clearFullCache(this);
 	}
 
-	update() {
+	update(): void {
 		clearFullCache(this);
 
 		this._updateButtons();
@@ -378,14 +523,14 @@ export class Carousel {
 		this._updateScrollbars();
 	}
 
-	_updateScrollbars() {
-		const { el, _options } = this;
+	protected _updateScrollbars(): void {
+		const { el , _options } = this;
 		const {hasScrollbars, scrollbarsMaskClassName} = _options;
 		if (hasScrollbars) {
 			return;
 		}
 
-		let {height} = scrollbar.dimensions;
+		let {height} = __scrollbar.dimensions;
 
 		if (el.scrollWidth <= el.clientWidth) {
 			// If the contents are not scrollable because their width are less
@@ -399,8 +544,8 @@ export class Carousel {
 			mask.className = scrollbarsMaskClassName;
 			mask.style.overflow = 'hidden';
 			mask.style.height = '100%';
-			this.el.parentNode.insertBefore(mask, this.el);
-			mask.appendChild(this.el);
+			el.parentNode?.insertBefore(mask, this.el);
+			mask.appendChild(el);
 			return mask;
 		})();
 
@@ -408,23 +553,26 @@ export class Carousel {
 			return;
 		}
 
-		this.el.style.height = `calc(100% + ${height}px)`;
-		this.el.style.marginBottom = `${height * -1}px`;
+		const element = el as HTMLElement | SVGElement;
+		element.style.height = `calc(100% + ${height}px)`;
+		element.style.marginBottom = `${height * -1}px`;
 		this._scrollbarHeight = height;
 	}
 
-	_removeScrollbars() {
+	protected _removeScrollbars(): void {
 		const {_mask, el} = this;
-		if (!this._mask) {
+		if (!_mask) {
 			return;
 		}
 
-		_mask.parentNode.insertBefore(el, _mask);
-		_mask.parentNode.removeChild(_mask);
+		_mask.parentNode?.insertBefore(el, _mask);
+		_mask.parentNode?.removeChild(_mask);
 		el.removeAttribute('style');
+
+		// @TODO: Remove mask instance `this._mask = null;` ?
 	}
 
-	_addButtons() {
+	protected _addButtons(): void {
 		const {el, id, _options} = this;
 		if (!_options.hasButtons) {
 			return;
@@ -434,7 +582,7 @@ export class Carousel {
 
 		// Create previous buttons:
 		const [previous, next] = [buttonPrevious, buttonNext].map((data) =>
-			__render(buttonTemplate, {
+			__render<HTMLButtonElement>(buttonTemplate, {
 				...data,
 				controls: id,
 				className: `${buttonClassName} ${data.className}`
@@ -444,11 +592,16 @@ export class Carousel {
 			const onPrevious = () => {
 				const {pages, pageIndex} = this;
 				const page = pages[pageIndex - 1] || pages[0];
-				this.index = page;
+
+				// @TODO: Test if pages always return at least one entry?
+				if (page.length > 0) {
+					// @FIXME: Remove cast
+					this.index = page as Index;
+				}
 			};
 
 			previous.onclick = onPrevious;
-			el.parentNode.appendChild(previous);
+			el.parentNode?.appendChild(previous);
 		}
 		this._previous = previous;
 
@@ -456,18 +609,23 @@ export class Carousel {
 			const onNext = () => {
 				const { pages, pageIndex } = this;
 				const page = pages[pageIndex + 1] || pages[pages.length - 1];
-				this.index = page;
+
+				// @TODO: Test if pages always return at least one entry?
+				if (page.length > 0) {
+					// @FIXME: Remove cast
+					this.index = page as Index;
+				}
 			};
 
 			next.onclick = onNext;
-			el.parentNode.appendChild(next);
+			el.parentNode?.appendChild(next);
 		}
 		this._next = next;
 
 		this._updateButtons();
 	}
 
-	_updateButtons() {
+	protected _updateButtons(): void {
 		const {_options} = this;
 		if (!_options.hasButtons) {
 			return;
@@ -488,18 +646,18 @@ export class Carousel {
 		}
 	}
 
-	_removeButtons() {
+	protected _removeButtons(): void {
 		const {_previous, _next} = this;
 		[_previous, _next].forEach((button) => {
 			if (!button) {
 				return;
 			}
 			button.onclick = null;
-			button.parentNode.removeChild(button);
+			button.parentNode?.removeChild(button);
 		});
 	}
 
-	_addPagination() {
+	protected _addPagination(): void {
 		const {_options} = this;
 		if (!_options.hasPagination) {
 			return;
@@ -524,21 +682,22 @@ export class Carousel {
 		}
 
 		// @TODO: Add template for buttons:
-		const buttons = Array.from(pagination.querySelectorAll('button'))
+		const buttons = Array.from(pagination.querySelectorAll<HTMLButtonElement>('button'))
 			.map((button, index) => {
-				button.onclick = () => this.index = pages[index];
+				// @FIXME: Remove cast
+				button.onclick = () => this.index = pages[index] as Index;
 				return button;
 			});
 
 		const target = (_mask || el).parentNode;
-		target.appendChild(pagination);
+		target?.appendChild(pagination);
 		this._pagination = pagination;
 		this._paginationButtons = buttons;
 
 		this._updatePagination();
 	}
 
-	_updatePagination() {
+	protected _updatePagination(): void {
 		const {_options} = this;
 		if (!_options.hasPagination) {
 			return;
@@ -552,19 +711,19 @@ export class Carousel {
 		_paginationButtons.forEach((button, at) => button.disabled = (at === pageIndex));
 	}
 
-	_removePagination() {
+	protected _removePagination(): void {
 		const {_pagination, _paginationButtons} = this;
 		(_paginationButtons || []).forEach((button) => {
 			button.onclick = null;
-			button.parentNode.removeChild(button);
+			button.parentNode?.removeChild(button);
 		});
 		this._paginationButtons = null;
 
-		_pagination && _pagination.parentNode.removeChild(_pagination);
+		_pagination && _pagination.parentNode?.removeChild(_pagination);
 		this._pagination = null;
 	}
 
-	_onScroll(event) {
+	protected _onScroll(event: Event): void {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
@@ -575,7 +734,7 @@ export class Carousel {
 		onScroll && onScroll({index, type: EVENT_SCROLL, target: this, originalEvent: event});
 	}
 
-	_onResize() {
+	protected _onResize(): void {
 		clearCache(this, CACHE_KEY_PAGES);
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
@@ -586,10 +745,4 @@ export class Carousel {
 		this._updateScrollbars();
 	}
 
-}
-
-if (process.env.NODE_ENV === 'test') {
-	// This can be used for testing purposes to reset the instance count which is
-	// used to create unique id's.
-	Carousel.resetInstanceCount = () => instanceCount = 0;
 }

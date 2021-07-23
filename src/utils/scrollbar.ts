@@ -1,5 +1,9 @@
 import {clearCache, fromCache} from './cache';
 
+export type ScrollbarDimensions = {
+	height: number,
+};
+
 export class Scrollbar {
 
 	constructor() {
@@ -9,8 +13,8 @@ export class Scrollbar {
 	}
 
 	// Inspired by https://gist.github.com/kflorence/3086552
-	get dimensions() {
-		return fromCache(this, 'dimensions', () => {
+	get dimensions(): ScrollbarDimensions {
+		return fromCache<ScrollbarDimensions>(this, 'dimensions', () => {
 			const
 				inner = document.createElement('div'),
 				outer = document.createElement('div')
@@ -55,7 +59,10 @@ export class Scrollbar {
 
 			document.body.removeChild(outer);
 
-			return {height};
+			return {
+				// width,
+				height
+			};
 		});
 	}
 

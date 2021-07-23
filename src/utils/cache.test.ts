@@ -1,8 +1,13 @@
 import { clearCache, clearFullCache, fromCache } from './cache';
 
+
+type CacheObject = {
+	__cache__?: { [key: string]: any };
+};
+
 describe('Cache util', () => {
 
-	let instance = null;
+	let instance: CacheObject | null = null;
 	beforeEach(() => {
 		instance = {};
 	});
@@ -120,6 +125,7 @@ describe('Cache util', () => {
 	describe('clearCache', () => {
 
 		it('should clear entry', () => {
+			instance = {};
 			instance.__cache__ = {};
 			instance.__cache__.first = 42;
 			instance.__cache__.second = 13;
@@ -132,6 +138,7 @@ describe('Cache util', () => {
 		});
 
 		it('should clear entry gracefully that doesn\'t exist', () => {
+			instance = {};
 			instance.__cache__ = {};
 			instance.__cache__.first = 42;
 			instance.__cache__.second = 13;
@@ -155,6 +162,7 @@ describe('Cache util', () => {
 	describe('clearFullCache', () => {
 
 		it('should clear entire cache', () => {
+			instance = {};
 			instance.__cache__ = {};
 			instance.__cache__.first = 42;
 			instance.__cache__.second = 13;

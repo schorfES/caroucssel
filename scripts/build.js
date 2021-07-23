@@ -7,7 +7,7 @@ const uglifyjs = require('uglify-js');
 
 
 const MODULE_ID = 'caroucssel';
-const MODULE_ENTRY = path.join(__dirname, '../src/index.js');
+const MODULE_ENTRY = path.join(__dirname, '../build/index.js');
 const TARGETS = [
 	{
 		file: path.join(__dirname, '../dist/caroucssel.esm.js'),

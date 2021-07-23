@@ -1,6 +1,7 @@
 .git/
 .github/
 coverage/
+build/
 scripts/
 src/
 web/
@@ -11,7 +12,7 @@ web/
 .gitignore
 .nvmrc
 .sass-lint.yml
-babel.config.js
 codecov.yml
-jest.config.js
+jest.config.ts
 Makefile
+tsconfig.json
