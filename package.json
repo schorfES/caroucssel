@@ -57,7 +57,7 @@
     "jest": "^27.0.4",
     "live-server": "^1.2.1",
     "np": "^7.5.0",
-    "npm-watch": "^0.10.0",
+    "npm-watch": "^0.11.0",
     "rollup": "^2.52.2",
     "rollup-plugin-replace": "^2.2.0",
     "sass": "^1.35.1",
