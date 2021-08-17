@@ -1,4 +1,4 @@
-.PHONY:  validate tests coverage build web ghpages release watch
+.PHONY:  validate tests build web ghpages release watch
 
 
 validate:
@@ -24,10 +24,6 @@ tests:
 		src \
 		--coverage \
 		--verbose
-
-
-coverage:
-	node_modules/.bin/codecov
 
 
 build:
