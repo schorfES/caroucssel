@@ -25,7 +25,7 @@ describe('Scrollbar util', () => {
 
 		describe('dimensions', () => {
 			it('should return when scrollbar is added to the inner viewport', () => {
-				const original = document.createElement;
+				const original = document.createElement.bind(document);
 				document.createElement = jest.fn<HTMLElement, [string, ElementCreationOptions | undefined]>(
 					function (this: Document, ...args) {
 						const callCount = (this.createElement as jest.Mock).mock.calls.length;
@@ -56,7 +56,7 @@ describe('Scrollbar util', () => {
 			});
 
 			it('should return when scrollbar is added to the outer viewport', () => {
-				const original = document.createElement;
+				const original = document.createElement.bind(document);
 				document.createElement = jest.fn<HTMLElement, [string, ElementCreationOptions | undefined]>(
 					function (this: Document, ...args) {
 						const callCount = (this.createElement as jest.Mock).mock.calls.length;

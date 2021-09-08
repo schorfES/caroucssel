@@ -15,14 +15,8 @@ export class Scrollbar {
 	// Inspired by https://gist.github.com/kflorence/3086552
 	get dimensions(): ScrollbarDimensions {
 		return fromCache<ScrollbarDimensions>(this, 'dimensions', () => {
-			const
-				inner = document.createElement('div'),
-				outer = document.createElement('div')
-			;
-			let
-				// width, w1, w2,
-				height, h1, h2
-			;
+			const inner = document.createElement('div');
+			const outer = document.createElement('div');
 
 			document.body.appendChild(outer);
 			outer.style.position = 'absolute';
@@ -51,11 +45,12 @@ export class Scrollbar {
 			outer.style.width = '150px';
 			outer.style.height = '200px';
 			outer.style.overflow = 'hidden';
-			h1 = inner.offsetHeight;
+
+			const h1 = inner.offsetHeight;
 			outer.style.overflow = 'scroll';
-			h2 = inner.offsetHeight;
+			let h2 = inner.offsetHeight;
 			h2 = (h1 === h2) ? outer.clientHeight : h2;
-			height = h1 - h2;
+			const height = h1 - h2;
 
 			document.body.removeChild(outer);
 

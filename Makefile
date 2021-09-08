@@ -5,8 +5,9 @@ validate:
 	./node_modules/.bin/tsc --noEmit
 
 	./node_modules/.bin/eslint \
-		. \
-		--ext .js
+		--ext .js \
+		--ext .ts \
+		.
 
 	./node_modules/.bin/sass-lint \
 		--verbose \

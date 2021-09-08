@@ -33,7 +33,7 @@ Object.defineProperties(Element.prototype, {
 
 	scrollTo: {
 		writable: true,
-		value: function({ top, left }: { top: number, left: number }): void {
+		value: function(this: Element, { top, left }: { top: number, left: number }): void {
 			this.mockedTop = top;
 			this.mockedLeft = left;
 
