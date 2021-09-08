@@ -13,10 +13,10 @@ exports[`Caroucssel buttons should add buttons 1`] = `
 				
 			</div></div>
 		<button type=\\"button\\" class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
-		<span>Previous</span>
-	</button><button type=\\"button\\" class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"caroucssel-1\\">
-		<span>Next</span>
-	</button></div>
+			<span>Previous</span>
+		</button><button type=\\"button\\" class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"caroucssel-1\\">
+			<span>Next</span>
+		</button></div>
 	"
 `;
 
@@ -33,10 +33,10 @@ exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 				
 			</div></div>
 		<button type=\\"button\\" class=\\"custom-button-class custom-previous-button-class\\" aria-label=\\"Custom previous label\\" title=\\"Custom previous title\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
-		<span>Custom previous label</span>
-	</button><button type=\\"button\\" class=\\"custom-button-class custom-next-button-class\\" aria-label=\\"Custom next label\\" title=\\"Custom next title\\" aria-controls=\\"caroucssel-1\\">
-		<span>Custom next label</span>
-	</button></div>
+			<span>Custom previous label</span>
+		</button><button type=\\"button\\" class=\\"custom-button-class custom-next-button-class\\" aria-label=\\"Custom next label\\" title=\\"Custom next title\\" aria-controls=\\"caroucssel-1\\">
+			<span>Custom next label</span>
+		</button></div>
 	"
 `;
 
@@ -63,10 +63,10 @@ exports[`Caroucssel buttons should add disabled buttons without items 1`] = `
 				
 			</div></div>
 		<button type=\\"button\\" class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
-		<span>Previous</span>
-	</button><button type=\\"button\\" class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
-		<span>Next</span>
-	</button></div>
+			<span>Previous</span>
+		</button><button type=\\"button\\" class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
+			<span>Next</span>
+		</button></div>
 	"
 `;
 
@@ -131,20 +131,20 @@ exports[`Caroucssel pagination should add pagination 1`] = `
 				
 			</div></div>
 		<ul class=\\"pagination\\">
-		<li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 1. page\\" title=\\"Go to 1. page\\" disabled=\\"\\">
-					<span>1</span>
-				</button>
-			</li><li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 2. page\\" title=\\"Go to 2. page\\">
-					<span>2</span>
-				</button>
-			</li><li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 3. page\\" title=\\"Go to 3. page\\">
-					<span>3</span>
-				</button>
-			</li>
-	</ul></div>
+			<li>
+					<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 1. page\\" title=\\"Go to 1. page\\" disabled=\\"\\">
+						<span>1</span>
+					</button>
+				</li><li>
+					<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 2. page\\" title=\\"Go to 2. page\\">
+						<span>2</span>
+					</button>
+				</li><li>
+					<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to 3. page\\" title=\\"Go to 3. page\\">
+						<span>3</span>
+					</button>
+				</li>
+		</ul></div>
 	"
 `;
 
@@ -161,20 +161,20 @@ exports[`Caroucssel pagination should add pagination with custom options 1`] = `
 				
 			</div></div>
 		<ul class=\\"custom-pagination-class\\">
-		<li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to first item\\" title=\\"Go to first item\\" disabled=\\"\\">
-					<span>first</span>
-				</button>
-			</li><li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to second item\\" title=\\"Go to second item\\">
-					<span>second</span>
-				</button>
-			</li><li>
-				<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to third item\\" title=\\"Go to third item\\">
-					<span>third</span>
-				</button>
-			</li>
-	</ul></div>
+			<li>
+					<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to first item\\" title=\\"Go to first item\\" disabled=\\"\\">
+						<span>first</span>
+					</button>
+				</li><li>
+					<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to second item\\" title=\\"Go to second item\\">
+						<span>second</span>
+					</button>
+				</li><li>
+					<button type=\\"button\\" aria-controls=\\"caroucssel-1\\" aria-label=\\"Go to third item\\" title=\\"Go to third item\\">
+						<span>third</span>
+					</button>
+				</li>
+		</ul></div>
 	"
 `;
 

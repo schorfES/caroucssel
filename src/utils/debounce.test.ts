@@ -49,7 +49,7 @@ describe('Debounce util', () => {
 			debounced: () => void;
 
 			constructor() {
-				this.debounced = debounce(this.callback, 25);
+				this.debounced = debounce(this.callback.bind(this), 25);
 			}
 
 			callback() {
@@ -75,7 +75,7 @@ describe('Debounce util', () => {
 		debounced(42, 'foo', 'bar');
 		jest.advanceTimersByTime(25);
 		expect(callback).toHaveBeenCalledTimes(1);
-		expect(callback).toBeCalledWith(42, 'foo', 'bar');
+		expect(callback).toHaveBeenCalledWith(42, 'foo', 'bar');
 	});
 
 });

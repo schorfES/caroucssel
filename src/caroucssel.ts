@@ -1,138 +1,13 @@
-import {clearCache, clearFullCache, fromCache} from './utils/cache';
-import {Scrollbar} from './utils/scrollbar';
-import {debounce} from './utils/debounce';
+import { clearCache, clearFullCache, fromCache } from './utils/cache';
+import { debounce } from './utils/debounce';
+import { render } from './utils/render';
+import { Scrollbar } from './utils/scrollbar';
+
+import { ButtonOptions, ButtonParams, Index, Options, Pages, PaginationParams } from './types';
 
 
-
-
-
-
-
-
-
-export type Index = [number, ...number[]];
-export type Pages = [Index, ...Index[]];
-
-export type ButtonParams = {
-	controls: string;
-	className: string;
-	label: string;
-	title: string;
-};
-
-export type ButtonTemplate = (params: ButtonParams) => string;
-
-export type ButtonOptions = {
-	className?: string;
-	label?: string;
-	title?: string;
-};
-
-export type PaginationTextParams = {
-	index: number;
-	page: number[];
-	pages: number[][];
-};
-
-export type PaginationText = (params: PaginationTextParams) => string;
-
-export type PaginationParams = {
-	controls: string;
-	className: string;
-	label: PaginationText;
-	title: PaginationText;
-	pages: number[][];
-};
-
-export type PaginationTemplate = (params: PaginationParams) => string;
-
-export type PaginationLabelTemplate = PaginationText;
-
-export type PaginationTitleTemplate = PaginationText;
-
-export type ScrollHook = (event: {
-	index: number[];
-	type: 'scroll';
-	target: Carousel;
-	originalEvent: Event;
-}) => any;
-
-export type FilterItemFn =
-	((item: HTMLElement) => boolean) |
-	((item: HTMLElement, index: number) => boolean) |
-	((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
-
-export type Options = {
-	// Settings:
-	index?: Index | number;
-
-	// Buttons:
-	hasButtons: boolean;
-	buttonClassName: string;
-	buttonTemplate: ButtonTemplate;
-	buttonPrevious: ButtonOptions;
-	buttonNext: ButtonOptions;
-
-	// Pagination:
-	hasPagination: boolean;
-	paginationClassName: string;
-	paginationTemplate: PaginationTemplate;
-	paginationLabel: PaginationLabelTemplate;
-	paginationTitle: PaginationTitleTemplate;
-
-	// Scrollbars:
-	hasScrollbars: boolean;
-	scrollbarsMaskClassName: string;
-
-	// Filter:
-	filterItem: FilterItemFn;
-
-	// Hooks:
-	onScroll: ScrollHook;
-};
-
-
-
-
-
-
-
-
-
-function __render<T = HTMLElement>(template: (...args: any[]) => string, data: {}): T | null {
-	const el = document.createElement('div');
-	el.innerHTML = template(data);
-
-	const ref = el.firstChild;
-	if (!(ref instanceof HTMLElement)) {
-		return null;
-	}
-
-	return ref as unknown as T;
-}
-
-
-function __templateButton({className, controls, label, title}: ButtonParams): string {
-	return `<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
-		<span>${label}</span>
-	</button>`;
-}
-
-
-function __templatePagination({className, controls, pages, label, title}: PaginationParams): string {
-	return `<ul class="${className}">
-		${pages.map((page, index) => {
-			const data = {index, page, pages};
-			const labelStr = label(data);
-			const titleStr = title(data);
-			return `<li>
-				<button type="button" aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
-					<span>${labelStr}</span>
-				</button>
-			</li>`;
-		}).join('')}
-	</ul>`;
-}
+// Export all types
+export * from './types';
 
 
 const ID_NAME = (count: number) => `caroucssel-${count}`;
@@ -150,13 +25,13 @@ const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
 const EVENT_SCROLL = 'scroll';
 const EVENT_RESIZE = 'resize';
 
-const DEFAULTS_BUTTON_PREVIOUS: ButtonOptions = {
+const DEFAULTS_BUTTON_PREVIOUS: Required<ButtonOptions> = {
 	className: 'is-previous',
 	label: 'Previous',
 	title: 'Go to previous'
 };
 
-const DEFAULTS_BUTTON_NEXT: ButtonOptions = {
+const DEFAULTS_BUTTON_NEXT: Required<ButtonOptions> = {
 	className: 'is-next',
 	label: 'Next',
 	title: 'Go to next'
@@ -166,16 +41,33 @@ const DEFAULTS: Options = {
 	// Buttons:
 	hasButtons: false,
 	buttonClassName: 'button',
-	buttonTemplate: __templateButton,
+	buttonTemplate: ({className, controls, label, title}: ButtonParams) => `
+		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
+			<span>${label}</span>
+		</button>
+	`,
 	buttonPrevious: DEFAULTS_BUTTON_PREVIOUS,
-	buttonNext: DEFAULTS_BUTTON_PREVIOUS,
+	buttonNext: DEFAULTS_BUTTON_NEXT,
 
 	// Pagination:
 	hasPagination: false,
 	paginationClassName: 'pagination',
 	paginationLabel: ({index}) => `${index + 1}`,
 	paginationTitle: ({index}) => `Go to ${index + 1}. page`,
-	paginationTemplate: __templatePagination,
+	paginationTemplate: ({className, controls, pages, label, title}: PaginationParams) => `
+		<ul class="${className}">
+			${pages.map((page, index) => {
+				const data = {index, page, pages};
+				const labelStr = label(data);
+				const titleStr = title(data);
+				return `<li>
+					<button type="button" aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
+						<span>${labelStr}</span>
+					</button>
+				</li>`;
+			}).join('')}
+		</ul>
+	`,
 
 	// Scrollbars, set to true when use default scrolling behaviour
 	hasScrollbars: false,
@@ -185,7 +77,7 @@ const DEFAULTS: Options = {
 	filterItem: () => true,
 
 	// Hooks:
-	onScroll: () => {},
+	onScroll: () => undefined,
 };
 
 
@@ -195,7 +87,7 @@ let __scrollbar: Scrollbar;
 
 export class Carousel {
 
-	public static resetInstanceCount() {
+	public static resetInstanceCount(): void {
 		// This can be used for testing purposes to reset the instance count which is
 		// used to create unique id's.
 		if (process.env.NODE_ENV === 'test') {
@@ -211,7 +103,7 @@ export class Carousel {
 
 	protected _mask: HTMLDivElement | null = null;
 
-	protected _isSmooth: boolean = false;
+	protected _isSmooth = false;
 
 	protected _scrollbarHeight: number | undefined = undefined;
 
@@ -242,10 +134,8 @@ export class Carousel {
 		// Mask will be rendered after scrollbar detection.
 		this._mask = null;
 
-		// "deep" extend options and defaults:
+		// extend options and defaults:
 		const opts = { ...DEFAULTS, ...options };
-		opts.buttonPrevious = {...DEFAULTS_BUTTON_PREVIOUS, ...options.buttonPrevious};
-		opts.buttonNext = {...DEFAULTS_BUTTON_NEXT, ...options.buttonNext};
 		this._options = opts;
 
 		// Render:
@@ -267,10 +157,18 @@ export class Carousel {
 		this._isSmooth = true;
 
 		// Events:
+		//
+		// We disable @typescript-eslint/unbound-method here because we already bound
+		// the functions while creating a debounced version. This would also cause
+		// reference errors when tying to access these function references when used
+		// with removeEventListeners() (see: destroy())
+		//
+		/* eslint-disable @typescript-eslint/unbound-method */
 		this._onScroll = debounce(this._onScroll.bind(this), 25);
 		this._onResize = debounce(this._onResize.bind(this), 25);
 		el.addEventListener(EVENT_SCROLL, this._onScroll);
 		window.addEventListener(EVENT_RESIZE, this._onResize);
+		/* eslint-enable @typescript-eslint/unbound-method */
 	}
 
 	get el(): Element {
@@ -352,7 +250,6 @@ export class Carousel {
 	get items(): HTMLElement[] {
 		return fromCache(this, CACHE_KEY_ITEMS, () => {
 			const { el, _options: { filterItem } } = this;
-			// @FIXME: This is only for casting Element[] to HTMLElement[]. Is this save?
 			const children = Array.from(el.children) as HTMLElement[];
 
 			return children
@@ -361,8 +258,8 @@ export class Carousel {
 		});
 	}
 
-	get pages(): number[][] {
-		return fromCache(this, CACHE_KEY_PAGES, () => {
+	get pages(): Pages {
+		return fromCache(this, CACHE_KEY_PAGES, (): Pages => {
 			const {el, items} = this;
 			const {clientWidth: viewport} = el;
 
@@ -371,7 +268,7 @@ export class Carousel {
 				// the pages properly and the carousel seems to be not visible. If
 				// this is the case, we assume that each item is placed on a
 				// separate page.
-				return items.map((item, index) => [index]);
+				return items.map((item, index) => [index] as Index) as Pages;
 			}
 
 			type Dataset = {
@@ -441,7 +338,7 @@ export class Carousel {
 			pages = pages.filter((page) => page.length !== 0);
 
 			// Restructure pages to only contain the index of each item:
-			return pages.map((page) => page.map(({ index }) => index));
+			return pages.map((page) => page.map(({ index }) => index) as Index) as Pages;
 		});
 	}
 
@@ -508,8 +405,15 @@ export class Carousel {
 		this._removeScrollbars();
 
 		// Remove events:
+		//
+		// We need to work the the function reference. Using .bind() would create a
+		// new referenced instance of the callback function. We already created a
+		// bound version of these function within the constructor.
+		//
+		/* eslint-disable @typescript-eslint/unbound-method */
 		el.removeEventListener(EVENT_SCROLL, this._onScroll);
 		window.removeEventListener(EVENT_RESIZE, this._onResize);
+		/* eslint-enable @typescript-eslint/unbound-method */
 
 		// Clear cache:
 		clearFullCache(this);
@@ -569,7 +473,7 @@ export class Carousel {
 		_mask.parentNode?.removeChild(_mask);
 		el.removeAttribute('style');
 
-		// @TODO: Remove mask instance `this._mask = null;` ?
+		this._mask = null;
 	}
 
 	protected _addButtons(): void {
@@ -579,25 +483,19 @@ export class Carousel {
 		}
 
 		const {buttonTemplate, buttonClassName, buttonPrevious, buttonNext} = _options;
+		const controls = id;
+		// Create button elements:
+		const [previous, next] = [
+			{ ...DEFAULTS_BUTTON_PREVIOUS, ...buttonPrevious, controls, className: [buttonClassName, buttonPrevious.className].join(' ') },
+			{ ...DEFAULTS_BUTTON_NEXT, ...buttonNext, controls, className: [buttonClassName, buttonNext.className].join(' ') },
+		].map((params) => render<HTMLButtonElement, ButtonParams>(buttonTemplate, params))
 
-		// Create previous buttons:
-		const [previous, next] = [buttonPrevious, buttonNext].map((data) =>
-			__render<HTMLButtonElement>(buttonTemplate, {
-				...data,
-				controls: id,
-				className: `${buttonClassName} ${data.className}`
-			}));
 
 		if (previous) {
 			const onPrevious = () => {
 				const {pages, pageIndex} = this;
-				const page = pages[pageIndex - 1] || pages[0];
-
-				// @TODO: Test if pages always return at least one entry?
-				if (page.length > 0) {
-					// @FIXME: Remove cast
-					this.index = page as Index;
-				}
+				const index = pages[pageIndex - 1] || pages[0];
+				this.index = index;
 			};
 
 			previous.onclick = onPrevious;
@@ -608,13 +506,8 @@ export class Carousel {
 		if (next) {
 			const onNext = () => {
 				const { pages, pageIndex } = this;
-				const page = pages[pageIndex + 1] || pages[pages.length - 1];
-
-				// @TODO: Test if pages always return at least one entry?
-				if (page.length > 0) {
-					// @FIXME: Remove cast
-					this.index = page as Index;
-				}
+				const index = pages[pageIndex + 1] || pages[pages.length - 1];
+				this.index = index;
 			};
 
 			next.onclick = onNext;
@@ -669,7 +562,7 @@ export class Carousel {
 		}
 
 		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
-		const pagination = __render(paginationTemplate, {
+		const pagination = render(paginationTemplate, {
 			pages,
 			controls: id,
 			className: paginationClassName,
@@ -684,8 +577,7 @@ export class Carousel {
 		// @TODO: Add template for buttons:
 		const buttons = Array.from(pagination.querySelectorAll<HTMLButtonElement>('button'))
 			.map((button, index) => {
-				// @FIXME: Remove cast
-				button.onclick = () => this.index = pages[index] as Index;
+				button.onclick = () => this.index = pages[index];
 				return button;
 			});
 
@@ -731,7 +623,7 @@ export class Carousel {
 		this._updatePagination();
 
 		const {index, _options: { onScroll }} = this;
-		onScroll && onScroll({index, type: EVENT_SCROLL, target: this, originalEvent: event});
+		onScroll && onScroll<Carousel>({index, type: EVENT_SCROLL, target: this, originalEvent: event});
 	}
 
 	protected _onResize(): void {

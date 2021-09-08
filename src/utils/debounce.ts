@@ -1,10 +1,17 @@
 // See: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf
 
-export function debounce<T extends (...args: any[]) => any>(func: T, delay: number) {
-	let timeout: ReturnType<typeof setTimeout>;
+type Source = (...args: never[]) => unknown;
+type Debounced<F extends Source> = (...args: Parameters<F>) => void;
 
-	return function (this: any, ...args: Parameters<T>): void {
-		clearTimeout(timeout);
-		timeout = setTimeout(() => func.apply(this, args), delay);
+export function debounce<F extends Source>(func: F, delay: number): Debounced<F> {
+	let timeout: ReturnType<typeof setTimeout> | null = null;
+	const debounced = (...args: Parameters<F>) => {
+		if (timeout !== null) {
+      clearTimeout(timeout);
+		}
+
+		timeout = setTimeout(() => func(...args), delay);
 	};
+
+	return debounced;
 }

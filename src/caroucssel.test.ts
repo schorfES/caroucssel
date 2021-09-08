@@ -1,5 +1,8 @@
 import { ScrollbarDimensions } from './utils/scrollbar';
-import { Carousel, ButtonParams, FilterItemFn, PaginationTextParams, PaginationParams } from './caroucssel';
+
+import { ButtonParams, FilterItemFn, PaginationParams, PaginationTextParams } from './types';
+import { Carousel } from './caroucssel';
+
 
 /* Mocks
  * -------------------------------------------------------------------------- */
@@ -393,10 +396,10 @@ describe('Caroucssel', () => {
 			expect(carousel.items).toHaveLength(3);
 		});
 
-		it('should ignore <link> in items', () => {
+		it('should ignore <meta> in items', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
-			const hidden = document.createElement('link');
+			const hidden = document.createElement('meta');
 			el.appendChild(hidden);
 
 			const carousel = new Carousel(el);
@@ -519,7 +522,7 @@ describe('Caroucssel', () => {
 					label: 'Custom next label',
 					title: 'Custom next title'
 				},
-				buttonTemplate: jest.fn(({className, label, title}) =>
+				buttonTemplate: jest.fn<string, ButtonParams[]>(({className, label, title}) =>
 					`<span class="${className}" title="${title}">${label}</span>`)
 			};
 			new Carousel(el, options);
@@ -544,7 +547,7 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			const buttonTemplate: jest.Mock<string, [ButtonParams]> = jest.fn((params) => '');
+			const buttonTemplate: jest.Mock<string, []> = jest.fn(() => '');
 
 			const options = {
 				hasButtons: true,
@@ -562,7 +565,7 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns null
 			// @ts-ignore
-			const buttonTemplate: jest.Mock<string, [ButtonParams]> = jest.fn((params) => null);
+			const buttonTemplate: jest.Mock<string, []> = jest.fn(() => null);
 
 			const options = {
 				hasButtons: true,
@@ -580,7 +583,7 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns undefined
 			// @ts-ignore
-			const buttonTemplate: jest.Mock<string, [ButtonParams]> = jest.fn((params) => undefined);
+			const buttonTemplate: jest.Mock<string, [ButtonParams]> = jest.fn(() => undefined);
 
 			const options = {
 				hasButtons: true,
@@ -811,8 +814,8 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			const paginationTemplate: jest.Mock<string, [PaginationParams]> = jest.fn(
-				(params) => '',
+			const paginationTemplate: jest.Mock<string, []> = jest.fn(
+				() => '',
 			);
 
 			new Carousel(el, {
@@ -830,8 +833,8 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns null
 			// @ts-ignore
-			const paginationTemplate: jest.Mock<string, [PaginationParams]> = jest.fn(
-				(params) => null,
+			const paginationTemplate: jest.Mock<string, []> = jest.fn(
+				() => null,
 			);
 
 			new Carousel(el, {
@@ -849,8 +852,8 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns undefined
 			// @ts-ignore
-			const paginationTemplate: jest.Mock<string, [PaginationParams]> = jest.fn(
-				(params) => undefined,
+			const paginationTemplate: jest.Mock<string, []> = jest.fn(
+				() => undefined,
 			);
 
 			new Carousel(el, {
@@ -928,7 +931,7 @@ describe('Caroucssel', () => {
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 			new Carousel(el, { hasPagination: true });
 
-			let pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
+			const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect(pagination).toHaveLength(3);
 			expect([...pagination].map(({disabled}) => disabled)).toEqual([true, false, false]);
 
@@ -946,7 +949,7 @@ describe('Caroucssel', () => {
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 			const carousel = new Carousel(el, { hasPagination: true });
 
-			let pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
+			const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect(pagination).toHaveLength(3);
 			expect([...pagination].map(({disabled}) => disabled)).toEqual([true, false, false]);
 
