@@ -5,6 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/schorfES/caroucssel/badge.svg)](https://snyk.io/test/github/schorfES/caroucssel)
 [![Minified gzipped size](https://badgen.net/bundlephobia/minzip/caroucssel)](https://bundlephobia.com/result?p=caroucssel)
 ![Types included](https://badgen.net/npm/types/tslib)
+[![License MIT](https://badgen.net/npm/license/caroucssel)](https://github.com/schorfES/caroucssel/blob/main/LICENSE)
 
 A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**_
 
