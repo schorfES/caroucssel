@@ -14,7 +14,7 @@ web/
 .gitattributes
 .gitignore
 .nvmrc
-.sass-lint.yml
+.stylelintignore
 codecov.yml
 jest.config.ts
 Makefile

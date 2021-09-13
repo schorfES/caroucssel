@@ -10,9 +10,8 @@ validate:
 		--ext .ts \
 		.
 
-	./node_modules/.bin/sass-lint \
-		--verbose \
-		--no-exit \
+	./node_modules/.bin/stylelint **/*.scss \
+		--config ./stylelint.config.js \
 		"./src/**/*.scss"
 
 

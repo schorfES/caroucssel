@@ -1,17 +1,18 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Vollkorn:400,600,700'); // sass-lint:disable-line no-url-protocols
 
 @font-face {
-	font-family: 'icons';
 	font-weight: normal;
+	font-family: 'icons';
 	font-style: normal;
-	src: url('./font/icons.woff2') format('woff2'),
+	src:
+		url('./font/icons.woff2') format('woff2'),
 		url('./font/icons.woff') format('woff');
 }
 
 * {
 	box-sizing: border-box;
 
-	> *
+	*,
 	&::before,
 	&::after {
 		box-sizing: inherit;
@@ -20,45 +21,45 @@
 
 body {
 	overflow: hidden;
-	background: #2F2F2F;
 	color: #FFFFFF;
-	font-family: 'Vollkorn', serif;
-	font-size: 14px;
 	font-weight: 400;
+	font-size: 14px;
+	font-family: 'Vollkorn', serif;
 	line-height: 1.3;
 	text-align: center;
+	background: #2F2F2F;
 }
 
 h1 {
 	margin: 0 0 1rem;
 	font-size: 1.5rem;
 
-	em {
-		display: block;
-		font-family: 'Pacifico', cursive;
-		font-size: 2.5rem;
-
-		span {
-			animation: skew 6s infinite;
-			display: inline-block;
-			color: #E91E63;
-		}
-	}
-
 	> span {
 		display: none;
+	}
+
+	em {
+		display: block;
+		font-size: 2.5rem;
+		font-family: 'Pacifico', cursive;
+
+		span {
+			display: inline-block;
+			color: #E91E63;
+			animation: skew 6s infinite;
+		}
 	}
 }
 
 h2 {
 	margin: 0 0 1rem;
-	font-family: 'Pacifico', cursive;
 	font-size: 1.75rem;
+	font-family: 'Pacifico', cursive;
 }
 
 p {
-	margin: 0 0 1rem;
 	max-width: 70vw;
+	margin: 0 0 1rem;
 }
 
 strong {
@@ -66,15 +67,15 @@ strong {
 }
 
 button {
-	appearance: none;
-	cursor: pointer;
 	margin: 0;
 	padding: 0;
+	color: inherit;
+	font: inherit;
 	background: transparent;
 	border: 0;
 	border-radius: 0;
-	color: inherit;
-	font: inherit;
+	cursor: pointer;
+	appearance: none;
 }
 
 a {
@@ -84,17 +85,17 @@ a {
 
 .code {
 	display: block;
-	overflow: auto;
+	max-width: 70vw;
 	margin: 0 0 2rem;
 	padding: 1rem;
-	max-width: 70vw;
+	overflow: auto;
+	color: #FFFFFF;
+	font-family: 'Lucida Console', Monaco, 'Courier New', Courier, monospace;
+	text-align: left;
 	background: #2F2F2F;
 	background-color: rgba(#2F2F2F, 0.5);
 	border: 1px solid rgba(#FFFFFF, 0.5);
 	border-radius: 3px;
-	color: #FFFFFF;
-	font-family: 'Lucida Console', Monaco, 'Courier New', Courier, monospace;
-	text-align: left;
 }
 
 .caroucssel {
@@ -102,23 +103,23 @@ a {
 }
 
 .item {
+	position: relative;
+	z-index: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	position: relative;
-	z-index: 1;
-	padding: 4rem 3rem 1rem;
 	width: 100vw;
 	height: 100vh;
+	padding: 4rem 3rem 1rem;
 }
 
 .arrow {
-	transition: transform 0.3s, opacity 0.3s;
-	opacity: 0;
 	position: absolute;
 	z-index: -1;
 	width: 20vh;
 	height: 20vh;
+	opacity: 0;
+	transition: transform 0.3s, opacity 0.3s;
 	fill: #2F2F2F;
 
 	.is-active & {
@@ -134,13 +135,13 @@ a {
 	background-image: linear-gradient(to right, transparent, #00BCD4);
 
 	.arrow {
-		transform: rotate(-20deg) scale(0.5);
 		bottom: 3rem;
 		left: 35%;
-	}
+		transform: rotate(-20deg) scale(0.5);
 
-	&.is-active .arrow {
-		transform: rotate(10deg) scale(1);
+		@at-root .is-active#{&} {
+			transform: rotate(10deg) scale(1);
+		}
 	}
 }
 
@@ -148,13 +149,13 @@ a {
 	background-image: linear-gradient(to right, #00BCD4, #E91E63);
 
 	.arrow {
-		transform: rotate(-20deg) scale(-0.5);
 		top: 50%;
 		right: 0;
-	}
+		transform: rotate(-20deg) scale(-0.5);
 
-	&.is-active .arrow {
-		transform: rotate(10deg) scale(-1);
+		@at-root .is-active#{&} {
+			transform: rotate(10deg) scale(-1);
+		}
 	}
 }
 
@@ -162,54 +163,54 @@ a {
 	background-image: linear-gradient(to right, #E91E63, #CDDC39);
 
 	.arrow {
-		transform: translate(-5vh, 0) rotate(120deg) scale(0.5);
 		top: 4rem;
 		left: 50%;
-	}
+		transform: translate(-5vh, 0) rotate(120deg) scale(0.5);
 
-	&.is-active .arrow {
-		transform: translate(-5vh, 0) rotate(140deg) scale(1);
+		@at-root .is-active#{&} {
+			transform: translate(-5vh, 0) rotate(140deg) scale(1);
+		}
 	}
 }
 
 .item-5 { // CSS Snap
-	background-image: linear-gradient(to right, #CDDC39, #FFFFFF);
 	color: #2F2F2F;
+	background-image: linear-gradient(to right, #CDDC39, #FFFFFF);
 }
 
 .item-6 { // Installation
-	background-color: #FFFFFF;
 	color: #2F2F2F;
+	background-color: #FFFFFF;
 
 	.arrow {
-		transform: rotate(-25deg) scale(1);
 		bottom: 55%;
 		left: 54%;
+		transform: rotate(-25deg) scale(1);
 		fill: #E91E63;
-	}
 
-	&.is-active .arrow {
-		transform: rotate(-5deg) scale(1);
+		@at-root .is-active#{&} {
+			transform: rotate(-5deg) scale(1);
+		}
 	}
 }
 
 .button {
-	transition: opacity 0.3s, text-shadow 0.3s;
-	opacity: 1;
-	transform: translate(0, -50%);
 	position: fixed;
 	top: 50%;
-	padding: 1.25rem 0;
 	width: 2rem;
+	padding: 1.25rem 0;
 	color: #2F2F2F;
-	font-family: 'icons';
-	font-size: 3rem;
 	font-weight: 400;
+	font-size: 3rem;
+	font-family: 'icons'; // stylelint-disable-line font-family-no-missing-generic-family-keyword
 	text-shadow: 0 0 0 rgba(#2F2F2F, 0);
+	transform: translate(0, -50%);
+	opacity: 1;
+	transition: opacity 0.3s, text-shadow 0.3s;
 
 	&:focus {
-		outline: none;
 		text-shadow: 0 0 12px rgba(#2F2F2F, 0.75);
+		outline: none;
 	}
 
 	&[disabled] {
@@ -251,24 +252,24 @@ a {
 	}
 
 	span {
-		transition: opacity 0.3s, bottom 0.3s;
-		opacity: 0;
-		transform: translate(-50%, 0);
 		position: absolute;
 		bottom: 0;
 		left: 50%;
+		transform: translate(-50%, 0);
+		opacity: 0;
+		transition: opacity 0.3s, bottom 0.3s;
 	}
 
 	button {
-		transition: background 0.3s;
-		display: block;
 		position: relative;
+		display: block;
 		width: 1rem;
 		height: 1rem;
-		background: #2F2F2F;
-		border-radius: 50%;
 		color: #2F2F2F;
 		font-family: 'Pacifico', cursive;
+		background: #2F2F2F;
+		border-radius: 50%;
+		transition: background 0.3s;
 
 		&:hover,
 		&:focus {
@@ -277,10 +278,10 @@ a {
 		}
 
 		&:hover,
-		&[disabled] {
+		&[disabled] { // stylelint-disable-line selector-no-qualifying-type
 			span {
-				opacity: 1;
 				bottom: 120%;
+				opacity: 1;
 			}
 		}
 	}
