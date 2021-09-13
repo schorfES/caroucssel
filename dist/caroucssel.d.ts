@@ -1,18 +1,17 @@
-import { Index, Options, Pages } from './types';
+import { Configuration, Index, Options, Pages } from './types';
 export * from './types';
 export declare class Carousel {
     static resetInstanceCount(): void;
     protected _el: Element;
     protected _id: string;
-    protected _options: Options;
+    protected _conf: Configuration;
     protected _mask: HTMLDivElement | null;
     protected _isSmooth: boolean;
-    protected _scrollbarHeight: number | undefined;
     protected _previous: HTMLButtonElement | null;
     protected _next: HTMLButtonElement | null;
     protected _pagination: HTMLElement | null;
     protected _paginationButtons: HTMLButtonElement[] | null;
-    constructor(el: Element, options?: Partial<Options>);
+    constructor(el: Element, options?: Options);
     get el(): Element;
     get id(): string;
     get index(): Index;

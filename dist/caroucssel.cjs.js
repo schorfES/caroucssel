@@ -13,6 +13,11 @@ function fromCache(ref, key, factory) {
     __CACHE.set(ref, storage);
     return value;
 }
+function writeCache(ref, key, value) {
+    const storage = __CACHE.get(ref) || {};
+    storage[key] = value;
+    __CACHE.set(ref, storage);
+}
 function clearCache(ref, key) {
     const storage = __CACHE.get(ref);
     if (!storage) {
@@ -86,6 +91,7 @@ const CACHE_KEY_INDEX = 'index';
 const CACHE_KEY_ITEMS = 'items';
 const CACHE_KEY_PAGES = 'pages';
 const CACHE_KEY_PAGE_INDEX = 'page-index';
+const CACHE_KEY_SCROLLBAR = 'scrollbar';
 const VISIBILITY_OFFSET = 0.25;
 const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
 const EVENT_SCROLL = 'scroll';
@@ -140,10 +146,9 @@ class Carousel {
     }
     _el;
     _id;
-    _options;
+    _conf;
     _mask = null;
     _isSmooth = false;
-    _scrollbarHeight = undefined;
     _previous = null;
     _next = null;
     _pagination = null;
@@ -159,7 +164,7 @@ class Carousel {
         this._id = el.id;
         this._mask = null;
         const opts = { ...DEFAULTS, ...options };
-        this._options = opts;
+        this._conf = opts;
         this._addButtons();
         this._addPagination();
         this._updateScrollbars();
@@ -234,7 +239,7 @@ class Carousel {
     }
     get items() {
         return fromCache(this, CACHE_KEY_ITEMS, () => {
-            const { el, _options: { filterItem } } = this;
+            const { el, _conf: { filterItem } } = this;
             const children = Array.from(el.children);
             return children
                 .filter((item) => !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden)
@@ -322,7 +327,7 @@ class Carousel {
         this._updateScrollbars();
     }
     _updateScrollbars() {
-        const { el, _options } = this;
+        const { el, _conf: _options } = this;
         const { hasScrollbars, scrollbarsMaskClassName } = _options;
         if (hasScrollbars) {
             return;
@@ -340,13 +345,14 @@ class Carousel {
             mask.appendChild(el);
             return mask;
         })();
-        if (height === this._scrollbarHeight) {
+        const cachedHeight = fromCache(this, CACHE_KEY_SCROLLBAR, () => undefined);
+        if (height === cachedHeight) {
             return;
         }
+        writeCache(this, CACHE_KEY_SCROLLBAR, height);
         const element = el;
         element.style.height = `calc(100% + ${height}px)`;
         element.style.marginBottom = `${height * -1}px`;
-        this._scrollbarHeight = height;
     }
     _removeScrollbars() {
         const { _mask, el } = this;
@@ -359,7 +365,7 @@ class Carousel {
         this._mask = null;
     }
     _addButtons() {
-        const { el, id, _options } = this;
+        const { el, id, _conf: _options } = this;
         if (!_options.hasButtons) {
             return;
         }
@@ -392,7 +398,7 @@ class Carousel {
         this._updateButtons();
     }
     _updateButtons() {
-        const { _options } = this;
+        const { _conf: _options } = this;
         if (!_options.hasButtons) {
             return;
         }
@@ -419,7 +425,7 @@ class Carousel {
         });
     }
     _addPagination() {
-        const { _options } = this;
+        const { _conf: _options } = this;
         if (!_options.hasPagination) {
             return;
         }
@@ -450,7 +456,7 @@ class Carousel {
         this._updatePagination();
     }
     _updatePagination() {
-        const { _options } = this;
+        const { _conf: _options } = this;
         if (!_options.hasPagination) {
             return;
         }
@@ -475,7 +481,7 @@ class Carousel {
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         this._updateButtons();
         this._updatePagination();
-        const { index, _options: { onScroll } } = this;
+        const { index, _conf: { onScroll } } = this;
         onScroll && onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
     }
     _onResize() {

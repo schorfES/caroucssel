@@ -35,7 +35,7 @@ export declare type ScrollHook = <T>(event: {
     originalEvent: Event;
 }) => void;
 export declare type FilterItemFn = ((item: HTMLElement) => boolean) | ((item: HTMLElement, index: number) => boolean) | ((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
-export declare type Options = {
+export declare type Configuration = {
     index?: Index | number;
     hasButtons: boolean;
     buttonClassName: string;
@@ -52,4 +52,5 @@ export declare type Options = {
     filterItem: FilterItemFn;
     onScroll: ScrollHook;
 };
+export declare type Options = Partial<Configuration>;
 //# sourceMappingURL=index.d.ts.map

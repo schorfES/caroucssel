@@ -13,7 +13,14 @@ declare type Storage = {
  */
 export declare function fromCache<T = unknown>(ref: Reference, key: string, factory: () => T): T;
 /**
- * Cleats the cache entry by as specific key of a given reference.
+ * Explicitly writes a value into the cache.
+ * @param ref the reference
+ * @param key the storage key
+ * @param value the value
+ */
+export declare function writeCache<T = unknown>(ref: Reference, key: string, value: T): void;
+/**
+ * Creates the cache entry by as specific key of a given reference.
  * @param ref the reference
  * @param key the storage key
  */

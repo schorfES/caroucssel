@@ -19,7 +19,18 @@ export function fromCache(ref, key, factory) {
     return value;
 }
 /**
- * Cleats the cache entry by as specific key of a given reference.
+ * Explicitly writes a value into the cache.
+ * @param ref the reference
+ * @param key the storage key
+ * @param value the value
+ */
+export function writeCache(ref, key, value) {
+    const storage = __CACHE.get(ref) || {};
+    storage[key] = value;
+    __CACHE.set(ref, storage);
+}
+/**
+ * Creates the cache entry by as specific key of a given reference.
  * @param ref the reference
  * @param key the storage key
  */
