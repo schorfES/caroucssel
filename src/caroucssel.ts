@@ -1,4 +1,4 @@
-import { ButtonOptions, ButtonParams, Index, Options, Pages, PaginationParams } from './types';
+import { ButtonOptions, ButtonParams, Configuration, Index, Options, Pages, PaginationParams } from './types';
 import { clearCache, clearFullCache, fromCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 import { render } from './utils/render';
@@ -36,7 +36,7 @@ const DEFAULTS_BUTTON_NEXT: Required<ButtonOptions> = {
 	title: 'Go to next',
 };
 
-const DEFAULTS: Options = {
+const DEFAULTS: Configuration = {
 	// Buttons:
 	hasButtons: false,
 	buttonClassName: 'button',
@@ -98,7 +98,7 @@ export class Carousel {
 
 	protected _id: string;
 
-	protected _options: Options;
+	protected _conf: Configuration;
 
 	protected _mask: HTMLDivElement | null = null;
 
@@ -114,7 +114,7 @@ export class Carousel {
 
 	protected _paginationButtons: HTMLButtonElement[] | null = null;
 
-	constructor(el: Element, options: Partial<Options> = {}) {
+	constructor(el: Element, options: Options = {}) {
 		if (!el || !(el instanceof Element)) {
 			throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
 		}
@@ -135,7 +135,7 @@ export class Carousel {
 
 		// extend options and defaults:
 		const opts = { ...DEFAULTS, ...options };
-		this._options = opts;
+		this._conf = opts;
 
 		// Render:
 		this._addButtons();
@@ -248,7 +248,7 @@ export class Carousel {
 
 	get items(): HTMLElement[] {
 		return fromCache(this, CACHE_KEY_ITEMS, () => {
-			const { el, _options: { filterItem } } = this;
+			const { el, _conf: { filterItem } } = this;
 			const children = Array.from(el.children) as HTMLElement[];
 
 			return children
@@ -427,7 +427,7 @@ export class Carousel {
 	}
 
 	protected _updateScrollbars(): void {
-		const { el , _options } = this;
+		const { el , _conf: _options } = this;
 		const { hasScrollbars, scrollbarsMaskClassName } = _options;
 		if (hasScrollbars) {
 			return;
@@ -476,7 +476,7 @@ export class Carousel {
 	}
 
 	protected _addButtons(): void {
-		const { el, id, _options } = this;
+		const { el, id, _conf: _options } = this;
 		if (!_options.hasButtons) {
 			return;
 		}
@@ -518,7 +518,7 @@ export class Carousel {
 	}
 
 	protected _updateButtons(): void {
-		const { _options } = this;
+		const { _conf: _options } = this;
 		if (!_options.hasButtons) {
 			return;
 		}
@@ -550,7 +550,7 @@ export class Carousel {
 	}
 
 	protected _addPagination(): void {
-		const { _options } = this;
+		const { _conf: _options } = this;
 		if (!_options.hasPagination) {
 			return;
 		}
@@ -589,7 +589,7 @@ export class Carousel {
 	}
 
 	protected _updatePagination(): void {
-		const { _options } = this;
+		const { _conf: _options } = this;
 		if (!_options.hasPagination) {
 			return;
 		}
@@ -621,7 +621,7 @@ export class Carousel {
 		this._updateButtons();
 		this._updatePagination();
 
-		const { index, _options: { onScroll } } = this;
+		const { index, _conf: { onScroll } } = this;
 		onScroll && onScroll<Carousel>({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
 	}
 
