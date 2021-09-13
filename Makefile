@@ -59,26 +59,20 @@ build_scripts:
 
 
 web:
-	cp ./dist/caroucssel.min.css ./web/caroucssel.min.css
-	cp ./dist/caroucssel.min.js ./web/caroucssel.min.js
+	rm -rf public/
 
-	node_modules/.bin/sass \
-		./web/styles.scss \
-		./web/styles.min.css \
-		--style compressed \
-		--no-source-map \
-		--trace
-
-	node_modules/.bin/sass \
-		./web/demo/styles.scss \
-		./web/demo/styles.min.css \
-		--style compressed \
-		--no-source-map \
-		--trace
+	node_modules/.bin/parcel \
+		build \
+		./web/index.html \
+		./web/demo/index.html \
+		--out-dir public \
+		--no-cache \
+		--no-minify \
+		--public-url /caroucssel/
 
 
 ghpages: web
-	gh-pages -d ./web/
+	gh-pages -d ./public/
 
 
 release: validate tests build ghpages
@@ -89,8 +83,9 @@ release: validate tests build ghpages
 		--tag
 
 
-watch: build web
-	# run em' all in parallel:
-	node_modules/.bin/live-server & \
-	node_modules/.bin/npm-watch web & \
-	node_modules/.bin/npm-watch build
+watch:
+	node_modules/.bin/parcel \
+		serve \
+		./web/index.html \
+		./web/demo/index.html \
+		--out-dir public

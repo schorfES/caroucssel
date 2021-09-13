@@ -8,8 +8,8 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Grand+Hotel|Vollkorn:400,600,700">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-		<link rel="stylesheet" href="./caroucssel.min.css">
-		<link rel="stylesheet" href="./styles.min.css">
+		<link rel="stylesheet" href="../src/caroucssel.css.scss">
+		<link rel="stylesheet" href="./styles.scss">
 
 		<meta name="description" content="A lightweight dependency-free css carousel." />
 
@@ -96,7 +96,6 @@
 							forwards and backward between items inside the
 							carousel.
 						</p>
-						<p>
 						<div class="code">
 							<pre>import {Carousel} from 'caroucssel';
 
@@ -105,6 +104,7 @@ const carousel = new Carousel(el, {
 	hasButtons: true
 });</pre>
 						</div>
+						<p>
 							Do you want some more details? Go to the
 							<a
 								href="https://github.com/schorfES/caroucssel#buttons"
@@ -219,8 +219,7 @@ const carousel = new Carousel(el, {
 				</div>
 			</div>
 		</div>
-		<script src="//polyfill.io/v3/polyfill.min.js?features=smoothscroll" async></script>
-		<script src="./caroucssel.min.js"></script>
-		<script src="./script.js"></script>
+		<script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Array.from%2Csmoothscroll%2CArray.prototype.findIndex"></script>
+		<script type="text/javascript" src="./script.ts"></script>
 	</body>
 </html>
