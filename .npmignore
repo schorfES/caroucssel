@@ -1,8 +1,6 @@
 .git/
 .github/
 coverage/
-build/
-scripts/
 src/
 web/
 .editorconfig
