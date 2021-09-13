@@ -1,4 +1,4 @@
-import { cacheInstance, clearCache, clearFullCache, fromCache } from './cache';
+import { cacheInstance, clearCache, clearFullCache, fromCache, writeCache } from './cache';
 
 
 describe('Cache util', () => {
@@ -114,6 +114,20 @@ describe('Cache util', () => {
 			expect(values).toEqual([42, 42, 13, 13]);
 			expect(calculate1).toHaveBeenCalledTimes(1);
 			expect(calculate2).toHaveBeenCalledTimes(1);
+		});
+
+	});
+
+	describe('writeCache', () => {
+
+		it('should write to cache', () => {
+			const ref = {};
+			writeCache(ref, 'answer', 123);
+
+			const calculate = jest.fn(() => 42);
+			expect(fromCache(ref, 'answer', calculate)).toBe(123);
+			expect(calculate).not.toHaveBeenCalled();
+
 		});
 
 	});
