@@ -1,4 +1,5 @@
-.PHONY:  validate tests build web ghpages release watch
+build_clean:
+.PHONY:  validate tests build build_clean build_styles build_scripts web ghpages release watch
 
 
 validate:
@@ -14,13 +15,6 @@ validate:
 		--no-exit \
 		"./src/**/*.scss"
 
-	# 1666: ignoring sass-lint>merge (https://github.com/sasstools/sass-lint/pull/1321)
-	# 1751: is caused by live-server, is out of maintainance and should be replaced in the future
-	# 1755: is caused by np, no relevant dependency for build
-	./node_modules/.bin/audit-ci  \
-		--moderate \
-		--allowlist 1666 1751 1755
-
 
 tests:
 	./node_modules/.bin/jest \
@@ -29,17 +23,22 @@ tests:
 		--verbose
 
 
-build:
+build: build_clean build_styles build_scripts
+
+
+build_clean:
 	rm -rf dist/ && mkdir dist/
 
-	./node_modules/.bin/sass \
+
+build_styles:
+	NODE_ENV=production ./node_modules/.bin/sass \
 		./src/caroucssel.css.scss \
 		./dist/caroucssel.css \
 		--style expanded \
 		--no-source-map \
 		--trace
 
-	./node_modules/.bin/sass \
+	NODE_ENV=production ./node_modules/.bin/sass \
 		./src/caroucssel.css.scss \
 		./dist/caroucssel.min.css \
 		--style compressed \
@@ -48,11 +47,15 @@ build:
 
 	cp ./src/caroucssel.scss ./dist/caroucssel.scss
 
-	./node_modules/.bin/tsc
 
-	cp ./build/index.d.ts ./dist/caroucssel.d.ts
+build_scripts:
+	NODE_ENV=production ./node_modules/.bin/tsc \
+		--project tsconfig.build.json \
+		--sourceMap
 
-	node ./scripts/build.js
+	NODE_ENV=production ./node_modules/.bin/rollup \
+		--config rollup.config.ts \
+		--configPlugin typescript
 
 
 web:
