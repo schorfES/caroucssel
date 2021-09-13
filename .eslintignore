@@ -1,5 +1,7 @@
+.cache/
+.parcel-cache/
 coverage/
 node_modules/
-build/
+public/
 dist/
 web/

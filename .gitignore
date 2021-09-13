@@ -1,7 +1,6 @@
 .DS_Store
-build/
+.cache/
+.parcel-cache/
 coverage/
 node_modules/
-
-# GH Pages
-web/**/*.min.*
+public/
