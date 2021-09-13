@@ -124,6 +124,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.fromCache = fromCache;
+exports.writeCache = writeCache;
 exports.clearCache = clearCache;
 exports.clearFullCache = clearFullCache;
 exports.cacheInstance = void 0;
@@ -155,7 +156,21 @@ function fromCache(ref, key, factory) {
   return value;
 }
 /**
- * Cleats the cache entry by as specific key of a given reference.
+ * Explicitly writes a value into the cache.
+ * @param ref the reference
+ * @param key the storage key
+ * @param value the value
+ */
+
+
+function writeCache(ref, key, value) {
+  var storage = __CACHE.get(ref) || {};
+  storage[key] = value;
+
+  __CACHE.set(ref, storage);
+}
+/**
+ * Creates the cache entry by as specific key of a given reference.
  * @param ref the reference
  * @param key the storage key
  */
@@ -385,6 +400,7 @@ var CACHE_KEY_INDEX = 'index';
 var CACHE_KEY_ITEMS = 'items';
 var CACHE_KEY_PAGES = 'pages';
 var CACHE_KEY_PAGE_INDEX = 'page-index';
+var CACHE_KEY_SCROLLBAR = 'scrollbar';
 var VISIBILITY_OFFSET = 0.25;
 var INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
 var EVENT_SCROLL = 'scroll';
@@ -466,13 +482,11 @@ var Carousel = /*#__PURE__*/function () {
 
     _defineProperty(this, "_id", void 0);
 
-    _defineProperty(this, "_options", void 0);
+    _defineProperty(this, "_conf", void 0);
 
     _defineProperty(this, "_mask", null);
 
     _defineProperty(this, "_isSmooth", false);
-
-    _defineProperty(this, "_scrollbarHeight", undefined);
 
     _defineProperty(this, "_previous", null);
 
@@ -499,7 +513,7 @@ var Carousel = /*#__PURE__*/function () {
 
     var opts = _objectSpread(_objectSpread({}, DEFAULTS), options);
 
-    this._options = opts; // Render:
+    this._conf = opts; // Render:
 
     this._addButtons();
 
@@ -627,7 +641,7 @@ var Carousel = /*#__PURE__*/function () {
 
       return (0, _cache.fromCache)(this, CACHE_KEY_ITEMS, function () {
         var el = _this2.el,
-            filterItem = _this2._options.filterItem;
+            filterItem = _this2._conf.filterItem;
         var children = Array.from(el.children);
         return children.filter(function (item) {
           return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
@@ -824,7 +838,7 @@ var Carousel = /*#__PURE__*/function () {
       var _this5 = this;
 
       var el = this.el,
-          _options = this._options;
+          _options = this._conf;
       var hasScrollbars = _options.hasScrollbars,
           scrollbarsMaskClassName = _options.scrollbarsMaskClassName;
 
@@ -853,14 +867,18 @@ var Carousel = /*#__PURE__*/function () {
         return mask;
       }();
 
-      if (height === this._scrollbarHeight) {
+      var cachedHeight = (0, _cache.fromCache)(this, CACHE_KEY_SCROLLBAR, function () {
+        return undefined;
+      });
+
+      if (height === cachedHeight) {
         return;
       }
 
+      (0, _cache.writeCache)(this, CACHE_KEY_SCROLLBAR, height);
       var element = el;
       element.style.height = "calc(100% + ".concat(height, "px)");
       element.style.marginBottom = "".concat(height * -1, "px");
-      this._scrollbarHeight = height;
     }
   }, {
     key: "_removeScrollbars",
@@ -886,7 +904,7 @@ var Carousel = /*#__PURE__*/function () {
 
       var el = this.el,
           id = this.id,
-          _options = this._options;
+          _options = this._conf;
 
       if (!_options.hasButtons) {
         return;
@@ -948,7 +966,7 @@ var Carousel = /*#__PURE__*/function () {
   }, {
     key: "_updateButtons",
     value: function _updateButtons() {
-      var _options = this._options;
+      var _options = this._conf;
 
       if (!_options.hasButtons) {
         return;
@@ -992,7 +1010,7 @@ var Carousel = /*#__PURE__*/function () {
     value: function _addPagination() {
       var _this7 = this;
 
-      var _options = this._options;
+      var _options = this._conf;
 
       if (!_options.hasPagination) {
         return;
@@ -1041,7 +1059,7 @@ var Carousel = /*#__PURE__*/function () {
   }, {
     key: "_updatePagination",
     value: function _updatePagination() {
-      var _options = this._options;
+      var _options = this._conf;
 
       if (!_options.hasPagination) {
         return;
@@ -1088,7 +1106,7 @@ var Carousel = /*#__PURE__*/function () {
       this._updatePagination();
 
       var index = this.index,
-          onScroll = this._options.onScroll;
+          onScroll = this._conf.onScroll;
       onScroll && onScroll({
         index: index,
         type: EVENT_SCROLL,
@@ -1126,26 +1144,40 @@ var Carousel = /*#__PURE__*/function () {
 }();
 
 exports.Carousel = Carousel;
-},{"./utils/cache":"HKiW","./utils/debounce":"GQHl","./utils/render":"D3is","./utils/scrollbar":"QbP4","./types":"FueT"}],"g4tf":[function(require,module,exports) {
+},{"./utils/cache":"HKiW","./utils/debounce":"GQHl","./utils/render":"D3is","./utils/scrollbar":"QbP4","./types":"FueT"}],"qcOq":[function(require,module,exports) {
 "use strict";
 
-var _caroucssel = require("../src/caroucssel");
+var _caroucssel = require("../../src/caroucssel");
 
-var element = document.querySelector('.caroucssel');
-var items = Array.from(document.querySelectorAll('.item'));
+var elements = Array.from(document.querySelectorAll('.caroucssel'));
+elements.forEach(function (element) {
+  var _element$dataset, _element$dataset$conf;
 
-if (!element) {
-  throw new Error('Missing element for carousel.');
-}
-
-new _caroucssel.Carousel(element, {
-  hasButtons: true,
-  hasPagination: true,
-  onScroll: function onScroll(event) {
-    items.forEach(function (item, index) {
-      item.classList[event.index.includes(index) ? 'add' : 'remove']('is-active');
-    });
-  }
+  var config = ((_element$dataset = element.dataset) === null || _element$dataset === void 0 ? void 0 : (_element$dataset$conf = _element$dataset.config) === null || _element$dataset$conf === void 0 ? void 0 : _element$dataset$conf.split(',').map(function (size) {
+    return size.trim();
+  })) || [];
+  var orders = (element.dataset.order || '').split(',');
+  var offsetsLeft = (element.dataset.offsetLeft || '').split(',');
+  config.forEach(function (width, index) {
+    var item = document.createElement('div');
+    item.className = 'item';
+    item.textContent = 'Item ' + (index + 1);
+    item.style.width = width;
+    item.style.order = orders[index] || '';
+    item.style.marginLeft = offsetsLeft[index] || '';
+    element.appendChild(item);
+    var label = document.createElement('small');
+    label.className = 'item-label';
+    label.textContent = '(index: ' + index + ', width: ' + width + ')';
+    item.appendChild(label);
+  });
+  new _caroucssel.Carousel(element, {
+    hasButtons: true,
+    hasPagination: true,
+    onScroll: function onScroll(event) {// console.log('INDEX', event.index);
+      // console.log('PAGES', event.target.pages);
+    }
+  });
 });
-},{"../src/caroucssel":"oYt0"}]},{},["g4tf"], null)
-//# sourceMappingURL=/caroucssel/script.af8431a3.js.map
+},{"../../src/caroucssel":"oYt0"}]},{},["qcOq"], null)
+//# sourceMappingURL=/caroucssel/script.b3187543.js.map
