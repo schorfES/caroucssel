@@ -51,7 +51,7 @@ export type FilterItemFn =
 	((item: HTMLElement, index: number) => boolean) |
 	((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
 
-export type Options = {
+export type Configuration = {
 	// Settings:
 	index?: Index | number;
 
@@ -79,3 +79,5 @@ export type Options = {
 	// Hooks:
 	onScroll: ScrollHook;
 };
+
+export type Options = Partial<Configuration>;
