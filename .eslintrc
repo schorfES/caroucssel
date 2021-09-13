@@ -1,39 +1,68 @@
 {
-  "env": {
-    "node": true,
-    "browser": true,
-    "es6": true,
-    "jest/globals": true
-  },
-  "extends": [
-    "eslint:recommended",
+	"env": {
+		"node": true,
+		"browser": true,
+		"es6": true,
+		"jest/globals": true
+	},
+	"extends": [
+		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
+		"plugin:import/errors",
+		"plugin:import/typescript",
 		"plugin:jest/recommended",
 		"plugin:jest/style"
-  ],
-  "parser": "@typescript-eslint/parser",
+	],
+	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"project": ["./tsconfig.json"]
 	},
-  "plugins": [
+	"plugins": [
 		"@typescript-eslint",
 		"jest"
-  ],
-  "rules": {
-    "sort-imports": ["error", {
+	],
+	"rules": {
+		"comma-dangle": ["error", "always-multiline"],
+
+		"import/newline-after-import": ["error", { "count": 2 }],
+
+		"import/order": ["error", {
+			"alphabetize": {
+				"order": "asc",
+				"caseInsensitive": false
+			},
+
+			"groups": [
+				"builtin",
+				"external",
+				"parent",
+				"sibling",
+				"index",
+				"object",
+				"unknown"
+			],
+
+			"newlines-between": "always"
+		}],
+
+		"object-curly-spacing": ["error", "always"],
+
+		"quote-props": ["error", "consistent-as-needed"],
+
+		"sort-imports": ["error", {
 			"allowSeparatedGroups": true,
 			"ignoreCase": true,
-			"ignoreMemberSort": false,
-			"memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+			"ignoreDeclarationSort": true,
+			"ignoreMemberSort": false
 		}]
-  },
+	},
 	"overrides": [
 		{
 			"files": ["*.test.ts"],
 			"rules": {
-        "@typescript-eslint/ban-ts-comment": "off"
-      }
+				"@typescript-eslint/ban-ts-comment": "off"
+			}
 		}
 	]
 }

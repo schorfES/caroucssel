@@ -1,7 +1,6 @@
-import { ScrollbarDimensions } from './utils/scrollbar';
-
-import { ButtonParams, FilterItemFn, PaginationParams, PaginationTextParams } from './types';
 import { Carousel } from './caroucssel';
+import { ButtonParams, FilterItemFn, PaginationParams, PaginationTextParams } from './types';
+import { ScrollbarDimensions } from './utils/scrollbar';
 
 
 /* Mocks
@@ -15,7 +14,7 @@ jest.mock('./utils/scrollbar', () => {
 			get dimensions() {
 				return mockScrollbarDimensions;
 			}
-		}
+		},
 	};
 });
 
@@ -25,7 +24,7 @@ jest.mock('./utils/scrollbar', () => {
 
 type FixtureOptions = {id: string | null;};
 function __fixture(count: number, options: Partial<FixtureOptions> = {}) {
-	const settings: FixtureOptions = {id: null, ...options};
+	const settings: FixtureOptions = { id: null, ...options };
 
 	return `
 		<div class="container">
@@ -81,7 +80,7 @@ describe('Caroucssel', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers();
-		mockScrollbarDimensions = {height: 0};
+		mockScrollbarDimensions = { height: 0 };
 	});
 
 
@@ -142,7 +141,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should not add id-attribute when element already has an id', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 
 			new Carousel(el);
@@ -150,17 +149,17 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return current index of visible item', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			const carousel = new Carousel(el);
 			expect(carousel.index).toEqual([0]);
 
-			__triggerScroll(el, {left: 120});
+			__triggerScroll(el, { left: 120 });
 			expect(carousel.index).toEqual([1]);
 		});
 
 		it('should return current index(s) when multiple items are visible', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 120;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 40);
@@ -168,7 +167,7 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el);
 			expect(carousel.index).toEqual([0, 1, 2]);
 
-			__triggerScroll(el, {left: 120});
+			__triggerScroll(el, { left: 120 });
 			expect(carousel.index).toEqual([3, 4, 5]);
 		});
 
@@ -181,19 +180,19 @@ describe('Caroucssel', () => {
 		});
 
 		it('should not set initial index when option is undefined (default)', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 
 			const scrollTo = jest.spyOn(el, 'scrollTo');
-			const carousel = new Carousel(el, {index: undefined});
+			const carousel = new Carousel(el, { index: undefined });
 			expect(carousel.index).toEqual([0]);
 			expect(scrollTo).not.toHaveBeenCalled();
 		});
 
 		it('should not set initial index when option is an empty array', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
@@ -202,59 +201,59 @@ describe('Caroucssel', () => {
 
 			// Test untyped behaviour of constructor
 			// @ts-ignore
-			const carousel = new Carousel(el, {index: []});
+			const carousel = new Carousel(el, { index: [] });
 			expect(carousel.index).toEqual([0]);
 			expect(scrollTo).not.toHaveBeenCalled();
 		});
 
 		it('should set initial index when option is a number', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 
 			const scrollTo = jest.spyOn(el, 'scrollTo');
-			const carousel = new Carousel(el, {index: 4});
+			const carousel = new Carousel(el, { index: 4 });
 			expect(carousel.index).toEqual([4]);
 			expect(scrollTo).toHaveBeenCalled();
 		});
 
 		it('should set initial index by option', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 
 			const scrollTo = jest.spyOn(el, 'scrollTo');
-			const carousel = new Carousel(el, {index: [2]});
+			const carousel = new Carousel(el, { index: [2] });
 			expect(carousel.index).toEqual([2]);
 			expect(scrollTo).toHaveBeenCalled();
 		});
 
 		it('should set initial index when option is [0]', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 
 			const scrollTo = jest.spyOn(el, 'scrollTo');
-			const carousel = new Carousel(el, {index: [0]});
+			const carousel = new Carousel(el, { index: [0] });
 			expect(carousel.index).toEqual([0]);
 			expect(scrollTo).toHaveBeenCalled();
 		});
 
 		it('should set initial index as option when multiple items are visible', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 120;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 40);
 
-			const carousel = new Carousel(el, {index: [2]});
+			const carousel = new Carousel(el, { index: [2] });
 			expect(carousel.index).toEqual([2, 3, 4]);
 		});
 
 		it('should return current index(s) at expected bounds (using 25% rule)', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
@@ -262,24 +261,24 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el);
 			expect(carousel.index).toEqual([0, 1]);
 
-			__triggerScroll(el, {left: 50 * 0.25});
+			__triggerScroll(el, { left: 50 * 0.25 });
 			expect(carousel.index).toEqual([0, 1]);
 
-			__triggerScroll(el, {left: 50 * 0.25 + 1});
+			__triggerScroll(el, { left: 50 * 0.25 + 1 });
 			expect(carousel.index).toEqual([1]);
 
-			__triggerScroll(el, {left: 50 * 0.75 - 1});
+			__triggerScroll(el, { left: 50 * 0.75 - 1 });
 			expect(carousel.index).toEqual([1]);
 
-			__triggerScroll(el, {left: 50 * 0.75});
+			__triggerScroll(el, { left: 50 * 0.75 });
 			expect(carousel.index).toEqual([1, 2]);
 
-			__triggerScroll(el, {left: 50 * 1});
+			__triggerScroll(el, { left: 50 * 1 });
 			expect(carousel.index).toEqual([1, 2]);
 		});
 
 		it('should return pages when each item is at 100% width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
@@ -291,7 +290,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages when each item is at 75% width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 75);
@@ -303,7 +302,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages when each item is at 58% width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 58);
@@ -315,7 +314,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages when each item is at 57% width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 57);
@@ -327,7 +326,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages when each item is at 50% width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
@@ -339,7 +338,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages when each item is at 33.33% width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 33.33);
@@ -351,7 +350,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages when each item is at 120% width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 120);
@@ -363,7 +362,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages when item is at 0px width', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 0);
@@ -375,7 +374,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should return pages for each item when element width is 0px', () => {
-			document.body.innerHTML = __fixture(10, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(10, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 0;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
@@ -464,7 +463,7 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(9);
 			const el = __querySelector('.caroucssel');
 			const filterItem: FilterItemFn = (item: Element, index: number) => (index % 3) === 0;
-			const carousel = new Carousel(el, {filterItem});
+			const carousel = new Carousel(el, { filterItem });
 			expect(carousel.items).toHaveLength(3);
 		});
 
@@ -477,7 +476,7 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 			const options = {
-				hasButtons: true
+				hasButtons: true,
 			};
 			new Carousel(el, options);
 
@@ -493,13 +492,13 @@ describe('Caroucssel', () => {
 				buttonPrevious: {
 					className: 'custom-previous-button-class',
 					label: 'Custom previous label',
-					title: 'Custom previous title'
+					title: 'Custom previous title',
 				},
 				buttonNext: {
 					className: 'custom-next-button-class',
 					label: 'Custom next label',
-					title: 'Custom next title'
-				}
+					title: 'Custom next title',
+				},
 			};
 			new Carousel(el, options);
 
@@ -507,7 +506,7 @@ describe('Caroucssel', () => {
 		});
 
 		it('should add buttons with custom template', () => {
-			document.body.innerHTML = __fixture(3, {id: 'custom-id'});
+			document.body.innerHTML = __fixture(3, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			const options = {
 				hasButtons: true,
@@ -515,15 +514,15 @@ describe('Caroucssel', () => {
 				buttonPrevious: {
 					className: 'custom-previous-button-class',
 					label: 'Custom previous label',
-					title: 'Custom previous title'
+					title: 'Custom previous title',
 				},
 				buttonNext: {
 					className: 'custom-next-button-class',
 					label: 'Custom next label',
-					title: 'Custom next title'
+					title: 'Custom next title',
 				},
-				buttonTemplate: jest.fn<string, ButtonParams[]>(({className, label, title}) =>
-					`<span class="${className}" title="${title}">${label}</span>`)
+				buttonTemplate: jest.fn<string, ButtonParams[]>(({ className, label, title }) =>
+					`<span class="${className}" title="${title}">${label}</span>`),
 			};
 			new Carousel(el, options);
 
@@ -533,13 +532,13 @@ describe('Caroucssel', () => {
 				className: 'custom-button-class custom-previous-button-class',
 				controls: 'custom-id',
 				label: 'Custom previous label',
-				title: 'Custom previous title'
+				title: 'Custom previous title',
 			});
 			expect(options.buttonTemplate).toHaveBeenNthCalledWith(2, {
 				className: 'custom-button-class custom-next-button-class',
 				controls: 'custom-id',
 				label: 'Custom next label',
-				title: 'Custom next title'
+				title: 'Custom next title',
 			});
 		});
 
@@ -599,7 +598,7 @@ describe('Caroucssel', () => {
 		it('should add disabled buttons without items', () => {
 			document.body.innerHTML = __fixture(0);
 			const el = __querySelector('.caroucssel');
-			new Carousel(el, {hasButtons: true});
+			new Carousel(el, { hasButtons: true });
 
 			expect(document.body.innerHTML).toMatchSnapshot();
 			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(2);
@@ -610,7 +609,7 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			new Carousel(el, {hasButtons: true});
+			new Carousel(el, { hasButtons: true });
 
 			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(1);
 
@@ -624,16 +623,16 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			new Carousel(el, {hasButtons: true});
+			new Carousel(el, { hasButtons: true });
 
 			const buttons = document.querySelectorAll<HTMLButtonElement>('.button');
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([true, false]);
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
 
-			__triggerScroll(el, {left: 100});
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([false, false]);
+			__triggerScroll(el, { left: 100 });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
 
-			__triggerScroll(el, {left: 200});
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([false, true]);
+			__triggerScroll(el, { left: 200 });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
 		});
 
 		it('should update buttons manually', () => {
@@ -641,18 +640,18 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			const carousel = new Carousel(el, {hasButtons: true});
+			const carousel = new Carousel(el, { hasButtons: true });
 
 			const buttons = document.querySelectorAll<HTMLButtonElement>('.button');
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([true, false]);
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
 
-			el.scrollTo({left: 100});
+			el.scrollTo({ left: 100 });
 			carousel.update();
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([false, false]);
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
 
-			el.scrollTo({left: 200});
+			el.scrollTo({ left: 200 });
 			carousel.update();
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([false, true]);
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
 		});
 
 		it('should handle clicks', () => {
@@ -660,33 +659,33 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
-			new Carousel(el, {hasButtons: true});
+			new Carousel(el, { hasButtons: true });
 
 			const callback = jest.spyOn(el, 'scrollTo');
 			const buttons = document.querySelectorAll<HTMLButtonElement>('.button');
 
 			__triggerClick(buttons[1]); // navigate forwards
 			expect(callback).toHaveBeenCalledTimes(1);
-			expect(callback).toHaveBeenNthCalledWith(1, {left: 100, behavior: 'smooth'});
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([false, false]);
+			expect(callback).toHaveBeenNthCalledWith(1, { left: 100, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
 
 			__triggerClick(buttons[1]); // navigate forwards
 			expect(callback).toHaveBeenCalledTimes(2);
-			expect(callback).toHaveBeenNthCalledWith(2, {left: 200, behavior: 'smooth'});
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([false, true]);
+			expect(callback).toHaveBeenNthCalledWith(2, { left: 200, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, true]);
 
 			__triggerClick(buttons[1]); // navigate forwards (doesn't work, disabled)
 			expect(callback).toHaveBeenCalledTimes(2);
 
 			__triggerClick(buttons[0]); // navigate backwards
 			expect(callback).toHaveBeenCalledTimes(3);
-			expect(callback).toHaveBeenNthCalledWith(3, {left: 100, behavior: 'smooth'});
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([false, false]);
+			expect(callback).toHaveBeenNthCalledWith(3, { left: 100, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([false, false]);
 
 			__triggerClick(buttons[0]); // navigate backwards
 			expect(callback).toHaveBeenCalledTimes(4);
-			expect(callback).toHaveBeenNthCalledWith(4, {left: 0, behavior: 'smooth'});
-			expect([...buttons].map(({disabled}) => disabled)).toEqual([true, false]);
+			expect(callback).toHaveBeenNthCalledWith(4, { left: 0, behavior: 'smooth' });
+			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
 
 			__triggerClick(buttons[0]); // navigate backwards (doesn't work, disabled)
 			expect(callback).toHaveBeenCalledTimes(4);
@@ -710,7 +709,7 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 
 			const paginationLabel: jest.Mock<string, [PaginationTextParams]> = jest.fn(
-				({index}) => {
+				({ index }) => {
 					switch (index) {
 						case 0: return 'first';
 						case 1: return 'second';
@@ -721,7 +720,7 @@ describe('Caroucssel', () => {
 			);
 
 			const paginationTitle: jest.Mock<string, [PaginationTextParams]> = jest.fn(
-				({index}) => {
+				({ index }) => {
 					let name: string;
 
 					switch (index) {
@@ -764,7 +763,7 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 
 			const paginationLabel: jest.Mock<string, [PaginationTextParams]> = jest.fn(
-				({index}) => {
+				({ index }) => {
 					switch (index) {
 						case 0: return 'first';
 						case 1: return 'second';
@@ -775,7 +774,7 @@ describe('Caroucssel', () => {
 			);
 
 			const paginationTitle: jest.Mock<string, [PaginationTextParams]> = jest.fn(
-				({index}) => {
+				({ index }) => {
 					let name;
 					switch (index) {
 						case 0: name = 'first'; break;
@@ -788,11 +787,11 @@ describe('Caroucssel', () => {
 			);
 
 			const paginationTemplate: jest.Mock<string, [PaginationParams]> = jest.fn(
-				({className, controls, pages, label, title}) =>
+				({ className, controls, pages, label, title }) =>
 					`<div class="${className}" aria-controls="${controls}">
 						${pages.map((page, index) => `
-							<div class="item" aria-label="${title({index, page, pages})}">
-								${label({index, page, pages})}
+							<div class="item" aria-label="${title({ index, page, pages })}">
+								${label({ index, page, pages })}
 							</div>`
 						).join('')}
 					</div>`,
@@ -933,13 +932,13 @@ describe('Caroucssel', () => {
 
 			const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect(pagination).toHaveLength(3);
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([true, false, false]);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
 
-			__triggerScroll(el, {left: 100});
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([false, true, false]);
+			__triggerScroll(el, { left: 100 });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
 
-			__triggerScroll(el, {left: 200});
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([false, false, true]);
+			__triggerScroll(el, { left: 200 });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 		});
 
 		it('should update pagination manually', () => {
@@ -951,15 +950,15 @@ describe('Caroucssel', () => {
 
 			const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect(pagination).toHaveLength(3);
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([true, false, false]);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
 
-			el.scrollTo({left: 100});
+			el.scrollTo({ left: 100 });
 			carousel.update()
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([false, true, false]);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
 
-			el.scrollTo({left: 200});
+			el.scrollTo({ left: 200 });
 			carousel.update()
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([false, false, true]);
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 		});
 
 		it('should handle clicks', () => {
@@ -974,18 +973,18 @@ describe('Caroucssel', () => {
 
 			__triggerClick(pagination[1]);
 			expect(callback).toHaveBeenCalledTimes(1);
-			expect(callback).toHaveBeenNthCalledWith(1, {left: 100, behavior: 'smooth'});
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([false, true, false]);
+			expect(callback).toHaveBeenNthCalledWith(1, { left: 100, behavior: 'smooth' });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
 
 			__triggerClick(pagination[0]);
 			expect(callback).toHaveBeenCalledTimes(2);
-			expect(callback).toHaveBeenNthCalledWith(2, {left: 0, behavior: 'smooth'});
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([true, false, false]);
+			expect(callback).toHaveBeenNthCalledWith(2, { left: 0, behavior: 'smooth' });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
 
 			__triggerClick(pagination[2]);
 			expect(callback).toHaveBeenCalledTimes(3);
-			expect(callback).toHaveBeenNthCalledWith(3, {left: 200, behavior: 'smooth'});
-			expect([...pagination].map(({disabled}) => disabled)).toEqual([false, false, true]);
+			expect(callback).toHaveBeenNthCalledWith(3, { left: 200, behavior: 'smooth' });
+			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 
 			__triggerClick(pagination[2]); // doesn't work, disabled
 			expect(callback).toHaveBeenCalledTimes(3);
@@ -996,7 +995,7 @@ describe('Caroucssel', () => {
 
 	describe('scrollbars', () => {
 		it('should wrap mask element', () => {
-			mockScrollbarDimensions = {height: 15};
+			mockScrollbarDimensions = { height: 15 };
 
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
@@ -1009,15 +1008,15 @@ describe('Caroucssel', () => {
 		});
 
 		it('should detect invisible scrollbar', () => {
-			mockScrollbarDimensions = {height: 0};
+			mockScrollbarDimensions = { height: 0 };
 
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 			const style = {};
 
-			Object.defineProperty(el, 'style', {value: style, writable: false});
-			Object.defineProperty(el, 'clientWidth', {value: 600, writable: false});
-			Object.defineProperty(el, 'scrollWidth', {value: 800, writable: false});
+			Object.defineProperty(el, 'style', { value: style, writable: false });
+			Object.defineProperty(el, 'clientWidth', { value: 600, writable: false });
+			Object.defineProperty(el, 'scrollWidth', { value: 800, writable: false });
 
 			new Carousel(el);
 			expect(style).toEqual({
@@ -1027,15 +1026,15 @@ describe('Caroucssel', () => {
 		});
 
 		it('should detect visible scrollbar', () => {
-			mockScrollbarDimensions = {height: 15};
+			mockScrollbarDimensions = { height: 15 };
 
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 			const style = {};
 
-			Object.defineProperty(el, 'style', {value: style, writable: false});
-			Object.defineProperty(el, 'clientWidth', {value: 600, writable: false});
-			Object.defineProperty(el, 'scrollWidth', {value: 800, writable: false});
+			Object.defineProperty(el, 'style', { value: style, writable: false });
+			Object.defineProperty(el, 'clientWidth', { value: 600, writable: false });
+			Object.defineProperty(el, 'scrollWidth', { value: 800, writable: false });
 
 			new Carousel(el);
 			expect(style).toEqual({
@@ -1045,15 +1044,15 @@ describe('Caroucssel', () => {
 		});
 
 		it('should detect not existing scrollbar (content is smaller than container)', () => {
-			mockScrollbarDimensions = {height: 15};
+			mockScrollbarDimensions = { height: 15 };
 
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 			const style = {};
 
-			Object.defineProperty(el, 'style', {value: style, writable: false});
-			Object.defineProperty(el, 'clientWidth', {value: 800, writable: false});
-			Object.defineProperty(el, 'scrollWidth', {value: 200, writable: false});
+			Object.defineProperty(el, 'style', { value: style, writable: false });
+			Object.defineProperty(el, 'clientWidth', { value: 800, writable: false });
+			Object.defineProperty(el, 'scrollWidth', { value: 200, writable: false });
 
 			new Carousel(el);
 			expect(style).toEqual({
@@ -1063,12 +1062,12 @@ describe('Caroucssel', () => {
 		});
 
 		it('should use css defaults by not wrapping mask element', () => {
-			mockScrollbarDimensions = {height: 1};
+			mockScrollbarDimensions = { height: 1 };
 
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			new Carousel(el, {hasScrollbars: true});
+			new Carousel(el, { hasScrollbars: true });
 			expect(el.getAttribute('style')).toBeNull();
 		});
 
@@ -1093,7 +1092,7 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
 				hasButtons: false,
-				hasPagination: true
+				hasPagination: true,
 			});
 
 			carousel.destroy();
@@ -1106,7 +1105,7 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
 				hasButtons: true,
-				hasPagination: false
+				hasPagination: false,
 			});
 
 			carousel.destroy();
