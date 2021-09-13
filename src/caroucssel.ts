@@ -1,5 +1,5 @@
 import { ButtonOptions, ButtonParams, Configuration, Index, Options, Pages, PaginationParams } from './types';
-import { clearCache, clearFullCache, fromCache } from './utils/cache';
+import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 import { render } from './utils/render';
 import { Scrollbar } from './utils/scrollbar';
@@ -16,6 +16,7 @@ const CACHE_KEY_INDEX = 'index';
 const CACHE_KEY_ITEMS = 'items';
 const CACHE_KEY_PAGES = 'pages';
 const CACHE_KEY_PAGE_INDEX = 'page-index';
+const CACHE_KEY_SCROLLBAR = 'scrollbar';
 
 const VISIBILITY_OFFSET = 0.25;
 
@@ -103,8 +104,6 @@ export class Carousel {
 	protected _mask: HTMLDivElement | null = null;
 
 	protected _isSmooth = false;
-
-	protected _scrollbarHeight: number | undefined = undefined;
 
 	protected _previous: HTMLButtonElement | null = null;
 
@@ -452,14 +451,16 @@ export class Carousel {
 			return mask;
 		})();
 
-		if (height === this._scrollbarHeight) {
+		const cachedHeight = fromCache<number | undefined>(this, CACHE_KEY_SCROLLBAR, () => undefined);
+		if (height === cachedHeight) {
 			return;
 		}
+
+		writeCache(this, CACHE_KEY_SCROLLBAR, height);
 
 		const element = el as HTMLElement | SVGElement;
 		element.style.height = `calc(100% + ${height}px)`;
 		element.style.marginBottom = `${height * -1}px`;
-		this._scrollbarHeight = height;
 	}
 
 	protected _removeScrollbars(): void {
