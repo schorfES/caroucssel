@@ -1,9 +1,8 @@
+import { ButtonOptions, ButtonParams, Index, Options, Pages, PaginationParams } from './types';
 import { clearCache, clearFullCache, fromCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 import { render } from './utils/render';
 import { Scrollbar } from './utils/scrollbar';
-
-import { ButtonOptions, ButtonParams, Index, Options, Pages, PaginationParams } from './types';
 
 
 // Export all types
@@ -28,20 +27,20 @@ const EVENT_RESIZE = 'resize';
 const DEFAULTS_BUTTON_PREVIOUS: Required<ButtonOptions> = {
 	className: 'is-previous',
 	label: 'Previous',
-	title: 'Go to previous'
+	title: 'Go to previous',
 };
 
 const DEFAULTS_BUTTON_NEXT: Required<ButtonOptions> = {
 	className: 'is-next',
 	label: 'Next',
-	title: 'Go to next'
+	title: 'Go to next',
 };
 
 const DEFAULTS: Options = {
 	// Buttons:
 	hasButtons: false,
 	buttonClassName: 'button',
-	buttonTemplate: ({className, controls, label, title}: ButtonParams) => `
+	buttonTemplate: ({ className, controls, label, title }: ButtonParams) => `
 		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
 			<span>${label}</span>
 		</button>
@@ -52,12 +51,12 @@ const DEFAULTS: Options = {
 	// Pagination:
 	hasPagination: false,
 	paginationClassName: 'pagination',
-	paginationLabel: ({index}) => `${index + 1}`,
-	paginationTitle: ({index}) => `Go to ${index + 1}. page`,
-	paginationTemplate: ({className, controls, pages, label, title}: PaginationParams) => `
+	paginationLabel: ({ index }) => `${index + 1}`,
+	paginationTitle: ({ index }) => `Go to ${index + 1}. page`,
+	paginationTemplate: ({ className, controls, pages, label, title }: PaginationParams) => `
 		<ul class="${className}">
 			${pages.map((page, index) => {
-				const data = {index, page, pages};
+				const data = { index, page, pages };
 				const labelStr = label(data);
 				const titleStr = title(data);
 				return `<li>
@@ -181,9 +180,9 @@ export class Carousel {
 
 	get index(): Index {
 		return fromCache(this, CACHE_KEY_INDEX, () => {
-			const {el, items} = this;
-			const {length} = items;
-			const {clientWidth} = el;
+			const { el, items } = this;
+			const { length } = items;
+			const { clientWidth } = el;
 			const outerLeft = el.getBoundingClientRect().left;
 
 			const index: number[] = [];
@@ -213,8 +212,8 @@ export class Carousel {
 	}
 
 	set index(values: Index) {
-		const {el, items} = this;
-		const {length} = items;
+		const { el, items } = this;
+		const { length } = items;
 
 		if (!Array.isArray(values) || !values.length) {
 			return;
@@ -227,9 +226,9 @@ export class Carousel {
 		let value = values[0] || 0;
 		value = Math.max(Math.min(value, length - 1), 0);
 
-		const {scrollLeft} = el;
-		const from = {left: scrollLeft};
-		const to = {left: items[value].offsetLeft};
+		const { scrollLeft } = el;
+		const from = { left: scrollLeft };
+		const to = { left: items[value].offsetLeft };
 
 		// If the target item is the first visible element in the list, ignore
 		// the possible offset to the left and scroll to the beginning of the list:
@@ -244,7 +243,7 @@ export class Carousel {
 		clearCache(this, CACHE_KEY_INDEX);
 
 		const behavior = this._isSmooth ? 'smooth' : 'auto';
-		el.scrollTo({...to, behavior});
+		el.scrollTo({ ...to, behavior });
 	}
 
 	get items(): HTMLElement[] {
@@ -260,8 +259,8 @@ export class Carousel {
 
 	get pages(): Pages {
 		return fromCache(this, CACHE_KEY_PAGES, (): Pages => {
-			const {el, items} = this;
-			const {clientWidth: viewport} = el;
+			const { el, items } = this;
+			const { clientWidth: viewport } = el;
 
 			if (viewport === 0) {
 				// if the width of the carousel element is zero, we can not calculate
@@ -283,7 +282,7 @@ export class Carousel {
 			items
 				.map((item, index): Dataset => {
 					// Create a re-usable dataset for each item:
-					const {offsetLeft: left, clientWidth: width} = item;
+					const { offsetLeft: left, clientWidth: width } = item;
 					return { left, width, item, index };
 				})
 				.sort((a, b) => {
@@ -344,16 +343,16 @@ export class Carousel {
 
 	get pageIndex(): number {
 		return fromCache(this, CACHE_KEY_PAGE_INDEX, () => {
-			const {el, items, index, pages} = this;
+			const { el, items, index, pages } = this;
 			const outerLeft = el.getBoundingClientRect().left;
-			const {clientWidth} = el;
+			const { clientWidth } = el;
 
 			let visibles: number[] = index.reduce<number []>((acc, at) => {
 				if (!items[at]) {
 					return acc;
 				}
 
-				let {left, right} = items[at].getBoundingClientRect();
+				let { left, right } = items[at].getBoundingClientRect();
 				// "getBoundingClientRect()" can return float numbers which
 				// lead to an unwanted behavior when in the calculation with
 				// "clientWidth" (not using floats). We use round here to
@@ -390,7 +389,7 @@ export class Carousel {
 	}
 
 	destroy(): void {
-		const {el} = this;
+		const { el } = this;
 
 		// Remove created id if it was created by carousel:
 		ID_MATCH.test(el.id) && el.removeAttribute('id');
@@ -429,12 +428,12 @@ export class Carousel {
 
 	protected _updateScrollbars(): void {
 		const { el , _options } = this;
-		const {hasScrollbars, scrollbarsMaskClassName} = _options;
+		const { hasScrollbars, scrollbarsMaskClassName } = _options;
 		if (hasScrollbars) {
 			return;
 		}
 
-		let {height} = __scrollbar.dimensions;
+		let { height } = __scrollbar.dimensions;
 
 		if (el.scrollWidth <= el.clientWidth) {
 			// If the contents are not scrollable because their width are less
@@ -464,7 +463,7 @@ export class Carousel {
 	}
 
 	protected _removeScrollbars(): void {
-		const {_mask, el} = this;
+		const { _mask, el } = this;
 		if (!_mask) {
 			return;
 		}
@@ -477,12 +476,12 @@ export class Carousel {
 	}
 
 	protected _addButtons(): void {
-		const {el, id, _options} = this;
+		const { el, id, _options } = this;
 		if (!_options.hasButtons) {
 			return;
 		}
 
-		const {buttonTemplate, buttonClassName, buttonPrevious, buttonNext} = _options;
+		const { buttonTemplate, buttonClassName, buttonPrevious, buttonNext } = _options;
 		const controls = id;
 		// Create button elements:
 		const [previous, next] = [
@@ -493,7 +492,7 @@ export class Carousel {
 
 		if (previous) {
 			const onPrevious = () => {
-				const {pages, pageIndex} = this;
+				const { pages, pageIndex } = this;
 				const index = pages[pageIndex - 1] || pages[0];
 				this.index = index;
 			};
@@ -519,12 +518,12 @@ export class Carousel {
 	}
 
 	protected _updateButtons(): void {
-		const {_options} = this;
+		const { _options } = this;
 		if (!_options.hasButtons) {
 			return;
 		}
 
-		const {pages, pageIndex, _previous, _next} = this;
+		const { pages, pageIndex, _previous, _next } = this;
 
 		if (_previous) {
 			const firstPage = pages[pageIndex - 1];
@@ -540,7 +539,7 @@ export class Carousel {
 	}
 
 	protected _removeButtons(): void {
-		const {_previous, _next} = this;
+		const { _previous, _next } = this;
 		[_previous, _next].forEach((button) => {
 			if (!button) {
 				return;
@@ -551,17 +550,17 @@ export class Carousel {
 	}
 
 	protected _addPagination(): void {
-		const {_options} = this;
+		const { _options } = this;
 		if (!_options.hasPagination) {
 			return;
 		}
 
-		const {_mask, el, id, pages} = this;
+		const { _mask, el, id, pages } = this;
 		if (pages.length < 2) {
 			return;
 		}
 
-		const {paginationTemplate, paginationClassName, paginationLabel, paginationTitle} = _options;
+		const { paginationTemplate, paginationClassName, paginationLabel, paginationTitle } = _options;
 		const pagination = render(paginationTemplate, {
 			pages,
 			controls: id,
@@ -590,7 +589,7 @@ export class Carousel {
 	}
 
 	protected _updatePagination(): void {
-		const {_options} = this;
+		const { _options } = this;
 		if (!_options.hasPagination) {
 			return;
 		}
@@ -604,7 +603,7 @@ export class Carousel {
 	}
 
 	protected _removePagination(): void {
-		const {_pagination, _paginationButtons} = this;
+		const { _pagination, _paginationButtons } = this;
 		(_paginationButtons || []).forEach((button) => {
 			button.onclick = null;
 			button.parentNode?.removeChild(button);
@@ -622,8 +621,8 @@ export class Carousel {
 		this._updateButtons();
 		this._updatePagination();
 
-		const {index, _options: { onScroll }} = this;
-		onScroll && onScroll<Carousel>({index, type: EVENT_SCROLL, target: this, originalEvent: event});
+		const { index, _options: { onScroll } } = this;
+		onScroll && onScroll<Carousel>({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
 	}
 
 	protected _onResize(): void {

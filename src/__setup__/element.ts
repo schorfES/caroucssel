@@ -1,5 +1,6 @@
 import './element.d';
 
+
 Object.defineProperties(Element.prototype, {
 	mockedTop: {
 		writable: true,
@@ -47,25 +48,25 @@ Object.defineProperties(Element.prototype, {
 	scrollTop: {
 		get: function(this: Element) {
 			return this.mockedTop;
-		}
+		},
 	},
 
 	scrollLeft: {
 		get: function(this: Element) {
 			return this.mockedLeft;
-		}
+		},
 	},
 
 	clientWidth: {
 		get: function(this: Element) {
 			return this.mockedClientWidth;
-		}
+		},
 	},
 
 	clientHeight: {
 		get: function(this: Element) {
 			return this.mockedClientHeight;
-		}
+		},
 	},
 
 	getBoundingClientRect: {
@@ -92,24 +93,24 @@ Object.defineProperties(HTMLElement.prototype, {
 	offsetWidth: {
 		get: function(this: HTMLElement) {
 			return this.mockedOffsetWidth;
-		}
+		},
 	},
 
 	offsetHeight: {
 		get: function(this: HTMLElement) {
 			return this.mockedOffsetHeight;
-		}
+		},
 	},
 
 	offsetTop: {
 		get: function(this: HTMLElement) {
 			return this.getBoundingClientRect().top;
-		}
+		},
 	},
 
 	offsetLeft: {
 		get: function(this: HTMLElement) {
 			return this.getBoundingClientRect().left;
-		}
+		},
 	},
 });

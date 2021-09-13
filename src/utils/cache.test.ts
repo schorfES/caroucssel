@@ -1,5 +1,6 @@
 import { cacheInstance, clearCache, clearFullCache, fromCache } from './cache';
 
+
 describe('Cache util', () => {
 
 	describe('fromCache', () => {
@@ -33,7 +34,7 @@ describe('Cache util', () => {
 			const values = [
 				fromCache(ref, 'answer', calculate),
 				fromCache(ref, 'answer', calculate),
-				fromCache(ref, 'answer', calculate)
+				fromCache(ref, 'answer', calculate),
 			];
 			expect(values).toEqual([42, 42, 42]);
 			expect(calculate).toHaveBeenCalledTimes(1);
@@ -45,7 +46,7 @@ describe('Cache util', () => {
 			const values = [
 				fromCache(ref, 'answer', calculate),
 				fromCache(ref, 'answer', calculate),
-				fromCache(ref, 'answer', calculate)
+				fromCache(ref, 'answer', calculate),
 			];
 			expect(values).toEqual([null, null, null]);
 			expect(calculate).toHaveBeenCalledTimes(1);
@@ -57,7 +58,7 @@ describe('Cache util', () => {
 			const values = [
 				fromCache(ref, 'answer', calculate),
 				fromCache(ref, 'answer', calculate),
-				fromCache(ref, 'answer', calculate)
+				fromCache(ref, 'answer', calculate),
 			];
 			expect(values).toEqual([undefined, undefined, undefined]);
 			expect(calculate).toHaveBeenCalledTimes(1);
@@ -69,7 +70,7 @@ describe('Cache util', () => {
 			const values = [
 				fromCache(ref, 'answer', calculate),
 				fromCache(ref, 'answer', calculate),
-				fromCache(ref, 'answer', calculate)
+				fromCache(ref, 'answer', calculate),
 			];
 			expect(values).toEqual([0, 0, 0]);
 			expect(calculate).toHaveBeenCalledTimes(1);
@@ -81,7 +82,7 @@ describe('Cache util', () => {
 			const values = [
 				fromCache(ref, 'answer', calculate),
 				fromCache(ref, 'answer', calculate),
-				fromCache(ref, 'answer', calculate)
+				fromCache(ref, 'answer', calculate),
 			];
 			expect(values).toEqual([false, false, false]);
 			expect(calculate).toHaveBeenCalledTimes(1);
@@ -93,7 +94,7 @@ describe('Cache util', () => {
 			const calculate2 = jest.fn(() => 13);
 			const values = [
 				fromCache(ref, 'answer', calculate1),
-				fromCache(ref, 'answer', calculate2)
+				fromCache(ref, 'answer', calculate2),
 			];
 			expect(values).toEqual([42, 42]);
 			expect(calculate1).toHaveBeenCalledTimes(1);

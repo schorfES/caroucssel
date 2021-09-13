@@ -1,4 +1,4 @@
-import {Scrollbar} from './scrollbar';
+import { Scrollbar } from './scrollbar';
 
 
 function __triggerResize() {
@@ -40,11 +40,11 @@ describe('Scrollbar util', () => {
 						const mockedOffsetHeight = jest.fn<number, []>((): number => isInner ? 75 : 50);
 
 						Object.defineProperty(element, 'clientHeight', {
-							get: mockedClientHeight
+							get: mockedClientHeight,
 						});
 
 						Object.defineProperty(element, 'offsetHeight', {
-							get: mockedOffsetHeight
+							get: mockedOffsetHeight,
 						});
 
 						return element;
@@ -80,11 +80,11 @@ describe('Scrollbar util', () => {
 						});
 
 						Object.defineProperty(element, 'clientHeight', {
-							get: mockedClientHeight
+							get: mockedClientHeight,
 						});
 
 						Object.defineProperty(element, 'offsetHeight', {
-							get: mockedOffsetHeight
+							get: mockedOffsetHeight,
 						});
 
 						return element;

@@ -1,10 +1,11 @@
-import { OutputOptions , Plugin } from 'rollup';
-
-import cleanup from 'rollup-plugin-cleanup';
 import path from 'path';
+
+import typescript from '@rollup/plugin-typescript';
+import type * as rollup from 'rollup';
+import cleanup from 'rollup-plugin-cleanup';
 import replace from 'rollup-plugin-replace';
 import { terser } from 'rollup-plugin-terser';
-import typescript from '@rollup/plugin-typescript';
+
 
 const MODULE_INPUT = path.join(__dirname, 'src/index.ts');
 const MODULE_NAME = 'caroucssel';
@@ -17,7 +18,7 @@ const PLUGIN_SETTINGS_CLEANUP = {
 	extensions: ['ts'],
 };
 
-function createBundle(output: OutputOptions = {}, plugins: Plugin[] = []) {
+function createBundle(output: rollup.OutputOptions = {}, plugins: rollup.Plugin[] = []) {
 	return {
 		input: MODULE_INPUT,
 		output: {

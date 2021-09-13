@@ -1,4 +1,5 @@
-import {clearCache, fromCache} from './cache';
+import { clearCache, fromCache } from './cache';
+
 
 export type ScrollbarDimensions = {
 	height: number,
@@ -56,7 +57,7 @@ export class Scrollbar {
 
 			return {
 				// width,
-				height
+				height,
 			};
 		});
 	}
