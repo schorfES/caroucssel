@@ -3,7 +3,7 @@
   font-family: "icons";
   font-weight: normal;
   font-style: normal;
-  src: url("/icons.3bdb90db.woff2") format("woff2"), url("/icons.60d87b5f.woff") format("woff");
+  src: url("/caroucssel/icons.3bdb90db.woff2") format("woff2"), url("/caroucssel/icons.60d87b5f.woff") format("woff");
 }
 * {
   box-sizing: border-box;
@@ -152,4 +152,4 @@ h2 {
   color: #2F2F2F;
 }
 
-/*# sourceMappingURL=/styles.06801c5e.css.map */
+/*# sourceMappingURL=/caroucssel/styles.da33871d.css.map */

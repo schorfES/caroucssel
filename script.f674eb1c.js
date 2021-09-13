@@ -1162,4 +1162,4 @@ elements.forEach(function (element) {
   });
 });
 },{"../../src/caroucssel":"oYt0"}]},{},["qcOq"], null)
-//# sourceMappingURL=/script.f674eb1c.js.map
+//# sourceMappingURL=/caroucssel/script.f674eb1c.js.map

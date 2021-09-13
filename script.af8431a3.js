@@ -1148,4 +1148,4 @@ new _caroucssel.Carousel(element, {
   }
 });
 },{"../src/caroucssel":"oYt0"}]},{},["g4tf"], null)
-//# sourceMappingURL=/script.af8431a3.js.map
+//# sourceMappingURL=/caroucssel/script.af8431a3.js.map
