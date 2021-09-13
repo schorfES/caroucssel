@@ -1,99 +1,36 @@
-export type ButtonParams = {
-	controls: string;
-	className: string;
-	label: string;
-	title: string;
-};
-
-export type ButtonTemplate = (params: ButtonParams) => string;
-
-export type ButtonOptions = {
-	className?: string;
-	label?: string;
-	title?: string;
-};
-
-export type PaginationTextParams = {
-	index: number;
-	page: number[];
-	pages: number[][];
-};
-
-export type PaginationText = (params: PaginationTextParams) => string;
-
-export type PaginationParams = {
-	controls: string;
-	className: string;
-	label: PaginationText;
-	title: PaginationText;
-	pages: number[][];
-};
-
-export type PaginationTemplate = (params: PaginationParams) => string;
-
-export type PaginationLabelTemplate = PaginationText;
-
-export type PaginationTitleTemplate = PaginationText;
-
-export type ScrollHook = (event: {
-	index: number[];
-	type: 'scroll';
-	target: Carousel;
-	originalEvent: Event;
-}) => any;
-
-export type FilterItemFn =
-	((item: HTMLOrSVGElement) => boolean) |
-	((item: HTMLOrSVGElement, index: number) => boolean);
-
-export type Options = {
-	// Settings:
-	index?: number;
-
-	// Buttons:
-	hasButtons?: boolean;
-	buttonClassName?: string;
-	buttonTemplate?: ButtonTemplate;
-	buttonPrevious?: ButtonOptions;
-	buttonNext?: ButtonOptions;
-
-	// Pagination:
-	hasPagination?: boolean;
-	paginationClassName?: string;
-	paginationTemplate?: PaginationTemplate;
-	paginationLabel?: PaginationLabelTemplate;
-	paginationTitle?: PaginationTitleTemplate;
-
-	// Scrollbars:
-	hasScrollbars?: boolean;
-	scrollbarsMaskClassName?: string;
-
-	// Filter:
-	filterItem?: FilterItemFn;
-
-	// Hooks:
-	onScroll?: ScrollHook;
-};
-
-export class Carousel {
-	constructor(el: HTMLOrSVGElement, options: Options);
-	public get el(): HTMLOrSVGElement;
-	public get id(): string;
-	public get index(): number[];
-	public set index(values: number[]);
-	public get items(): HTMLOrSVGElement[];
-	public get pages(): number[][];
-	public get pageIndex(): number;
-	public destroy(): void;
-	public update(): void;
-
-	protected _updateScrollbars(): void;
-	protected _addButtons(): void;
-	protected _updateButtons(index: number[]): void;
-	protected _removeButtons(): void;
-	protected _addPagination(): void;
-	protected _updatePagination(index: number[]): void;
-	protected _removePagination(): void;
-	protected _onScroll(event: Event): void;
-	protected _onResize(event: Event): void;
+import { Index, Options, Pages } from './types';
+export * from './types';
+export declare class Carousel {
+    static resetInstanceCount(): void;
+    protected _el: Element;
+    protected _id: string;
+    protected _options: Options;
+    protected _mask: HTMLDivElement | null;
+    protected _isSmooth: boolean;
+    protected _scrollbarHeight: number | undefined;
+    protected _previous: HTMLButtonElement | null;
+    protected _next: HTMLButtonElement | null;
+    protected _pagination: HTMLElement | null;
+    protected _paginationButtons: HTMLButtonElement[] | null;
+    constructor(el: Element, options?: Partial<Options>);
+    get el(): Element;
+    get id(): string;
+    get index(): Index;
+    set index(values: Index);
+    get items(): HTMLElement[];
+    get pages(): Pages;
+    get pageIndex(): number;
+    destroy(): void;
+    update(): void;
+    protected _updateScrollbars(): void;
+    protected _removeScrollbars(): void;
+    protected _addButtons(): void;
+    protected _updateButtons(): void;
+    protected _removeButtons(): void;
+    protected _addPagination(): void;
+    protected _updatePagination(): void;
+    protected _removePagination(): void;
+    protected _onScroll(event: Event): void;
+    protected _onResize(): void;
 }
+//# sourceMappingURL=caroucssel.d.ts.map
