@@ -2,25 +2,23 @@
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: stretch;
+	width: 100%;
 	overflow: auto;
 	overflow-y: hidden;
-	transform: translate3d(0, 0, 0);
-	width: 100%;
 	white-space: nowrap;
+	transform: translate3d(0, 0, 0);
 	scroll-behavior: smooth;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 	-webkit-overflow-scrolling: touch;
 
 	> * {
 		flex: 0 0 auto;
-		outline: none;
 		white-space: normal;
+		outline: none;
 	}
 
 	/* browsers with scrollbars that only appear on scrolling */
-	/* @FIXME: Is the spaceless variant required? */
-	&[style*='margin-bottom: 0px'],
-	&[style*='margin-bottom:0px'] {
+	&[style*='margin-bottom: 0px'] {
 		scrollbar-width: none;
 		-ms-overflow-style: none;
 
@@ -33,16 +31,15 @@
 @mixin caroucssel-snap($at: 100%) {
 	// See: https://medium.com/@OneBitAhead/detecting-css-features-with-supports-1fb9c04c56c0
 	scroll-snap-type: mandatory;
-	scroll-snap-type: x mandatory; // sass-lint:disable-line no-duplicate-properties
+	scroll-snap-type: x mandatory; // stylelint-disable-line no-duplicate-properties
 	scroll-snap-destination: $at $at;
-	scroll-snap-points-x: snapInterval(0, $at); // sass-lint:disable-line function-name-format
-	scroll-snap-points-x: repeat($at); // sass-lint:disable-line no-duplicate-properties
+	scroll-snap-points-x: snapinterval(0, $at); // stylelint-disable-line function-name-format
+	scroll-snap-points-x: repeat($at); // stylelint-disable-line no-duplicate-properties
 
 	> * {
 		scroll-snap-align: start;
 	}
 }
-
 
 %caroucssel {
 	@include caroucssel();
