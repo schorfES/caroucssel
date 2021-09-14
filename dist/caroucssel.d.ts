@@ -32,4 +32,3 @@ export declare class Carousel {
     protected _onScroll(event: Event): void;
     protected _onResize(): void;
 }
-//# sourceMappingURL=caroucssel.d.ts.map

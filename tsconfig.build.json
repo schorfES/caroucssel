@@ -2,5 +2,9 @@
   "extends": "./tsconfig.json",
   "include": [
     "./src/caroucssel.ts"
-  ]
+  ],
+  "compilerOptions": {
+    "declarationMap": false,
+    "sourceMap": false
+  }
 }

@@ -496,4 +496,3 @@ class Carousel {
 }
 
 exports.Carousel = Carousel;
-//# sourceMappingURL=caroucssel.cjs.js.map
