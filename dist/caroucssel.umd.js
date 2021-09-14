@@ -97,9 +97,9 @@
     return debounced;
   }
 
-  function render(template, data) {
+  function render(template, context) {
     var el = document.createElement('div');
-    el.innerHTML = template(data);
+    el.innerHTML = template(context);
     var ref = el.firstElementChild;
 
     if (!ref) {

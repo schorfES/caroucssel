@@ -1,11 +1,24 @@
 import { clearCache, fromCache } from './cache';
+/**
+ * Helper class for scrollbar features.
+ */
 export class Scrollbar {
+    /**
+     * Creates an instance.
+     */
     constructor() {
         window.addEventListener('resize', () => {
             clearCache(this, 'dimensions');
         });
     }
-    // Inspired by https://gist.github.com/kflorence/3086552
+    /**
+     * Calculates the dimensions of a scrollbar in the current browser. The result
+     * of the computation will be cached for this instance.
+     *
+     * Inspired by https://gist.github.com/kflorence/3086552
+     *
+     * @return the dimensions of the scrollar
+     */
     get dimensions() {
         return fromCache(this, 'dimensions', () => {
             const inner = document.createElement('div');
