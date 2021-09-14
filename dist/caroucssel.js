@@ -3,6 +3,7 @@ import { debounce } from './utils/debounce';
 import { render } from './utils/render';
 import { Scrollbar } from './utils/scrollbar';
 // Export all types
+// (is required to expose all types in dist/caroucssel.d.ts)
 export * from './types';
 const ID_NAME = (count) => `caroucssel-${count}`;
 const ID_MATCH = /^caroucssel-[0-9]*$/;
@@ -63,9 +64,25 @@ const DEFAULTS = {
     // Hooks:
     onScroll: () => undefined,
 };
+/*
+ * Internal counter for created instances. Will be used to create unique IDs.
+ */
 let __instanceCount = 0;
+/*
+ * Singleton of scrollbar util. Is shared across all instances of carousel to
+ * reduce redundant calculations.
+ */
 let __scrollbar;
+/**
+ * The carousel javascript instance.
+ */
 export class Carousel {
+    /**
+     * Creates an instance.
+     * @param el is the dom element to control. This should be a container element
+     * 	that holds child elements that will scroll horizontally.
+     * @param options are the options to configure this instance.
+     */
     constructor(el, options = {}) {
         this._mask = null;
         this._isSmooth = false;
@@ -119,19 +136,39 @@ export class Carousel {
         window.addEventListener(EVENT_RESIZE, this._onResize);
         /* eslint-enable @typescript-eslint/unbound-method */
     }
+    /**
+     * This can be used for testing purposes to reset the instance count which is
+     * used to create unique id's.
+     * @internal
+     */
     static resetInstanceCount() {
-        // This can be used for testing purposes to reset the instance count which is
-        // used to create unique id's.
         if (process.env.NODE_ENV === 'test') {
             __instanceCount = 0;
         }
     }
+    /**
+     * Returns the dom element reference of the carousel which was passed into the
+     * constructor.
+     * @public
+     * @return the controlled dom element
+     */
     get el() {
         return this._el;
     }
+    /**
+     * Returns the id-attribute value of the carousel.
+     * @public
+     * @return the id of the controlled dom element
+     */
     get id() {
         return this._id;
     }
+    /**
+     * Returns the current index of the carousel. The returned index is a list (array)
+     * of indexes that are currently visible (depending on each item width).
+     * @public
+     * @return a list of visible indexes
+     */
     get index() {
         return fromCache(this, CACHE_KEY_INDEX, () => {
             const { el, items } = this;
@@ -159,6 +196,13 @@ export class Carousel {
             return index;
         });
     }
+    /**
+     * Sets the current index of the carousel. To set an index you need to pass an
+     * array with at least one element. When passing more than one, the rest will
+     * be ignored.
+     * @public
+     * @param values are the upcoming indexes
+     */
     set index(values) {
         const { el, items } = this;
         const { length } = items;
@@ -185,6 +229,11 @@ export class Carousel {
         const behavior = this._isSmooth ? 'smooth' : 'auto';
         el.scrollTo(Object.assign(Object.assign({}, to), { behavior }));
     }
+    /**
+     * Returns an array of all child dom elements of the carousel.
+     * @public
+     * @return a list of elements (child elements of the root element)
+     */
     get items() {
         return fromCache(this, CACHE_KEY_ITEMS, () => {
             const { el, _conf: { filterItem } } = this;
@@ -194,6 +243,12 @@ export class Carousel {
                 .filter(filterItem);
         });
     }
+    /**
+     * Returns an array of all pages. Each page is a group of indexes that matches
+     * a page.
+     * @public
+     * @return the list of pages and indexes inside each page
+     */
     get pages() {
         return fromCache(this, CACHE_KEY_PAGES, () => {
             const { el, items } = this;
@@ -260,6 +315,11 @@ export class Carousel {
             return pages.map((page) => page.map(({ index }) => index));
         });
     }
+    /**
+     * Returns the index of the current page.
+     * @public
+     * @return the index of the current page
+     */
     get pageIndex() {
         return fromCache(this, CACHE_KEY_PAGE_INDEX, () => {
             const { el, items, index, pages } = this;
@@ -299,6 +359,11 @@ export class Carousel {
             return pages.findIndex((page) => page.includes(at));
         });
     }
+    /**
+     * This completely deconstructs the carousel and returns the dom to its
+     * initial state.
+     * @public
+     */
     destroy() {
         const { el } = this;
         // Remove created id if it was created by carousel:
@@ -322,6 +387,11 @@ export class Carousel {
         // Clear cache:
         clearFullCache(this);
     }
+    /**
+     * Enforces an update of all enabled components of the carousel. This is, for
+     * example, useful when changing the number of items inside the carousel.
+     * @public
+     */
     update() {
         clearFullCache(this);
         this._updateButtons();

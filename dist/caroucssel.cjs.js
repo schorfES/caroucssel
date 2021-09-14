@@ -41,9 +41,9 @@ function debounce(func, delay) {
     return debounced;
 }
 
-function render(template, data) {
+function render(template, context) {
     const el = document.createElement('div');
-    el.innerHTML = template(data);
+    el.innerHTML = template(context);
     const ref = el.firstElementChild;
     if (!ref) {
         return null;
