@@ -3,6 +3,12 @@
 type Source = (...args: never[]) => unknown;
 type Debounced<F extends Source> = (...args: Parameters<F>) => void;
 
+/**
+ * Creates a debounced version for a given function in a given delay (in ms).
+ * @param func the original function
+ * @param delay the delay in milliseconds (ms)
+ * @returns the debounced function
+ */
 export function debounce<F extends Source>(func: F, delay: number): Debounced<F> {
 	let timeout: ReturnType<typeof setTimeout> | null = null;
 	const debounced = (...args: Parameters<F>) => {
