@@ -5,15 +5,28 @@ export type ScrollbarDimensions = {
 	height: number,
 };
 
+/**
+ * Helper class for scrollbar features.
+ */
 export class Scrollbar {
 
+	/**
+	 * Creates an instance.
+	 */
 	constructor() {
 		window.addEventListener('resize', () => {
 			clearCache(this, 'dimensions');
 		});
 	}
 
-	// Inspired by https://gist.github.com/kflorence/3086552
+	/**
+	 * Calculates the dimensions of a scrollbar in the current browser. The result
+	 * of the computation will be cached for this instance.
+	 *
+	 * Inspired by https://gist.github.com/kflorence/3086552
+	 *
+	 * @return the dimensions of the scrollar
+	 */
 	get dimensions(): ScrollbarDimensions {
 		return fromCache<ScrollbarDimensions>(this, 'dimensions', () => {
 			const inner = document.createElement('div');
