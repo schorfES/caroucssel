@@ -50,7 +50,6 @@ build_styles:
 build_scripts:
 	NODE_ENV=production ./node_modules/.bin/tsc \
 		--project tsconfig.build.json \
-		--sourceMap
 
 	NODE_ENV=production ./node_modules/.bin/rollup \
 		--config rollup.config.ts \

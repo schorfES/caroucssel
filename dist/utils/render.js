@@ -7,4 +7,3 @@ export function render(template, data) {
     }
     return ref;
 }
-//# sourceMappingURL=render.js.map

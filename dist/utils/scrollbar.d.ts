@@ -5,4 +5,3 @@ export declare class Scrollbar {
     constructor();
     get dimensions(): ScrollbarDimensions;
 }
-//# sourceMappingURL=scrollbar.d.ts.map

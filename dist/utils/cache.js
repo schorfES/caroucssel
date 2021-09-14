@@ -53,4 +53,3 @@ export function clearFullCache(ref) {
  * This exposes the cache instance for test environments. Otherwise it will be null.
  */
 export const cacheInstance = (process.env.NODE_ENV === 'test') ? __CACHE : null;
-//# sourceMappingURL=cache.js.map

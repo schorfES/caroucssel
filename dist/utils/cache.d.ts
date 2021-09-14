@@ -35,4 +35,3 @@ export declare function clearFullCache(ref: Reference): void;
  */
 export declare const cacheInstance: WeakMap<object, Storage> | null;
 export {};
-//# sourceMappingURL=cache.d.ts.map

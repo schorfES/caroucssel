@@ -9,4 +9,3 @@ export function debounce(func, delay) {
     };
     return debounced;
 }
-//# sourceMappingURL=debounce.js.map

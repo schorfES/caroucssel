@@ -23,7 +23,6 @@ function createBundle(output: rollup.OutputOptions = {}, plugins: rollup.Plugin[
 		input: MODULE_INPUT,
 		output: {
 			format: 'es',
-			sourcemap: true,
 			name: MODULE_NAME,
 			...output,
 		},
@@ -53,7 +52,6 @@ export default [
 		{
 			file: path.join(__dirname, 'dist/caroucssel.min.js'),
 			format: 'iife',
-			sourcemap: false,
 		},
 		[terser()],
 	),

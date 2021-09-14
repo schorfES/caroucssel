@@ -504,4 +504,3 @@ export class Carousel {
         this._updateScrollbars();
     }
 }
-//# sourceMappingURL=caroucssel.js.map

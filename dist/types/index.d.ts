@@ -53,4 +53,3 @@ export declare type Configuration = {
     onScroll: ScrollHook;
 };
 export declare type Options = Partial<Configuration>;
-//# sourceMappingURL=index.d.ts.map
