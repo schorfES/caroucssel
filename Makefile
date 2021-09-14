@@ -1,5 +1,5 @@
 build_clean:
-.PHONY:  validate tests build build_clean build_styles build_scripts web ghpages release watch
+.PHONY:  validate tests build build_clean build_styles build_scripts web_clean web web_docs web_pages ghpages release watch
 
 
 validate:
@@ -56,9 +56,23 @@ build_scripts:
 		--configPlugin typescript
 
 
-web:
+web: web_clean web_pages web_docs
+
+
+web_clean:
 	rm -rf public/
 
+
+web_docs:
+	node_modules/.bin/typedoc \
+		./src/caroucssel.ts \
+		--out public/docs/ \
+		--readme none \
+		--excludeProtected \
+		--excludeInternal
+
+
+web_pages:
 	node_modules/.bin/parcel \
 		build \
 		./web/index.html \
