@@ -6,6 +6,7 @@
   "main": "dist/caroucssel.cjs.js",
   "unpkg": "dist/caroucssel.min.js",
   "types": "dist/caroucssel.d.ts",
+  "sideEffects": false,
   "scripts": {
     "validate": "make validate",
     "test": "make tests",
