@@ -211,6 +211,13 @@ Object.defineProperty(exports, "__esModule", {
 exports.debounce = debounce;
 
 // See: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf
+
+/**
+ * Creates a debounced version for a given function in a given delay (in ms).
+ * @param func the original function
+ * @param delay the delay in milliseconds (ms)
+ * @returns the debounced function
+ */
 function debounce(func, delay) {
   var timeout = null;
 
@@ -238,9 +245,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.render = render;
 
-function render(template, data) {
+/**
+ * Renders a template (function) to into an HTML element. The template needs to
+ * return a valid HTML string (with a single root element). A context with
+ * key/value pairs will be passed into the template to allow dynamic rendering.
+ * @param template a function to render a template
+ * @param context context data for the template
+ * @returns the rendered htmml element
+ */
+function render(template, context) {
   var el = document.createElement('div');
-  el.innerHTML = template(data);
+  el.innerHTML = template(context);
   var ref = el.firstElementChild;
 
   if (!ref) {
@@ -265,7 +280,13 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+/**
+ * Helper class for scrollbar features.
+ */
 var Scrollbar = /*#__PURE__*/function () {
+  /**
+   * Creates an instance.
+   */
   function Scrollbar() {
     var _this = this;
 
@@ -274,7 +295,15 @@ var Scrollbar = /*#__PURE__*/function () {
     window.addEventListener('resize', function () {
       (0, _cache.clearCache)(_this, 'dimensions');
     });
-  } // Inspired by https://gist.github.com/kflorence/3086552
+  }
+  /**
+   * Calculates the dimensions of a scrollbar in the current browser. The result
+   * of the computation will be cached for this instance.
+   *
+   * Inspired by https://gist.github.com/kflorence/3086552
+   *
+   * @return the dimensions of the scrollar
+   */
 
 
   _createClass(Scrollbar, [{
@@ -462,11 +491,29 @@ var DEFAULTS = {
     return undefined;
   }
 };
+/*
+ * Internal counter for created instances. Will be used to create unique IDs.
+ */
+
 var __instanceCount = 0;
+/*
+ * Singleton of scrollbar util. Is shared across all instances of carousel to
+ * reduce redundant calculations.
+ */
 
 var __scrollbar;
+/**
+ * The carousel javascript instance.
+ */
+
 
 var Carousel = /*#__PURE__*/function () {
+  /**
+   * Creates an instance.
+   * @param el is the dom element to control. This should be a container element
+   * 	that holds child elements that will scroll horizontally.
+   * @param options are the options to configure this instance.
+   */
   function Carousel(el) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -535,14 +582,34 @@ var Carousel = /*#__PURE__*/function () {
 
   _createClass(Carousel, [{
     key: "el",
-    get: function get() {
+    get:
+    /**
+     * Returns the dom element reference of the carousel which was passed into the
+     * constructor.
+     * @public
+     * @return the controlled dom element
+     */
+    function get() {
       return this._el;
     }
+    /**
+     * Returns the id-attribute value of the carousel.
+     * @public
+     * @return the id of the controlled dom element
+     */
+
   }, {
     key: "id",
     get: function get() {
       return this._id;
     }
+    /**
+     * Returns the current index of the carousel. The returned index is a list (array)
+     * of indexes that are currently visible (depending on each item width).
+     * @public
+     * @return a list of visible indexes
+     */
+
   }, {
     key: "index",
     get: function get() {
@@ -577,7 +644,15 @@ var Carousel = /*#__PURE__*/function () {
 
         return index;
       });
-    },
+    }
+    /**
+     * Sets the current index of the carousel. To set an index you need to pass an
+     * array with at least one element. When passing more than one, the rest will
+     * be ignored.
+     * @public
+     * @param values are the upcoming indexes
+     */
+    ,
     set: function set(values) {
       var el = this.el,
           items = this.items;
@@ -616,6 +691,12 @@ var Carousel = /*#__PURE__*/function () {
         behavior: behavior
       }));
     }
+    /**
+     * Returns an array of all child dom elements of the carousel.
+     * @public
+     * @return a list of elements (child elements of the root element)
+     */
+
   }, {
     key: "items",
     get: function get() {
@@ -630,6 +711,13 @@ var Carousel = /*#__PURE__*/function () {
         }).filter(filterItem);
       });
     }
+    /**
+     * Returns an array of all pages. Each page is a group of indexes that matches
+     * a page.
+     * @public
+     * @return the list of pages and indexes inside each page
+     */
+
   }, {
     key: "pages",
     get: function get() {
@@ -719,6 +807,12 @@ var Carousel = /*#__PURE__*/function () {
         });
       });
     }
+    /**
+     * Returns the index of the current page.
+     * @public
+     * @return the index of the current page
+     */
+
   }, {
     key: "pageIndex",
     get: function get() {
@@ -773,6 +867,12 @@ var Carousel = /*#__PURE__*/function () {
         });
       });
     }
+    /**
+     * This completely deconstructs the carousel and returns the dom to its
+     * initial state.
+     * @public
+     */
+
   }, {
     key: "destroy",
     value: function destroy() {
@@ -803,6 +903,12 @@ var Carousel = /*#__PURE__*/function () {
 
       (0, _cache.clearFullCache)(this);
     }
+    /**
+     * Enforces an update of all enabled components of the carousel. This is, for
+     * example, useful when changing the number of items inside the carousel.
+     * @public
+     */
+
   }, {
     key: "update",
     value: function update() {
@@ -1160,4 +1266,4 @@ elements.forEach(function (element) {
   });
 });
 },{"../../src/caroucssel":"oYt0"}]},{},["qcOq"], null)
-//# sourceMappingURL=/caroucssel/script.9e1d6c4d.js.map
+//# sourceMappingURL=/caroucssel/script.98a69efb.js.map
