@@ -27,6 +27,13 @@ or
 yarn add caroucssel
 ```
 
+or in the browser
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/caroucssel@latest/dist/caroucssel.min.css" />
+<script src="https://unpkg.com/caroucssel@latest"></script>
+```
+
 ## Usage
 
 The carousel is based on two elements. The most important part is the styling. CarouCSSel is shipped with a prebuild CSS-file (for basic usage) and an SCSS-file which contains mixins to set up the carousel. On the other hand, there is a  JavaScript class which enhances the carousel by adding controls.
