@@ -92,14 +92,18 @@ let __instanceCount = 0;
  */
 let __scrollbar: Scrollbar;
 
+
 /**
  * The carousel javascript instance.
  */
 export class Carousel {
 
+	/**
+	 * This can be used for testing purposes to reset the instance count which is
+	 * used to create unique id's.
+	 * @internal
+	 */
 	public static resetInstanceCount(): void {
-		// This can be used for testing purposes to reset the instance count which is
-		// used to create unique id's.
 		if (process.env.NODE_ENV === 'test') {
 			__instanceCount = 0;
 		}
