@@ -579,6 +579,12 @@ var Carousel = /*#__PURE__*/function () {
     window.addEventListener(EVENT_RESIZE, this._onResize);
     /* eslint-enable @typescript-eslint/unbound-method */
   }
+  /**
+   * This can be used for testing purposes to reset the instance count which is
+   * used to create unique id's.
+   * @internal
+   */
+
 
   _createClass(Carousel, [{
     key: "el",
@@ -1218,8 +1224,6 @@ var Carousel = /*#__PURE__*/function () {
   }], [{
     key: "resetInstanceCount",
     value: function resetInstanceCount() {
-      // This can be used for testing purposes to reset the instance count which is
-      // used to create unique id's.
       if ("production" === 'test') {
         __instanceCount = 0;
       }
@@ -1252,4 +1256,4 @@ new _caroucssel.Carousel(element, {
   }
 });
 },{"../src/caroucssel":"oYt0"}]},{},["g4tf"], null)
-//# sourceMappingURL=/caroucssel/script.37a95808.js.map
+//# sourceMappingURL=/caroucssel/script.dcc82e4f.js.map
