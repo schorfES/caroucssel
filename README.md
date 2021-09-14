@@ -9,7 +9,7 @@
 
 A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**_
 
-* Take a [quick introduction](https://schorfes.github.io/caroucssel/)
+* Take a [quick tour](https://schorfes.github.io/caroucssel/)
 * Try the [examples](https://schorfes.github.io/caroucssel/demo/)
 * Read the [docs](https://schorfes.github.io/caroucssel/docs/)
 
