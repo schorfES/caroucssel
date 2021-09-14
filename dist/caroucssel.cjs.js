@@ -142,18 +142,13 @@ const DEFAULTS = {
 let __instanceCount = 0;
 let __scrollbar;
 class Carousel {
-    static resetInstanceCount() {
-    }
-    _el;
-    _id;
-    _conf;
-    _mask = null;
-    _isSmooth = false;
-    _previous = null;
-    _next = null;
-    _pagination = null;
-    _paginationButtons = null;
     constructor(el, options = {}) {
+        this._mask = null;
+        this._isSmooth = false;
+        this._previous = null;
+        this._next = null;
+        this._pagination = null;
+        this._paginationButtons = null;
         if (!el || !(el instanceof Element)) {
             throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
         }
@@ -163,7 +158,7 @@ class Carousel {
         el.id = el.id || ID_NAME(__instanceCount);
         this._id = el.id;
         this._mask = null;
-        const opts = { ...DEFAULTS, ...options };
+        const opts = Object.assign(Object.assign({}, DEFAULTS), options);
         this._conf = opts;
         this._addButtons();
         this._addPagination();
@@ -181,6 +176,8 @@ class Carousel {
         this._onResize = debounce(this._onResize.bind(this), 25);
         el.addEventListener(EVENT_SCROLL, this._onScroll);
         window.addEventListener(EVENT_RESIZE, this._onResize);
+    }
+    static resetInstanceCount() {
     }
     get el() {
         return this._el;
@@ -235,7 +232,7 @@ class Carousel {
         }
         clearCache(this, CACHE_KEY_INDEX);
         const behavior = this._isSmooth ? 'smooth' : 'auto';
-        el.scrollTo({ ...to, behavior });
+        el.scrollTo(Object.assign(Object.assign({}, to), { behavior }));
     }
     get items() {
         return fromCache(this, CACHE_KEY_ITEMS, () => {
@@ -266,7 +263,7 @@ class Carousel {
                 const { left, width } = item;
                 const prevPage = pages[pages.length - 1];
                 const firstItem = prevPage[0];
-                let start = firstItem?.left || 0;
+                let start = (firstItem === null || firstItem === void 0 ? void 0 : firstItem.left) || 0;
                 if (prevPage === pages[0]) {
                     start = 0;
                 }
@@ -337,11 +334,12 @@ class Carousel {
             height = 0;
         }
         this._mask = this._mask || (() => {
+            var _a;
             const mask = document.createElement('div');
             mask.className = scrollbarsMaskClassName;
             mask.style.overflow = 'hidden';
             mask.style.height = '100%';
-            el.parentNode?.insertBefore(mask, this.el);
+            (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, this.el);
             mask.appendChild(el);
             return mask;
         })();
@@ -355,16 +353,18 @@ class Carousel {
         element.style.marginBottom = `${height * -1}px`;
     }
     _removeScrollbars() {
+        var _a, _b;
         const { _mask, el } = this;
         if (!_mask) {
             return;
         }
-        _mask.parentNode?.insertBefore(el, _mask);
-        _mask.parentNode?.removeChild(_mask);
+        (_a = _mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, _mask);
+        (_b = _mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(_mask);
         el.removeAttribute('style');
         this._mask = null;
     }
     _addButtons() {
+        var _a, _b;
         const { el, id, _conf: _options } = this;
         if (!_options.hasButtons) {
             return;
@@ -372,8 +372,8 @@ class Carousel {
         const { buttonTemplate, buttonClassName, buttonPrevious, buttonNext } = _options;
         const controls = id;
         const [previous, next] = [
-            { ...DEFAULTS_BUTTON_PREVIOUS, ...buttonPrevious, controls, className: [buttonClassName, buttonPrevious.className].join(' ') },
-            { ...DEFAULTS_BUTTON_NEXT, ...buttonNext, controls, className: [buttonClassName, buttonNext.className].join(' ') },
+            Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_PREVIOUS), buttonPrevious), { controls, className: [buttonClassName, buttonPrevious.className].join(' ') }),
+            Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_NEXT), buttonNext), { controls, className: [buttonClassName, buttonNext.className].join(' ') }),
         ].map((params) => render(buttonTemplate, params));
         if (previous) {
             const onPrevious = () => {
@@ -382,7 +382,7 @@ class Carousel {
                 this.index = index;
             };
             previous.onclick = onPrevious;
-            el.parentNode?.appendChild(previous);
+            (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(previous);
         }
         this._previous = previous;
         if (next) {
@@ -392,7 +392,7 @@ class Carousel {
                 this.index = index;
             };
             next.onclick = onNext;
-            el.parentNode?.appendChild(next);
+            (_b = el.parentNode) === null || _b === void 0 ? void 0 : _b.appendChild(next);
         }
         this._next = next;
         this._updateButtons();
@@ -417,11 +417,12 @@ class Carousel {
     _removeButtons() {
         const { _previous, _next } = this;
         [_previous, _next].forEach((button) => {
+            var _a;
             if (!button) {
                 return;
             }
             button.onclick = null;
-            button.parentNode?.removeChild(button);
+            (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
         });
     }
     _addPagination() {
@@ -450,7 +451,7 @@ class Carousel {
             return button;
         });
         const target = (_mask || el).parentNode;
-        target?.appendChild(pagination);
+        target === null || target === void 0 ? void 0 : target.appendChild(pagination);
         this._pagination = pagination;
         this._paginationButtons = buttons;
         this._updatePagination();
@@ -467,13 +468,15 @@ class Carousel {
         _paginationButtons.forEach((button, at) => button.disabled = (at === pageIndex));
     }
     _removePagination() {
+        var _a;
         const { _pagination, _paginationButtons } = this;
         (_paginationButtons || []).forEach((button) => {
+            var _a;
             button.onclick = null;
-            button.parentNode?.removeChild(button);
+            (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
         });
         this._paginationButtons = null;
-        _pagination && _pagination.parentNode?.removeChild(_pagination);
+        _pagination && ((_a = _pagination.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(_pagination));
         this._pagination = null;
     }
     _onScroll(event) {

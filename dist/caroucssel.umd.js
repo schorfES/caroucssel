@@ -30,13 +30,7 @@
 
   function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
   function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -241,23 +235,12 @@
 
       _classCallCheck(this, Carousel);
 
-      _defineProperty(this, "_el", void 0);
-
-      _defineProperty(this, "_id", void 0);
-
-      _defineProperty(this, "_conf", void 0);
-
-      _defineProperty(this, "_mask", null);
-
-      _defineProperty(this, "_isSmooth", false);
-
-      _defineProperty(this, "_previous", null);
-
-      _defineProperty(this, "_next", null);
-
-      _defineProperty(this, "_pagination", null);
-
-      _defineProperty(this, "_paginationButtons", null);
+      this._mask = null;
+      this._isSmooth = false;
+      this._previous = null;
+      this._next = null;
+      this._pagination = null;
+      this._paginationButtons = null;
 
       if (!el || !(el instanceof Element)) {
         throw new Error("Carousel needs a dom element but \"".concat(_typeof(el), "\" was passed."));
@@ -269,9 +252,7 @@
       el.id = el.id || ID_NAME(__instanceCount);
       this._id = el.id;
       this._mask = null;
-
-      var opts = _objectSpread(_objectSpread({}, DEFAULTS), options);
-
+      var opts = Object.assign(Object.assign({}, DEFAULTS), options);
       this._conf = opts;
 
       this._addButtons();
@@ -373,7 +354,7 @@
 
         clearCache(this, CACHE_KEY_INDEX);
         var behavior = this._isSmooth ? 'smooth' : 'auto';
-        el.scrollTo(_objectSpread(_objectSpread({}, to), {}, {
+        el.scrollTo(Object.assign(Object.assign({}, to), {
           behavior: behavior
         }));
       }
@@ -544,13 +525,13 @@
         }
 
         this._mask = this._mask || function () {
-          var _el$parentNode;
+          var _a;
 
           var mask = document.createElement('div');
           mask.className = scrollbarsMaskClassName;
           mask.style.overflow = 'hidden';
           mask.style.height = '100%';
-          (_el$parentNode = el.parentNode) === null || _el$parentNode === void 0 ? void 0 : _el$parentNode.insertBefore(mask, _this6.el);
+          (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, _this6.el);
           mask.appendChild(el);
           return mask;
         }();
@@ -571,7 +552,7 @@
     }, {
       key: "_removeScrollbars",
       value: function _removeScrollbars() {
-        var _mask$parentNode, _mask$parentNode2;
+        var _a, _b;
 
         var _mask = this._mask,
             el = this.el;
@@ -580,8 +561,8 @@
           return;
         }
 
-        (_mask$parentNode = _mask.parentNode) === null || _mask$parentNode === void 0 ? void 0 : _mask$parentNode.insertBefore(el, _mask);
-        (_mask$parentNode2 = _mask.parentNode) === null || _mask$parentNode2 === void 0 ? void 0 : _mask$parentNode2.removeChild(_mask);
+        (_a = _mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, _mask);
+        (_b = _mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(_mask);
         el.removeAttribute('style');
         this._mask = null;
       }
@@ -589,6 +570,8 @@
       key: "_addButtons",
       value: function _addButtons() {
         var _this7 = this;
+
+        var _a, _b;
 
         var el = this.el,
             id = this.id,
@@ -604,10 +587,10 @@
             buttonNext = _options.buttonNext;
         var controls = id;
 
-        var _map = [_objectSpread(_objectSpread(_objectSpread({}, DEFAULTS_BUTTON_PREVIOUS), buttonPrevious), {}, {
+        var _map = [Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_PREVIOUS), buttonPrevious), {
           controls: controls,
           className: [buttonClassName, buttonPrevious.className].join(' ')
-        }), _objectSpread(_objectSpread(_objectSpread({}, DEFAULTS_BUTTON_NEXT), buttonNext), {}, {
+        }), Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_NEXT), buttonNext), {
           controls: controls,
           className: [buttonClassName, buttonNext.className].join(' ')
         })].map(function (params) {
@@ -618,8 +601,6 @@
             next = _map2[1];
 
         if (previous) {
-          var _el$parentNode2;
-
           var onPrevious = function onPrevious() {
             var pages = _this7.pages,
                 pageIndex = _this7.pageIndex;
@@ -628,14 +609,12 @@
           };
 
           previous.onclick = onPrevious;
-          (_el$parentNode2 = el.parentNode) === null || _el$parentNode2 === void 0 ? void 0 : _el$parentNode2.appendChild(previous);
+          (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(previous);
         }
 
         this._previous = previous;
 
         if (next) {
-          var _el$parentNode3;
-
           var onNext = function onNext() {
             var pages = _this7.pages,
                 pageIndex = _this7.pageIndex;
@@ -644,7 +623,7 @@
           };
 
           next.onclick = onNext;
-          (_el$parentNode3 = el.parentNode) === null || _el$parentNode3 === void 0 ? void 0 : _el$parentNode3.appendChild(next);
+          (_b = el.parentNode) === null || _b === void 0 ? void 0 : _b.appendChild(next);
         }
 
         this._next = next;
@@ -683,14 +662,14 @@
         var _previous = this._previous,
             _next = this._next;
         [_previous, _next].forEach(function (button) {
-          var _button$parentNode;
+          var _a;
 
           if (!button) {
             return;
           }
 
           button.onclick = null;
-          (_button$parentNode = button.parentNode) === null || _button$parentNode === void 0 ? void 0 : _button$parentNode.removeChild(button);
+          (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
         });
       }
     }, {
@@ -766,20 +745,20 @@
     }, {
       key: "_removePagination",
       value: function _removePagination() {
-        var _pagination$parentNod;
+        var _a;
 
         var _pagination = this._pagination,
             _paginationButtons = this._paginationButtons;
 
         (_paginationButtons || []).forEach(function (button) {
-          var _button$parentNode2;
+          var _a;
 
           button.onclick = null;
-          (_button$parentNode2 = button.parentNode) === null || _button$parentNode2 === void 0 ? void 0 : _button$parentNode2.removeChild(button);
+          (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
         });
 
         this._paginationButtons = null;
-        _pagination && ((_pagination$parentNod = _pagination.parentNode) === null || _pagination$parentNod === void 0 ? void 0 : _pagination$parentNod.removeChild(_pagination));
+        _pagination && ((_a = _pagination.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(_pagination));
         this._pagination = null;
       }
     }, {
