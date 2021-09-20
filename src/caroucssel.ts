@@ -1,4 +1,4 @@
-import { ButtonOptions, ButtonParams, Configuration, Index, Options, Pages, PaginationParams } from './types';
+import { ButtonOptions, ButtonParams, Configuration, Index, Options, Pages, PaginationParams, Plugin, PluginProxy, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 import { render } from './utils/render';
@@ -18,6 +18,10 @@ const CACHE_KEY_ITEMS = 'items';
 const CACHE_KEY_PAGES = 'pages';
 const CACHE_KEY_PAGE_INDEX = 'page-index';
 const CACHE_KEY_SCROLLBAR = 'scrollbar';
+const CACHE_KEY_PROXY = 'proxy';
+const CACHE_KEY_PLUGINS = 'plugins';
+const CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
+const CACHE_KEY_PROXY_PLUGIN = 'proxy:plugins';
 
 const VISIBILITY_OFFSET = 0.25;
 
@@ -49,6 +53,8 @@ const DEFAULTS: Configuration = {
 	`,
 	buttonPrevious: DEFAULTS_BUTTON_PREVIOUS,
 	buttonNext: DEFAULTS_BUTTON_NEXT,
+	// Plugins:
+	plugins: [],
 
 	// Pagination:
 	hasPagination: false,
@@ -91,6 +97,55 @@ let __instanceCount = 0;
  * reduce redundant calculations.
  */
 let __scrollbar: Scrollbar;
+
+
+/**
+ * A proxy instance between carousel and each plugin.
+ * @internal
+ */
+class Proxy implements PluginProxy {
+
+	constructor(instance: Carousel, plugins: Plugin[]) {
+		writeCache(this, CACHE_KEY_PROXY_INSTANCE, instance);
+		writeCache(this, CACHE_KEY_PROXY_PLUGIN, plugins);
+	}
+
+	public get el(): Element {
+		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
+		return instance.el;
+	}
+
+	public get index(): Index {
+		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
+		return instance.index;
+	}
+
+	public set index(value: Index) {
+		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
+		instance.index = value;
+	}
+
+	public get items(): HTMLElement[] {
+		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
+		return instance.items;
+	}
+
+	public get pages(): Pages {
+		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
+		return instance.pages;
+	}
+
+	public get pageIndex(): number {
+		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
+		return instance.pageIndex;
+	}
+
+	public update(plugin: Plugin): void {
+		// @TODO: Trigger update in instance and all other plugins except the source
+		// plugin that triggered the event.
+	}
+
+}
 
 
 /**
@@ -155,6 +210,13 @@ export class Carousel {
 		// extend options and defaults:
 		const opts = { ...DEFAULTS, ...options };
 		this._conf = opts;
+
+		// Plugins:
+		const { plugins } = opts;
+		const proxy = new Proxy(this, plugins);
+		writeCache(this, CACHE_KEY_PROXY, proxy);
+		writeCache(this, CACHE_KEY_PLUGINS, plugins);
+		plugins.forEach((plugin) => plugin.init(proxy));
 
 		// Render:
 		this._addButtons();
@@ -460,6 +522,9 @@ export class Carousel {
 
 		// Remove buttons:
 		this._removeButtons();
+		// Destroy attached plugins:
+		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		plugins?.forEach((plugin) => plugin.destroy());
 
 		// Remove pagination:
 		this._removePagination();
@@ -488,9 +553,15 @@ export class Carousel {
 	 * @public
 	 */
 	update(): void {
-		clearFullCache(this);
+		clearCache(this, CACHE_KEY_INDEX);
+		clearCache(this, CACHE_KEY_ITEMS);
+		clearCache(this, CACHE_KEY_PAGES);
+		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
 		this._updateButtons();
+		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
+
 		this._updatePagination();
 		this._updateScrollbars();
 	}
@@ -692,6 +763,9 @@ export class Carousel {
 		this._updateButtons();
 		this._updatePagination();
 
+		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.SCROLL }));
+
 		const { index, _conf: { onScroll } } = this;
 		onScroll && onScroll<Carousel>({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
 	}
@@ -702,6 +776,9 @@ export class Carousel {
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
 		this._updateButtons();
+		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
+
 		this._removePagination();
 		this._addPagination();
 		this._updateScrollbars();
