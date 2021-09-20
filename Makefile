@@ -31,20 +31,20 @@ build_clean:
 
 build_styles:
 	NODE_ENV=production ./node_modules/.bin/sass \
-		./src/caroucssel.css.scss \
+		./src/styles/caroucssel.css.scss \
 		./dist/caroucssel.css \
 		--style expanded \
 		--no-source-map \
 		--trace
 
 	NODE_ENV=production ./node_modules/.bin/sass \
-		./src/caroucssel.css.scss \
+		./src/styles/caroucssel.css.scss \
 		./dist/caroucssel.min.css \
 		--style compressed \
 		--no-source-map \
 		--trace
 
-	cp ./src/caroucssel.scss ./dist/caroucssel.scss
+	cp ./src/styles/caroucssel.scss ./dist/caroucssel.scss
 
 
 build_scripts:
