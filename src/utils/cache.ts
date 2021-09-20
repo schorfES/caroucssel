@@ -18,10 +18,16 @@ const __CACHE = new WeakMap<Reference, Storage>();
  * @param factory the factory function
  * @returns the cached value
  */
-export function fromCache<T = unknown>(ref: Reference, key: string, factory: () => T): T {
+export function fromCache<T = unknown>(ref: Reference, key: string): T | undefined;
+export function fromCache<T = unknown>(ref: Reference, key: string, factory: () => T): T;
+export function fromCache<T = unknown>(ref: Reference, key: string, factory?: () => T): T | undefined {
 	const storage = __CACHE.get(ref) || {};
 	if (key in storage) {
 		return storage[key] as T;
+	}
+
+	if (!factory) {
+		return undefined;
 	}
 
 	const value = factory();

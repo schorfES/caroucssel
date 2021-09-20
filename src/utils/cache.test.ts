@@ -5,7 +5,14 @@ describe('Cache util', () => {
 
 	describe('fromCache', () => {
 
-		it('should create cache entry', () => {
+		it('should access cache entry', () => {
+			const ref = {};
+			expect(fromCache(ref, 'key')).toBeUndefined();
+			expect(fromCache(ref, 'key', () => 42)).toBe(42);
+			expect(fromCache(ref, 'key',)).toBe(42);
+		});
+
+		it('should create cache entry with factory', () => {
 			const ref = {};
 			fromCache(ref, 'first', () => 42);
 			fromCache(ref, 'second', () => true);
@@ -21,14 +28,14 @@ describe('Cache util', () => {
 			});
 		});
 
-		it('should call calculation function when empty', () => {
+		it('should call factory when empty', () => {
 			const ref = {};
 			const calculate = jest.fn(() => 42);
 			expect(fromCache(ref, 'answer', calculate)).toBe(42);
 			expect(calculate).toHaveBeenCalled();
 		});
 
-		it('should call calculation function only once', () => {
+		it('should call factory only once', () => {
 			const ref = {};
 			const calculate = jest.fn(() => 42);
 			const values = [
@@ -40,7 +47,7 @@ describe('Cache util', () => {
 			expect(calculate).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call calculation function only once even if response is null', () => {
+		it('should call factory only once even if response is null', () => {
 			const ref = {};
 			const calculate = jest.fn(() => null);
 			const values = [
@@ -52,7 +59,7 @@ describe('Cache util', () => {
 			expect(calculate).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call calculation function only once even if response is undefined', () => {
+		it('should call factory only once even if response is undefined', () => {
 			const ref = {};
 			const calculate = jest.fn(() => undefined);
 			const values = [
@@ -64,7 +71,7 @@ describe('Cache util', () => {
 			expect(calculate).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call calculation function only once even if response is 0', () => {
+		it('should call factory only once even if response is 0', () => {
 			const ref = {};
 			const calculate = jest.fn(() => 0);
 			const values = [
@@ -76,7 +83,7 @@ describe('Cache util', () => {
 			expect(calculate).toHaveBeenCalledTimes(1);
 		});
 
-		it('should call calculation function only once even if response is false', () => {
+		it('should call factory only once even if response is false', () => {
 			const ref = {};
 			const calculate = jest.fn(() => false);
 			const values = [
@@ -88,7 +95,7 @@ describe('Cache util', () => {
 			expect(calculate).toHaveBeenCalledTimes(1);
 		});
 
-		it('should ignore calculation function reference', () => {
+		it('should ignore factory reference', () => {
 			const ref = {};
 			const calculate1 = jest.fn(() => 42);
 			const calculate2 = jest.fn(() => 13);
@@ -101,7 +108,7 @@ describe('Cache util', () => {
 			expect(calculate2).not.toHaveBeenCalled();
 		});
 
-		it('should call calculation function for different keys', () => {
+		it('should call factory for different keys', () => {
 			const ref = {};
 			const calculate1 = jest.fn(() => 42);
 			const calculate2 = jest.fn(() => 13);
