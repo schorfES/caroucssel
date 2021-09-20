@@ -32,21 +32,6 @@ export interface Plugin {
 	update(data :UpdateData): void;
 }
 
-export type ButtonParams = {
-	controls: string;
-	className: string;
-	label: string;
-	title: string;
-};
-
-export type ButtonTemplate = (params: ButtonParams) => string;
-
-export type ButtonOptions = {
-	className?: string;
-	label?: string;
-	title?: string;
-};
-
 export type PaginationTextParams = {
 	index: number;
 	page: number[];
@@ -87,13 +72,6 @@ export type Configuration = {
 
 	// Plugins:
 	plugins: Plugin[],
-
-	// Buttons:
-	hasButtons: boolean;
-	buttonClassName: string;
-	buttonTemplate: ButtonTemplate;
-	buttonPrevious: ButtonOptions;
-	buttonNext: ButtonOptions;
 
 	// Pagination:
 	hasPagination: boolean;
