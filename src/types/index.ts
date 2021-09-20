@@ -2,6 +2,36 @@ export type Index = [number, ...number[]];
 
 export type Pages = [Index, ...Index[]];
 
+export enum UpdateReason {
+	SCROLL = 'scroll',
+	RESIZE = 'resize',
+	FORCED = 'forced',
+	PLUGIN = 'plugin',
+}
+
+export type UpdateData = {
+	reason: UpdateReason;
+};
+
+export interface PluginProxy {
+	get el(): Element;
+	get index(): Index;
+	set index(value: Index);
+	get items(): HTMLElement[];
+	get pages(): Pages;
+	get pageIndex(): number;
+
+	update(plugin: Plugin): void;
+}
+
+export interface Plugin {
+	get name(): string;
+
+	init(proxy: PluginProxy): void;
+	destroy(): void;
+	update(data :UpdateData): void;
+}
+
 export type ButtonParams = {
 	controls: string;
 	className: string;
@@ -54,6 +84,9 @@ export type FilterItemFn =
 export type Configuration = {
 	// Settings:
 	index?: Index | number;
+
+	// Plugins:
+	plugins: Plugin[],
 
 	// Buttons:
 	hasButtons: boolean;
