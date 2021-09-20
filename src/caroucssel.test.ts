@@ -1,5 +1,6 @@
 import { Carousel } from './caroucssel';
-import { ButtonParams, FilterItemFn, PaginationParams, PaginationTextParams } from './types';
+import { Params as ButtonParams, Buttons } from './plugins/buttons';
+import { FilterItemFn, PaginationParams, PaginationTextParams } from './types';
 import { ScrollbarDimensions } from './utils/scrollbar';
 
 
@@ -476,7 +477,7 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 			const options = {
-				hasButtons: true,
+				plugins: [new Buttons()],
 			};
 			new Carousel(el, options);
 
@@ -487,18 +488,15 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 			const options = {
-				hasButtons: true,
-				buttonClassName: 'custom-button-class',
-				buttonPrevious: {
-					className: 'custom-previous-button-class',
-					label: 'Custom previous label',
-					title: 'Custom previous title',
-				},
-				buttonNext: {
-					className: 'custom-next-button-class',
-					label: 'Custom next label',
-					title: 'Custom next title',
-				},
+				plugins: [new Buttons({
+					className: 'custom-button-class',
+					previousClassName: 'custom-previous-button-class',
+					previousLabel: 'Custom previous label',
+					previousTitle: 'Custom previous title',
+					nextClassName: 'custom-next-button-class',
+					nextLabel: 'Custom next label',
+					nextTitle: 'Custom next title',
+				})],
 			};
 			new Carousel(el, options);
 
@@ -509,32 +507,29 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3, { id: 'custom-id' });
 			const el = __querySelector('.caroucssel');
 			const options = {
-				hasButtons: true,
-				buttonClassName: 'custom-button-class',
-				buttonPrevious: {
-					className: 'custom-previous-button-class',
-					label: 'Custom previous label',
-					title: 'Custom previous title',
-				},
-				buttonNext: {
-					className: 'custom-next-button-class',
-					label: 'Custom next label',
-					title: 'Custom next title',
-				},
-				buttonTemplate: jest.fn<string, ButtonParams[]>(({ className, label, title }) =>
+				template: jest.fn<string, ButtonParams[]>(({ className, label, title }) =>
 					`<span class="${className}" title="${title}">${label}</span>`),
+				className: 'custom-button-class',
+				previousClassName: 'custom-previous-button-class',
+				previousLabel: 'Custom previous label',
+				previousTitle: 'Custom previous title',
+				nextClassName: 'custom-next-button-class',
+				nextLabel: 'Custom next label',
+				nextTitle: 'Custom next title',
 			};
-			new Carousel(el, options);
+			new Carousel(el, {
+				plugins: [new Buttons(options)],
+			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(options.buttonTemplate).toHaveBeenCalledTimes(2);
-			expect(options.buttonTemplate).toHaveBeenNthCalledWith(1, {
+			expect(options.template).toHaveBeenCalledTimes(2);
+			expect(options.template).toHaveBeenNthCalledWith(1, {
 				className: 'custom-button-class custom-previous-button-class',
 				controls: 'custom-id',
 				label: 'Custom previous label',
 				title: 'Custom previous title',
 			});
-			expect(options.buttonTemplate).toHaveBeenNthCalledWith(2, {
+			expect(options.template).toHaveBeenNthCalledWith(2, {
 				className: 'custom-button-class custom-next-button-class',
 				controls: 'custom-id',
 				label: 'Custom next label',
@@ -546,16 +541,14 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			const buttonTemplate: jest.Mock<string, []> = jest.fn(() => '');
+			const template: jest.Mock<string, []> = jest.fn(() => '');
 
-			const options = {
-				hasButtons: true,
-				buttonTemplate,
-			};
-			new Carousel(el, options);
+			new Carousel(el, {
+				plugins: [new Buttons({ template })],
+			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(options.buttonTemplate).toHaveBeenCalledTimes(2);
+			expect(template).toHaveBeenCalledTimes(2);
 		});
 
 		it('should handle buttons with custom template that returns null', () => {
@@ -564,16 +557,14 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns null
 			// @ts-ignore
-			const buttonTemplate: jest.Mock<string, []> = jest.fn(() => null);
+			const template: jest.Mock<string, []> = jest.fn(() => null);
 
-			const options = {
-				hasButtons: true,
-				buttonTemplate,
-			};
-			new Carousel(el, options);
+			new Carousel(el, {
+				plugins: [new Buttons({ template })],
+			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(options.buttonTemplate).toHaveBeenCalledTimes(2);
+			expect(template).toHaveBeenCalledTimes(2);
 		});
 
 		it('should handle buttons with custom template that returns undefined', () => {
@@ -582,23 +573,24 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns undefined
 			// @ts-ignore
-			const buttonTemplate: jest.Mock<string, [ButtonParams]> = jest.fn(() => undefined);
+			const template: jest.Mock<string, [ButtonParams]> = jest.fn(() => undefined);
 
-			const options = {
-				hasButtons: true,
-				buttonTemplate,
-			};
-			new Carousel(el, options);
+			new Carousel(el, {
+				plugins: [new Buttons({ template })],
+			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(options.buttonTemplate).toHaveBeenCalledTimes(2);
+			expect(template).toHaveBeenCalledTimes(2);
 		});
 
 
 		it('should add disabled buttons without items', () => {
 			document.body.innerHTML = __fixture(0);
 			const el = __querySelector('.caroucssel');
-			new Carousel(el, { hasButtons: true });
+			const options = {
+				plugins: [new Buttons()],
+			};
+			new Carousel(el, options);
 
 			expect(document.body.innerHTML).toMatchSnapshot();
 			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(2);
@@ -609,7 +601,10 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			new Carousel(el, { hasButtons: true });
+			const options = {
+				plugins: [new Buttons()],
+			};
+			new Carousel(el, options);
 
 			expect(document.querySelectorAll('.button[disabled]')).toHaveLength(1);
 
@@ -623,7 +618,10 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			new Carousel(el, { hasButtons: true });
+			const options = {
+				plugins: [new Buttons()],
+			};
+			new Carousel(el, options);
 
 			const buttons = document.querySelectorAll<HTMLButtonElement>('.button');
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
@@ -640,7 +638,10 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			const carousel = new Carousel(el, { hasButtons: true });
+			const options = {
+				plugins: [new Buttons()],
+			};
+			const carousel = new Carousel(el, options);
 
 			const buttons = document.querySelectorAll<HTMLButtonElement>('.button');
 			expect([...buttons].map(({ disabled }) => disabled)).toEqual([true, false]);
@@ -659,7 +660,10 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
-			new Carousel(el, { hasButtons: true });
+			const options = {
+				plugins: [new Buttons()],
+			};
+			new Carousel(el, options);
 
 			const callback = jest.spyOn(el, 'scrollTo');
 			const buttons = document.querySelectorAll<HTMLButtonElement>('.button');
@@ -1091,7 +1095,9 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = structure;
 			const el = __querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
-				hasButtons: false,
+				plugins: [
+					new Buttons(),
+				],
 				hasPagination: true,
 			});
 
@@ -1104,7 +1110,9 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = structure;
 			const el = __querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
-				hasButtons: true,
+				plugins: [
+					new Buttons(),
+				],
 				hasPagination: false,
 			});
 
@@ -1117,7 +1125,9 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = structure;
 			const el = __querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
-				hasButtons: true,
+				plugins: [
+					new Buttons(),
+				],
 				hasPagination: true,
 				hasScrollbars: true,
 			});

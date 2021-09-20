@@ -1,4 +1,4 @@
-import { ButtonOptions, ButtonParams, Configuration, Index, Options, Pages, PaginationParams, Plugin, PluginProxy, UpdateReason } from './types';
+import { Configuration, Index, Options, Pages, PaginationParams, Plugin, PluginProxy, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 import { render } from './utils/render';
@@ -30,29 +30,8 @@ const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
 const EVENT_SCROLL = 'scroll';
 const EVENT_RESIZE = 'resize';
 
-const DEFAULTS_BUTTON_PREVIOUS: Required<ButtonOptions> = {
-	className: 'is-previous',
-	label: 'Previous',
-	title: 'Go to previous',
-};
-
-const DEFAULTS_BUTTON_NEXT: Required<ButtonOptions> = {
-	className: 'is-next',
-	label: 'Next',
-	title: 'Go to next',
-};
 
 const DEFAULTS: Configuration = {
-	// Buttons:
-	hasButtons: false,
-	buttonClassName: 'button',
-	buttonTemplate: ({ className, controls, label, title }: ButtonParams) => `
-		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
-			<span>${label}</span>
-		</button>
-	`,
-	buttonPrevious: DEFAULTS_BUTTON_PREVIOUS,
-	buttonNext: DEFAULTS_BUTTON_NEXT,
 	// Plugins:
 	plugins: [],
 
@@ -174,10 +153,6 @@ export class Carousel {
 
 	protected _isSmooth = false;
 
-	protected _previous: HTMLButtonElement | null = null;
-
-	protected _next: HTMLButtonElement | null = null;
-
 	protected _pagination: HTMLElement | null = null;
 
 	protected _paginationButtons: HTMLButtonElement[] | null = null;
@@ -219,7 +194,6 @@ export class Carousel {
 		plugins.forEach((plugin) => plugin.init(proxy));
 
 		// Render:
-		this._addButtons();
 		this._addPagination();
 		this._updateScrollbars();
 
@@ -520,8 +494,6 @@ export class Carousel {
 		// Remove created id if it was created by carousel:
 		ID_MATCH.test(el.id) && el.removeAttribute('id');
 
-		// Remove buttons:
-		this._removeButtons();
 		// Destroy attached plugins:
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.destroy());
@@ -558,7 +530,6 @@ export class Carousel {
 		clearCache(this, CACHE_KEY_PAGES);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		this._updateButtons();
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
 
@@ -615,80 +586,6 @@ export class Carousel {
 		el.removeAttribute('style');
 
 		this._mask = null;
-	}
-
-	protected _addButtons(): void {
-		const { el, id, _conf: _options } = this;
-		if (!_options.hasButtons) {
-			return;
-		}
-
-		const { buttonTemplate, buttonClassName, buttonPrevious, buttonNext } = _options;
-		const controls = id;
-		// Create button elements:
-		const [previous, next] = [
-			{ ...DEFAULTS_BUTTON_PREVIOUS, ...buttonPrevious, controls, className: [buttonClassName, buttonPrevious.className].join(' ') },
-			{ ...DEFAULTS_BUTTON_NEXT, ...buttonNext, controls, className: [buttonClassName, buttonNext.className].join(' ') },
-		].map((params) => render<HTMLButtonElement, ButtonParams>(buttonTemplate, params))
-
-
-		if (previous) {
-			const onPrevious = () => {
-				const { pages, pageIndex } = this;
-				const index = pages[pageIndex - 1] || pages[0];
-				this.index = index;
-			};
-
-			previous.onclick = onPrevious;
-			el.parentNode?.appendChild(previous);
-		}
-		this._previous = previous;
-
-		if (next) {
-			const onNext = () => {
-				const { pages, pageIndex } = this;
-				const index = pages[pageIndex + 1] || pages[pages.length - 1];
-				this.index = index;
-			};
-
-			next.onclick = onNext;
-			el.parentNode?.appendChild(next);
-		}
-		this._next = next;
-
-		this._updateButtons();
-	}
-
-	protected _updateButtons(): void {
-		const { _conf: _options } = this;
-		if (!_options.hasButtons) {
-			return;
-		}
-
-		const { pages, pageIndex, _previous, _next } = this;
-
-		if (_previous) {
-			const firstPage = pages[pageIndex - 1];
-			const isFirstPage = firstPage === undefined;
-			_previous.disabled = isFirstPage;
-		}
-
-		if (_next) {
-			const lastPage = pages[pageIndex + 1];
-			const isLastPage = lastPage === undefined;
-			_next.disabled = isLastPage;
-		}
-	}
-
-	protected _removeButtons(): void {
-		const { _previous, _next } = this;
-		[_previous, _next].forEach((button) => {
-			if (!button) {
-				return;
-			}
-			button.onclick = null;
-			button.parentNode?.removeChild(button);
-		});
 	}
 
 	protected _addPagination(): void {
@@ -760,7 +657,6 @@ export class Carousel {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		this._updateButtons();
 		this._updatePagination();
 
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
@@ -775,7 +671,6 @@ export class Carousel {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		this._updateButtons();
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
 
