@@ -1,6 +1,7 @@
 import { Carousel } from './caroucssel';
 import { Params as ButtonParams, Buttons } from './plugins/buttons';
-import { FilterItemFn, PaginationParams, PaginationTextParams } from './types';
+import { Pagination, Params as PaginationParams, TextParams as PaginationTextParams } from './plugins/pagination';
+import { FilterItemFn } from './types';
 import { ScrollbarDimensions } from './utils/scrollbar';
 
 
@@ -703,7 +704,9 @@ describe('Caroucssel', () => {
 		it('should add pagination', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
-			new Carousel(el, { hasPagination: true });
+			new Carousel(el, {
+				plugins: [new Pagination()],
+			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
 		});
@@ -712,7 +715,7 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			const paginationLabel: jest.Mock<string, [PaginationTextParams]> = jest.fn(
+			const label: jest.Mock<string, [PaginationTextParams]> = jest.fn(
 				({ index }) => {
 					switch (index) {
 						case 0: return 'first';
@@ -723,7 +726,7 @@ describe('Caroucssel', () => {
 				},
 			);
 
-			const paginationTitle: jest.Mock<string, [PaginationTextParams]> = jest.fn(
+			const title: jest.Mock<string, [PaginationTextParams]> = jest.fn(
 				({ index }) => {
 					let name: string;
 
@@ -739,23 +742,26 @@ describe('Caroucssel', () => {
 			);
 
 			new Carousel(el, {
-				hasPagination: true,
-				paginationClassName: 'custom-pagination-class',
-				paginationLabel,
-				paginationTitle,
+				plugins: [
+					new Pagination({
+						label,
+						title,
+						className: 'custom-pagination-class',
+					}),
+				],
 			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
 
-			expect(paginationLabel).toHaveBeenCalledTimes(3);
-			expect(paginationLabel).toHaveBeenNthCalledWith(1, {
+			expect(label).toHaveBeenCalledTimes(3);
+			expect(label).toHaveBeenNthCalledWith(1, {
 				index: 0,
 				page: [0],
 				pages: [[0], [1], [2]],
 			});
 
-			expect(paginationTitle).toHaveBeenCalledTimes(3);
-			expect(paginationTitle).toHaveBeenNthCalledWith(3, {
+			expect(title).toHaveBeenCalledTimes(3);
+			expect(title).toHaveBeenNthCalledWith(3, {
 				index: 2,
 				page: [2],
 				pages: [[0], [1], [2]],
@@ -766,7 +772,7 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			const paginationLabel: jest.Mock<string, [PaginationTextParams]> = jest.fn(
+			const label: jest.Mock<string, [PaginationTextParams]> = jest.fn(
 				({ index }) => {
 					switch (index) {
 						case 0: return 'first';
@@ -777,7 +783,7 @@ describe('Caroucssel', () => {
 				},
 			);
 
-			const paginationTitle: jest.Mock<string, [PaginationTextParams]> = jest.fn(
+			const title: jest.Mock<string, [PaginationTextParams]> = jest.fn(
 				({ index }) => {
 					let name;
 					switch (index) {
@@ -790,7 +796,7 @@ describe('Caroucssel', () => {
 				},
 			);
 
-			const paginationTemplate: jest.Mock<string, [PaginationParams]> = jest.fn(
+			const template: jest.Mock<string, [PaginationParams]> = jest.fn(
 				({ className, controls, pages, label, title }) =>
 					`<div class="${className}" aria-controls="${controls}">
 						${pages.map((page, index) => `
@@ -802,32 +808,32 @@ describe('Caroucssel', () => {
 			);
 
 			new Carousel(el, {
-				hasPagination: true,
-				paginationClassName: 'custom-pagination-class',
-				paginationLabel,
-				paginationTitle,
-				paginationTemplate,
+				plugins: [
+					new Pagination({
+						label,
+						title,
+						template,
+						className: 'custom-pagination-class',
+					}),
+				],
 			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(paginationTemplate).toHaveBeenCalledTimes(1);
+			expect(template).toHaveBeenCalledTimes(1);
 		});
 
 		it('should handle pagination with custom template that returns empty string', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			const paginationTemplate: jest.Mock<string, []> = jest.fn(
-				() => '',
-			);
+			const template: jest.Mock<string, []> = jest.fn(() => '');
 
 			new Carousel(el, {
-				hasPagination: true,
-				paginationTemplate,
+				plugins: [new Pagination({ template })],
 			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(paginationTemplate).toHaveBeenCalledTimes(1);
+			expect(template).toHaveBeenCalledTimes(1);
 		});
 
 		it('should handle pagination with custom template that returns null', () => {
@@ -836,17 +842,14 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns null
 			// @ts-ignore
-			const paginationTemplate: jest.Mock<string, []> = jest.fn(
-				() => null,
-			);
+			const template: jest.Mock<string, []> = jest.fn(() => null);
 
 			new Carousel(el, {
-				hasPagination: true,
-				paginationTemplate,
+				plugins: [new Pagination({ template })],
 			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(paginationTemplate).toHaveBeenCalledTimes(1);
+			expect(template).toHaveBeenCalledTimes(1);
 		});
 
 		it('should handle pagination with custom template that returns undefined', () => {
@@ -855,17 +858,14 @@ describe('Caroucssel', () => {
 
 			// Test when js custom implementation returns undefined
 			// @ts-ignore
-			const paginationTemplate: jest.Mock<string, []> = jest.fn(
-				() => undefined,
-			);
+			const template: jest.Mock<string, []> = jest.fn(() => undefined);
 
 			new Carousel(el, {
-				hasPagination: true,
-				paginationTemplate,
+				plugins: [new Pagination({ template })],
 			});
 
 			expect(document.body.innerHTML).toMatchSnapshot();
-			expect(paginationTemplate).toHaveBeenCalledTimes(1);
+			expect(template).toHaveBeenCalledTimes(1);
 		});
 
 		it('should not add pagination without items', () => {
@@ -873,7 +873,9 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
-			new Carousel(el, { hasPagination: true });
+			new Carousel(el, {
+				plugins: [new Pagination()],
+			});
 
 			const pagination = document.querySelectorAll('.pagination');
 			expect(pagination).toHaveLength(0);
@@ -884,7 +886,9 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
-			new Carousel(el, { hasPagination: true });
+			new Carousel(el, {
+				plugins: [new Pagination()],
+			});
 
 			const pagination = document.querySelectorAll('.pagination');
 			expect(pagination).toHaveLength(0);
@@ -895,7 +899,9 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			new Carousel(el, { hasPagination: true });
+			new Carousel(el, {
+				plugins: [new Pagination()],
+			});
 
 			let pagination = document.querySelectorAll('.pagination');
 			let pages = pagination[0].querySelectorAll('li');
@@ -932,7 +938,9 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			new Carousel(el, { hasPagination: true });
+			new Carousel(el, {
+				plugins: [new Pagination()],
+			});
 
 			const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect(pagination).toHaveLength(3);
@@ -950,18 +958,22 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			const carousel = new Carousel(el, { hasPagination: true });
+			const carousel = new Carousel(el, {
+				plugins: [new Pagination()],
+			});
 
-			const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
+			let pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect(pagination).toHaveLength(3);
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([true, false, false]);
 
 			el.scrollTo({ left: 100 });
-			carousel.update()
+			carousel.update();
+			pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, true, false]);
 
 			el.scrollTo({ left: 200 });
-			carousel.update()
+			carousel.update();
+			pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
 			expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 		});
 
@@ -970,7 +982,9 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			el.mockedClientWidth = 100;
 			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
-			new Carousel(el, { hasPagination: true });
+			new Carousel(el, {
+				plugins: [new Pagination()],
+			});
 
 			const callback = jest.spyOn(el, 'scrollTo');
 			const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
@@ -1097,8 +1111,8 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el, {
 				plugins: [
 					new Buttons(),
+					new Pagination(),
 				],
-				hasPagination: true,
 			});
 
 			carousel.destroy();
@@ -1112,8 +1126,8 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el, {
 				plugins: [
 					new Buttons(),
+					new Pagination(),
 				],
-				hasPagination: false,
 			});
 
 			carousel.destroy();
@@ -1127,8 +1141,8 @@ describe('Caroucssel', () => {
 			const carousel = new Carousel(el, {
 				plugins: [
 					new Buttons(),
+					new Pagination(),
 				],
-				hasPagination: true,
 				hasScrollbars: true,
 			});
 
