@@ -1,5 +1,6 @@
 import { Carousel } from '../../src/caroucssel';
 import { Buttons } from '../../src/plugins/buttons';
+import { Pagination } from '../../src/plugins/pagination';
 
 const elements = Array.from(document.querySelectorAll<HTMLDivElement>('.caroucssel'));
 
@@ -24,9 +25,9 @@ elements.forEach((element) => {
 	});
 
 	new Carousel(element, {
-		hasPagination: true,
 		plugins: [
 			new Buttons(),
+			new Pagination(),
 		],
 		onScroll: function(event) {
 			// console.log('INDEX', event.index);
