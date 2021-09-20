@@ -1,7 +1,6 @@
-import { Configuration, Index, Options, Pages, PaginationParams, Plugin, PluginProxy, UpdateReason } from './types';
+import { Configuration, Index, Options, Pages, Plugin, PluginProxy, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
-import { render } from './utils/render';
 import { Scrollbar } from './utils/scrollbar';
 
 
@@ -34,26 +33,6 @@ const EVENT_RESIZE = 'resize';
 const DEFAULTS: Configuration = {
 	// Plugins:
 	plugins: [],
-
-	// Pagination:
-	hasPagination: false,
-	paginationClassName: 'pagination',
-	paginationLabel: ({ index }) => `${index + 1}`,
-	paginationTitle: ({ index }) => `Go to ${index + 1}. page`,
-	paginationTemplate: ({ className, controls, pages, label, title }: PaginationParams) => `
-		<ul class="${className}">
-			${pages.map((page, index) => {
-				const data = { index, page, pages };
-				const labelStr = label(data);
-				const titleStr = title(data);
-				return `<li>
-					<button type="button" aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
-						<span>${labelStr}</span>
-					</button>
-				</li>`;
-			}).join('')}
-		</ul>
-	`,
 
 	// Scrollbars, set to true when use default scrolling behaviour
 	hasScrollbars: false,
@@ -153,10 +132,6 @@ export class Carousel {
 
 	protected _isSmooth = false;
 
-	protected _pagination: HTMLElement | null = null;
-
-	protected _paginationButtons: HTMLButtonElement[] | null = null;
-
 	/**
 	 * Creates an instance.
 	 * @param el is the dom element to control. This should be a container element
@@ -194,7 +169,6 @@ export class Carousel {
 		plugins.forEach((plugin) => plugin.init(proxy));
 
 		// Render:
-		this._addPagination();
 		this._updateScrollbars();
 
 		// Set initial index and set smooth scrolling:
@@ -498,9 +472,6 @@ export class Carousel {
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.destroy());
 
-		// Remove pagination:
-		this._removePagination();
-
 		// Remove scrollbars:
 		this._removeScrollbars();
 
@@ -533,7 +504,6 @@ export class Carousel {
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
 
-		this._updatePagination();
 		this._updateScrollbars();
 	}
 
@@ -588,76 +558,9 @@ export class Carousel {
 		this._mask = null;
 	}
 
-	protected _addPagination(): void {
-		const { _conf: _options } = this;
-		if (!_options.hasPagination) {
-			return;
-		}
-
-		const { _mask, el, id, pages } = this;
-		if (pages.length < 2) {
-			return;
-		}
-
-		const { paginationTemplate, paginationClassName, paginationLabel, paginationTitle } = _options;
-		const pagination = render(paginationTemplate, {
-			pages,
-			controls: id,
-			className: paginationClassName,
-			label: paginationLabel,
-			title: paginationTitle,
-		});
-
-		if (!pagination) {
-			return;
-		}
-
-		// @TODO: Add template for buttons:
-		const buttons = Array.from(pagination.querySelectorAll<HTMLButtonElement>('button'))
-			.map((button, index) => {
-				button.onclick = () => this.index = pages[index];
-				return button;
-			});
-
-		const target = (_mask || el).parentNode;
-		target?.appendChild(pagination);
-		this._pagination = pagination;
-		this._paginationButtons = buttons;
-
-		this._updatePagination();
-	}
-
-	protected _updatePagination(): void {
-		const { _conf: _options } = this;
-		if (!_options.hasPagination) {
-			return;
-		}
-
-		const { pageIndex, _paginationButtons } = this;
-		if (!_paginationButtons) {
-			return;
-		}
-
-		_paginationButtons.forEach((button, at) => button.disabled = (at === pageIndex));
-	}
-
-	protected _removePagination(): void {
-		const { _pagination, _paginationButtons } = this;
-		(_paginationButtons || []).forEach((button) => {
-			button.onclick = null;
-			button.parentNode?.removeChild(button);
-		});
-		this._paginationButtons = null;
-
-		_pagination && _pagination.parentNode?.removeChild(_pagination);
-		this._pagination = null;
-	}
-
 	protected _onScroll(event: Event): void {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
-
-		this._updatePagination();
 
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.SCROLL }));
@@ -674,8 +577,6 @@ export class Carousel {
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
 
-		this._removePagination();
-		this._addPagination();
 		this._updateScrollbars();
 	}
 

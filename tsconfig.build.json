@@ -3,6 +3,7 @@
   "include": [
     "./src/caroucssel.ts",
     "./src/plugins/buttons/index.ts",
+    "./src/plugins/pagination/index.ts"
   ],
   "compilerOptions": {
     "declarationMap": false,

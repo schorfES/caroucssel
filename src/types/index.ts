@@ -32,28 +32,6 @@ export interface Plugin {
 	update(data :UpdateData): void;
 }
 
-export type PaginationTextParams = {
-	index: number;
-	page: number[];
-	pages: number[][];
-};
-
-export type PaginationText = (params: PaginationTextParams) => string;
-
-export type PaginationParams = {
-	controls: string;
-	className: string;
-	label: PaginationText;
-	title: PaginationText;
-	pages: number[][];
-};
-
-export type PaginationTemplate = (params: PaginationParams) => string;
-
-export type PaginationLabelTemplate = PaginationText;
-
-export type PaginationTitleTemplate = PaginationText;
-
 export type ScrollHook = <T>(event: {
 	index: number[];
 	type: 'scroll';
@@ -72,13 +50,6 @@ export type Configuration = {
 
 	// Plugins:
 	plugins: Plugin[],
-
-	// Pagination:
-	hasPagination: boolean;
-	paginationClassName: string;
-	paginationTemplate: PaginationTemplate;
-	paginationLabel: PaginationLabelTemplate;
-	paginationTitle: PaginationTitleTemplate;
 
 	// Scrollbars:
 	hasScrollbars: boolean;
