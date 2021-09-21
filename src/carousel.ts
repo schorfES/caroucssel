@@ -1,11 +1,15 @@
 import { Mask } from './plugins/mask';
-import { Configuration, Index, Options, Pages, Plugin, PluginProxy, ScrollBehavior, UpdateReason } from './types';
+import { Proxy } from './proxy';
+import { CarouselCore, CarouselPlugin, Configuration, Index, Options, Pages, ScrollBehavior, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 
 
 const ID_NAME = (count: number) => `caroucssel-${count}`;
 const ID_MATCH = /^caroucssel-[0-9]*$/;
+
+const EVENT_SCROLL = 'scroll';
+const EVENT_RESIZE = 'resize';
 
 const CACHE_KEY_ELEMENT = 'element';
 const CACHE_KEY_ID = 'id';
@@ -17,16 +21,9 @@ const CACHE_KEY_PAGE_INDEX = 'page-index';
 const CACHE_KEY_MASK = 'mask';
 const CACHE_KEY_PROXY = 'proxy';
 const CACHE_KEY_PLUGINS = 'plugins';
-const CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
-const CACHE_KEY_PROXY_PLUGIN = 'proxy:plugins';
 
 const VISIBILITY_OFFSET = 0.25;
-
 const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
-
-const EVENT_SCROLL = 'scroll';
-const EVENT_RESIZE = 'resize';
-
 
 const DEFAULTS: Configuration = {
 	// Plugins:
@@ -45,63 +42,11 @@ const DEFAULTS: Configuration = {
 let __instanceCount = 0;
 
 
-/**
- * A proxy instance between carousel and each plugin.
- */
-class Proxy implements PluginProxy {
-
-	constructor(instance: Carousel, plugins: Plugin[]) {
-		writeCache(this, CACHE_KEY_PROXY_INSTANCE, instance);
-		writeCache(this, CACHE_KEY_PROXY_PLUGIN, plugins);
-	}
-
-	public get el(): Element {
-		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
-		return instance.el;
-	}
-
-	public get mask(): Element | null {
-		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
-		return instance.mask;
-	}
-
-	public get index(): Index {
-		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
-		return instance.index;
-	}
-
-	public set index(value: Index) {
-		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
-		instance.index = value;
-	}
-
-	public get items(): HTMLElement[] {
-		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
-		return instance.items;
-	}
-
-	public get pages(): Pages {
-		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
-		return instance.pages;
-	}
-
-	public get pageIndex(): number {
-		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
-		return instance.pageIndex;
-	}
-
-	public update(plugin: Plugin): void {
-		// @TODO: Trigger update in instance and all other plugins except the source
-		// plugin that triggered the event.
-	}
-
-}
-
 
 /**
  * The carousel javascript instance.
  */
-export class Carousel {
+export class Carousel implements CarouselCore {
 
 	/**
 	 * This can be used for testing purposes to reset the instance count which is
@@ -148,7 +93,7 @@ export class Carousel {
 		// otherwise add a mandatory instance by default:
 		const plugins = [...configuration.plugins];
 		const index = configuration.plugins.findIndex((plugin) => plugin instanceof Mask);
-		let mask: Plugin = new Mask();
+		let mask: CarouselPlugin = new Mask();
 		if (index > -1) {
 			[mask] = plugins.splice(index, 1);
 		}
@@ -195,7 +140,7 @@ export class Carousel {
 	 * @public
 	 * @return the controlled dom element
 	 */
-	get el(): Element {
+	public get el(): Element {
 		return fromCache<Element>(this, CACHE_KEY_ELEMENT) as Element;
 	}
 
@@ -205,7 +150,7 @@ export class Carousel {
 	 * @public
 	 * @return the mask dom element
 	 */
-	get mask(): Element | null {
+	public get mask(): Element | null {
 		const mask = fromCache<Mask>(this, CACHE_KEY_MASK) as Mask;
 		return mask.el ?? null;
 	}
@@ -215,7 +160,7 @@ export class Carousel {
 	 * @public
 	 * @return the id of the controlled dom element
 	 */
-	get id(): string {
+	public get id(): string {
 		return fromCache<string>(this, CACHE_KEY_ID) as string;
 	}
 
@@ -225,7 +170,7 @@ export class Carousel {
 	 * @public
 	 * @return a list of visible indexes
 	 */
-	get index(): Index {
+	public get index(): Index {
 		return fromCache(this, CACHE_KEY_INDEX, (): Index => {
 			const { el, items } = this;
 			const { length } = items;
@@ -265,7 +210,7 @@ export class Carousel {
 	 * @public
 	 * @param values are the upcoming indexes
 	 */
-	set index(values: Index) {
+	public set index(values: Index) {
 		const { behavior, el, items } = this;
 		const { length } = items;
 
@@ -304,7 +249,7 @@ export class Carousel {
 	 * @public
 	 * @return a list of elements (child elements of the root element)
 	 */
-	get items(): HTMLElement[] {
+	public get items(): HTMLElement[] {
 		return fromCache(this, CACHE_KEY_ITEMS, (): HTMLElement[] => {
 			const { filterItem } = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 			const { el } = this;
@@ -322,7 +267,7 @@ export class Carousel {
 	 * @public
 	 * @return the list of pages and indexes inside each page
 	 */
-	get pages(): Pages {
+	public get pages(): Pages {
 		return fromCache(this, CACHE_KEY_PAGES, (): Pages => {
 			const { el, items } = this;
 			const { clientWidth: viewport } = el;
@@ -411,7 +356,7 @@ export class Carousel {
 	 * @public
 	 * @return the index of the current page
 	 */
-	get pageIndex(): number {
+	public get pageIndex(): number {
 		return fromCache(this, CACHE_KEY_PAGE_INDEX, (): number => {
 			const { el, items, index, pages } = this;
 			const outerLeft = el.getBoundingClientRect().left;
@@ -463,14 +408,14 @@ export class Carousel {
 	 * initial state.
 	 * @public
 	 */
-	destroy(): void {
+	public destroy(): void {
 		const { el } = this;
 
 		// Remove created id if it was created by carousel:
 		ID_MATCH.test(el.id) && el.removeAttribute('id');
 
 		// Destroy attached plugins:
-		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		const plugins = fromCache<CarouselPlugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.destroy());
 
 		// Remove events:
@@ -493,13 +438,13 @@ export class Carousel {
 	 * example, useful when changing the number of items inside the carousel.
 	 * @public
 	 */
-	update(): void {
+	public update(): void {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_ITEMS);
 		clearCache(this, CACHE_KEY_PAGES);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		const plugins = fromCache<CarouselPlugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
 	}
 
@@ -507,7 +452,7 @@ export class Carousel {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		const plugins = fromCache<CarouselPlugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.SCROLL }));
 
 		const { index } = this;
@@ -520,7 +465,7 @@ export class Carousel {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
+		const plugins = fromCache<CarouselPlugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
 	}
 
