@@ -47,7 +47,7 @@ export enum ScrollBehavior {
 }
 
 export type ScrollHook = <T>(event: {
-	index: number[];
+	index: Index;
 	type: 'scroll';
 	target: T;
 	originalEvent: Event;
