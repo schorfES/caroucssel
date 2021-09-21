@@ -1,5 +1,5 @@
 import { Mask } from './plugins/mask';
-import { Configuration, Index, Options, Pages, Plugin, PluginProxy, ScrollBehaviour, UpdateReason } from './types';
+import { Configuration, Index, Options, Pages, Plugin, PluginProxy, ScrollBehavior, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 
@@ -124,7 +124,7 @@ export class Carousel {
 	 * * `'auto'`
 	 * * `'smooth'`
 	 */
-	public behavior: ScrollBehavior = ScrollBehaviour.AUTO;
+	public behavior: ScrollBehavior = ScrollBehavior.AUTO;
 
 	/**
 	 * Creates an instance.
@@ -177,7 +177,7 @@ export class Carousel {
 				this.index = [options.index as number];
 				break;
 		}
-		this.behavior = ScrollBehaviour.SMOOTH;
+		this.behavior = ScrollBehavior.SMOOTH;
 
 		// Events:
 		//
