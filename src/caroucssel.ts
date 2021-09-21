@@ -1,5 +1,5 @@
 import { Mask } from './plugins/mask';
-import { Configuration, Index, Options, Pages, Plugin, PluginProxy, UpdateReason } from './types';
+import { Configuration, Index, Options, Pages, Plugin, PluginProxy, ScrollBehaviour, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 
@@ -12,6 +12,9 @@ export * from './types';
 const ID_NAME = (count: number) => `caroucssel-${count}`;
 const ID_MATCH = /^caroucssel-[0-9]*$/;
 
+const CACHE_KEY_ELEMENT = 'element';
+const CACHE_KEY_ID = 'id';
+const CACHE_KEY_CONFIGURATION = 'config';
 const CACHE_KEY_INDEX = 'index';
 const CACHE_KEY_ITEMS = 'items';
 const CACHE_KEY_PAGES = 'pages';
@@ -49,7 +52,6 @@ let __instanceCount = 0;
 
 /**
  * A proxy instance between carousel and each plugin.
- * @internal
  */
 class Proxy implements PluginProxy {
 
@@ -117,13 +119,12 @@ export class Carousel {
 		}
 	}
 
-	protected _el: Element;
-
-	protected _id: string;
-
-	protected _conf: Configuration;
-
-	protected _isSmooth = false;
+	/**
+	 * Current scroll behavior. Possible values are:
+	 * * `'auto'`
+	 * * `'smooth'`
+	 */
+	public behavior: ScrollBehavior = ScrollBehaviour.AUTO;
 
 	/**
 	 * Creates an instance.
@@ -136,22 +137,22 @@ export class Carousel {
 			throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
 		}
 
-		this._el = el;
+		writeCache(this, CACHE_KEY_ELEMENT, el);
 
 		// Count all created instances to create unique id, if given dom element
 		// has no id-attribute:
 		__instanceCount++;
 		el.id = el.id || ID_NAME(__instanceCount);
-		this._id = el.id;
+		writeCache(this, CACHE_KEY_ID, el.id);
 
-		// extend options and defaults:
-		const opts = { ...DEFAULTS, ...options };
-		this._conf = opts;
+		// Extend options and defaults into configuration:
+		const configuration = { ...DEFAULTS, ...options };
+		writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
 
 		// Detect if there is a "Mask" plugin passed as option. Then use this one,
 		// otherwise add a mandatory instance by default:
-		const plugins = [...opts.plugins];
-		const index = opts.plugins.findIndex((plugin) => plugin instanceof Mask);
+		const plugins = [...configuration.plugins];
+		const index = configuration.plugins.findIndex((plugin) => plugin instanceof Mask);
 		let mask: Plugin = new Mask();
 		if (index > -1) {
 			[mask] = plugins.splice(index, 1);
@@ -176,7 +177,7 @@ export class Carousel {
 				this.index = [options.index as number];
 				break;
 		}
-		this._isSmooth = true;
+		this.behavior = ScrollBehaviour.SMOOTH;
 
 		// Events:
 		//
@@ -200,7 +201,7 @@ export class Carousel {
 	 * @return the controlled dom element
 	 */
 	get el(): Element {
-		return this._el;
+		return fromCache<Element>(this, CACHE_KEY_ELEMENT) as Element;
 	}
 
 	/**
@@ -220,7 +221,7 @@ export class Carousel {
 	 * @return the id of the controlled dom element
 	 */
 	get id(): string {
-		return this._id;
+		return fromCache<string>(this, CACHE_KEY_ID) as string;
 	}
 
 	/**
@@ -230,7 +231,7 @@ export class Carousel {
 	 * @return a list of visible indexes
 	 */
 	get index(): Index {
-		return fromCache(this, CACHE_KEY_INDEX, () => {
+		return fromCache(this, CACHE_KEY_INDEX, (): Index => {
 			const { el, items } = this;
 			const { length } = items;
 			const { clientWidth } = el;
@@ -270,7 +271,7 @@ export class Carousel {
 	 * @param values are the upcoming indexes
 	 */
 	set index(values: Index) {
-		const { el, items } = this;
+		const { behavior, el, items } = this;
 		const { length } = items;
 
 		if (!Array.isArray(values) || !values.length) {
@@ -300,7 +301,6 @@ export class Carousel {
 
 		clearCache(this, CACHE_KEY_INDEX);
 
-		const behavior = this._isSmooth ? 'smooth' : 'auto';
 		el.scrollTo({ ...to, behavior });
 	}
 
@@ -310,8 +310,9 @@ export class Carousel {
 	 * @return a list of elements (child elements of the root element)
 	 */
 	get items(): HTMLElement[] {
-		return fromCache(this, CACHE_KEY_ITEMS, () => {
-			const { el, _conf: { filterItem } } = this;
+		return fromCache(this, CACHE_KEY_ITEMS, (): HTMLElement[] => {
+			const { filterItem } = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
+			const { el } = this;
 			const children = Array.from(el.children) as HTMLElement[];
 
 			return children
@@ -416,7 +417,7 @@ export class Carousel {
 	 * @return the index of the current page
 	 */
 	get pageIndex(): number {
-		return fromCache(this, CACHE_KEY_PAGE_INDEX, () => {
+		return fromCache(this, CACHE_KEY_PAGE_INDEX, (): number => {
 			const { el, items, index, pages } = this;
 			const outerLeft = el.getBoundingClientRect().left;
 			const { clientWidth } = el;
@@ -514,8 +515,9 @@ export class Carousel {
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.SCROLL }));
 
-		const { index, _conf: { onScroll } } = this;
-		onScroll && onScroll<Carousel>({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
+		const { index } = this;
+		const configuration = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION);
+		configuration?.onScroll<Carousel>({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
 	}
 
 	protected _onResize(): void {
