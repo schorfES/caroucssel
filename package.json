@@ -3,8 +3,8 @@
   "version": "0.12.0-0",
   "description": "A lightweight dependency-free css carousel.",
   "module": "dist/index.js",
-  "main": "dist/caroucssel.cjs.js",
-  "unpkg": "dist/caroucssel.min.js",
+  "main": "dist/formats/cjs/caroucssel.js",
+  "unpkg": "dist/formats/umd/caroucssel.min.js",
   "types": "dist/caroucssel.d.ts",
   "sideEffects": false,
   "scripts": {
