@@ -1,4 +1,4 @@
-import { Index, Options, Pages } from './types';
+import { Index, Options, Pages, ScrollBehavior } from './types';
 export * from './types';
 /**
  * The carousel javascript instance.

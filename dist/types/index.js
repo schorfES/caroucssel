@@ -5,8 +5,8 @@ export var UpdateReason;
     UpdateReason["FORCED"] = "forced";
     UpdateReason["PLUGIN"] = "plugin";
 })(UpdateReason || (UpdateReason = {}));
-export var ScrollBehaviour;
-(function (ScrollBehaviour) {
-    ScrollBehaviour["AUTO"] = "auto";
-    ScrollBehaviour["SMOOTH"] = "smooth";
-})(ScrollBehaviour || (ScrollBehaviour = {}));
+export var ScrollBehavior;
+(function (ScrollBehavior) {
+    ScrollBehavior["AUTO"] = "auto";
+    ScrollBehavior["SMOOTH"] = "smooth";
+})(ScrollBehavior || (ScrollBehavior = {}));

@@ -162,18 +162,18 @@ class Buttons {
     }
 }
 
-var UpdateReason;
+exports.UpdateReason = void 0;
 (function (UpdateReason) {
     UpdateReason["SCROLL"] = "scroll";
     UpdateReason["RESIZE"] = "resize";
     UpdateReason["FORCED"] = "forced";
     UpdateReason["PLUGIN"] = "plugin";
-})(UpdateReason || (UpdateReason = {}));
-var ScrollBehaviour;
-(function (ScrollBehaviour) {
-    ScrollBehaviour["AUTO"] = "auto";
-    ScrollBehaviour["SMOOTH"] = "smooth";
-})(ScrollBehaviour || (ScrollBehaviour = {}));
+})(exports.UpdateReason || (exports.UpdateReason = {}));
+exports.ScrollBehavior = void 0;
+(function (ScrollBehavior) {
+    ScrollBehavior["AUTO"] = "auto";
+    ScrollBehavior["SMOOTH"] = "smooth";
+})(exports.ScrollBehavior || (exports.ScrollBehavior = {}));
 
 class Scrollbar {
     constructor() {
@@ -240,8 +240,8 @@ class Mask {
     }
     update(data) {
         switch (data.reason) {
-            case UpdateReason.RESIZE:
-            case UpdateReason.FORCED:
+            case exports.UpdateReason.RESIZE:
+            case exports.UpdateReason.FORCED:
                 clearCache(this, CACHE_KEY_HEIGHT);
                 this._render();
                 break;
@@ -289,6 +289,21 @@ class Mask {
     }
 }
 
+class Mouse {
+    get name() {
+        return 'buildin:mouse';
+    }
+    init(proxy) {
+        writeCache(this, 'proxy', proxy);
+    }
+    destroy() {
+        console.log('Destroy mouse');
+    }
+    update(data) {
+        console.log('Update mouse:', data.reason);
+    }
+}
+
 const DEFAULTS$1 = {
     template: ({ className, controls, pages, label, title }) => `
 		<ul class="${className}">
@@ -330,7 +345,7 @@ class Pagination {
     }
     update(data) {
         switch (data.reason) {
-            case UpdateReason.SCROLL:
+            case exports.UpdateReason.SCROLL:
                 this._update();
                 break;
             default:
@@ -465,7 +480,7 @@ class Proxy {
 }
 class Carousel {
     constructor(el, options = {}) {
-        this.behavior = ScrollBehaviour.AUTO;
+        this.behavior = exports.ScrollBehavior.AUTO;
         if (!el || !(el instanceof Element)) {
             throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
         }
@@ -495,7 +510,7 @@ class Carousel {
                 this.index = [options.index];
                 break;
         }
-        this.behavior = ScrollBehaviour.SMOOTH;
+        this.behavior = exports.ScrollBehavior.SMOOTH;
         this._onScroll = debounce(this._onScroll.bind(this), 25);
         this._onResize = debounce(this._onResize.bind(this), 25);
         el.addEventListener(EVENT_SCROLL, this._onScroll);
@@ -651,13 +666,13 @@ class Carousel {
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: exports.UpdateReason.FORCED }));
     }
     _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.SCROLL }));
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: exports.UpdateReason.SCROLL }));
         const { index } = this;
         const configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
         configuration === null || configuration === void 0 ? void 0 : configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
@@ -667,11 +682,12 @@ class Carousel {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: exports.UpdateReason.RESIZE }));
     }
 }
 
-const plugins = { Buttons, Mask, Pagination };
-
+exports.Buttons = Buttons;
 exports.Carousel = Carousel;
-exports.plugins = plugins;
+exports.Mask = Mask;
+exports.Mouse = Mouse;
+exports.Pagination = Pagination;
