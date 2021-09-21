@@ -33,7 +33,7 @@ export interface Plugin {
 	update(data :UpdateData): void;
 }
 
-export enum ScrollBehaviour {
+export enum ScrollBehavior {
 	AUTO = 'auto',
 	SMOOTH = 'smooth',
 }
