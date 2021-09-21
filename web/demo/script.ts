@@ -1,4 +1,4 @@
-import { Carousel } from '../../src/caroucssel';
+import { Carousel } from '../../src/carousel';
 import { Buttons } from '../../src/plugins/buttons';
 import { Pagination } from '../../src/plugins/pagination';
 

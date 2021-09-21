@@ -1,5 +1,5 @@
 import { fixture, querySelector } from '../../__setup__/helpers';
-import { Carousel } from '../../caroucssel';
+import { Carousel } from '../../carousel';
 import { ScrollbarDimensions } from '../../utils/scrollbar';
 
 import { Mask } from './index';
