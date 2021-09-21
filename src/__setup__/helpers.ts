@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 /**
  * Options of the HTML markup.
  */
