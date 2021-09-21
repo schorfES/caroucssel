@@ -2,7 +2,7 @@ export type Index = [number, ...number[]];
 
 export type Pages = [Index, ...Index[]];
 
-interface Carousel {
+interface ICore {
 	get el(): Element;
 	get mask(): Element | null;
 	get index(): Index;
@@ -12,20 +12,20 @@ interface Carousel {
 	get pageIndex(): number;
 }
 
-export interface CarouselCore extends Carousel {
+export interface ICarousel extends ICore {
 	behavior: ScrollBehavior;
 	destroy(): void;
 	update(): void;
 }
 
-export interface CarouselProxy extends Carousel {
-	update(sender: CarouselPlugin): void;
+export interface IProxy extends ICore {
+	update(sender: IFeature): void;
 }
 
-export interface CarouselPlugin {
+export interface IFeature {
 	get name(): string;
 
-	init(proxy: CarouselProxy): void;
+	init(proxy: IProxy): void;
 	destroy(): void;
 	update(data :UpdateData): void;
 }
@@ -34,14 +34,12 @@ export enum UpdateReason {
 	SCROLL = 'scroll',
 	RESIZE = 'resize',
 	FORCED = 'forced',
-	PLUGIN = 'plugin',
+	FEATURE = 'feature',
 }
 
 export type UpdateData = {
 	reason: UpdateReason;
 };
-
-
 
 export enum ScrollBehavior {
 	AUTO = 'auto',
@@ -61,17 +59,11 @@ export type FilterItemFn =
 	((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
 
 export type Configuration = {
-	// Settings:
-	index?: Index | number;
-
-	// Plugins:
-	plugins: CarouselPlugin[],
-
-	// Filter:
+	features: IFeature[],
 	filterItem: FilterItemFn;
-
-	// Hooks:
 	onScroll: ScrollHook;
 };
 
-export type Options = Partial<Configuration>;
+export type Options = Partial<Configuration> & {
+	index?: Index | number;
+};

@@ -17,7 +17,7 @@ jest.mock('../../utils/scrollbar', () => {
 	};
 });
 
-describe('Buttons plugin', () => {
+describe('Buttons feature', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers();
@@ -35,7 +35,7 @@ describe('Buttons plugin', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
 		const options = {
-			plugins: [new Buttons()],
+			features: [new Buttons()],
 		};
 		new Carousel(el, options);
 
@@ -46,7 +46,7 @@ describe('Buttons plugin', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
 		const options = {
-			plugins: [new Buttons({
+			features: [new Buttons({
 				className: 'custom-button-class',
 				previousClassName: 'custom-previous-button-class',
 				previousLabel: 'Custom previous label',
@@ -78,7 +78,7 @@ describe('Buttons plugin', () => {
 			previousTitle: 'Custom previous title',
 		};
 		new Carousel(el, {
-			plugins: [new Buttons(options)],
+			features: [new Buttons(options)],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -104,7 +104,7 @@ describe('Buttons plugin', () => {
 		const template: jest.Mock<string, []> = jest.fn(() => '');
 
 		new Carousel(el, {
-			plugins: [new Buttons({ template })],
+			features: [new Buttons({ template })],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -120,7 +120,7 @@ describe('Buttons plugin', () => {
 		const template: jest.Mock<string, []> = jest.fn(() => null);
 
 		new Carousel(el, {
-			plugins: [new Buttons({ template })],
+			features: [new Buttons({ template })],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -136,7 +136,7 @@ describe('Buttons plugin', () => {
 		const template: jest.Mock<string, [Params]> = jest.fn(() => undefined);
 
 		new Carousel(el, {
-			plugins: [new Buttons({ template })],
+			features: [new Buttons({ template })],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -148,7 +148,7 @@ describe('Buttons plugin', () => {
 		document.body.innerHTML = fixture(0);
 		const el = querySelector('.caroucssel');
 		const options = {
-			plugins: [new Buttons()],
+			features: [new Buttons()],
 		};
 		new Carousel(el, options);
 
@@ -162,7 +162,7 @@ describe('Buttons plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 		const options = {
-			plugins: [new Buttons()],
+			features: [new Buttons()],
 		};
 		new Carousel(el, options);
 
@@ -179,7 +179,7 @@ describe('Buttons plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 		const options = {
-			plugins: [new Buttons()],
+			features: [new Buttons()],
 		};
 		new Carousel(el, options);
 
@@ -199,7 +199,7 @@ describe('Buttons plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 		const options = {
-			plugins: [new Buttons()],
+			features: [new Buttons()],
 		};
 		const carousel = new Carousel(el, options);
 
@@ -221,7 +221,7 @@ describe('Buttons plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 		const options = {
-			plugins: [new Buttons()],
+			features: [new Buttons()],
 		};
 		new Carousel(el, options);
 

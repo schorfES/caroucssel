@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Buttons plugin should add buttons 1`] = `
+exports[`Buttons feature should add buttons 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -44,7 +44,7 @@ exports[`Buttons plugin should add buttons 1`] = `
 </div>
 `;
 
-exports[`Buttons plugin should add buttons with custom options 1`] = `
+exports[`Buttons feature should add buttons with custom options 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -88,7 +88,7 @@ exports[`Buttons plugin should add buttons with custom options 1`] = `
 </div>
 `;
 
-exports[`Buttons plugin should add buttons with custom template 1`] = `
+exports[`Buttons feature should add buttons with custom template 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -121,7 +121,7 @@ exports[`Buttons plugin should add buttons with custom template 1`] = `
 </div>
 `;
 
-exports[`Buttons plugin should add disabled buttons without items 1`] = `
+exports[`Buttons feature should add disabled buttons without items 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -157,7 +157,7 @@ exports[`Buttons plugin should add disabled buttons without items 1`] = `
 </div>
 `;
 
-exports[`Buttons plugin should handle buttons with custom template that returns empty string 1`] = `
+exports[`Buttons feature should handle buttons with custom template that returns empty string 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -180,7 +180,7 @@ exports[`Buttons plugin should handle buttons with custom template that returns 
 </div>
 `;
 
-exports[`Buttons plugin should handle buttons with custom template that returns null 1`] = `
+exports[`Buttons feature should handle buttons with custom template that returns null 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -203,7 +203,7 @@ exports[`Buttons plugin should handle buttons with custom template that returns 
 </div>
 `;
 
-exports[`Buttons plugin should handle buttons with custom template that returns undefined 1`] = `
+exports[`Buttons feature should handle buttons with custom template that returns undefined 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"

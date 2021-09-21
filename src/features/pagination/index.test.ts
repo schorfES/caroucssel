@@ -17,7 +17,7 @@ jest.mock('../../utils/scrollbar', () => {
 	};
 });
 
-describe('Pagination plugin', () => {
+describe('Pagination feature', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers();
@@ -35,7 +35,7 @@ describe('Pagination plugin', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
 		new Carousel(el, {
-			plugins: [new Pagination()],
+			features: [new Pagination()],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -72,7 +72,7 @@ describe('Pagination plugin', () => {
 		);
 
 		new Carousel(el, {
-			plugins: [
+			features: [
 				new Pagination({
 					label,
 					title,
@@ -138,7 +138,7 @@ describe('Pagination plugin', () => {
 		);
 
 		new Carousel(el, {
-			plugins: [
+			features: [
 				new Pagination({
 					label,
 					title,
@@ -159,7 +159,7 @@ describe('Pagination plugin', () => {
 		const template: jest.Mock<string, []> = jest.fn(() => '');
 
 		new Carousel(el, {
-			plugins: [new Pagination({ template })],
+			features: [new Pagination({ template })],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -175,7 +175,7 @@ describe('Pagination plugin', () => {
 		const template: jest.Mock<string, []> = jest.fn(() => null);
 
 		new Carousel(el, {
-			plugins: [new Pagination({ template })],
+			features: [new Pagination({ template })],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -191,7 +191,7 @@ describe('Pagination plugin', () => {
 		const template: jest.Mock<string, []> = jest.fn(() => undefined);
 
 		new Carousel(el, {
-			plugins: [new Pagination({ template })],
+			features: [new Pagination({ template })],
 		});
 
 		expect(document.body.innerHTML).toMatchSnapshot();
@@ -204,7 +204,7 @@ describe('Pagination plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 		new Carousel(el, {
-			plugins: [new Pagination()],
+			features: [new Pagination()],
 		});
 
 		const pagination = document.querySelectorAll('.pagination');
@@ -217,7 +217,7 @@ describe('Pagination plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 		new Carousel(el, {
-			plugins: [new Pagination()],
+			features: [new Pagination()],
 		});
 
 		const pagination = document.querySelectorAll('.pagination');
@@ -230,7 +230,7 @@ describe('Pagination plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 		new Carousel(el, {
-			plugins: [new Pagination()],
+			features: [new Pagination()],
 		});
 
 		let pagination = document.querySelectorAll('.pagination');
@@ -269,7 +269,7 @@ describe('Pagination plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 		new Carousel(el, {
-			plugins: [new Pagination()],
+			features: [new Pagination()],
 		});
 
 		const pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
@@ -289,7 +289,7 @@ describe('Pagination plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 		const carousel = new Carousel(el, {
-			plugins: [new Pagination()],
+			features: [new Pagination()],
 		});
 
 		let pagination = document.querySelectorAll<HTMLButtonElement>('.pagination > li > button');
@@ -313,7 +313,7 @@ describe('Pagination plugin', () => {
 		el.mockedClientWidth = 100;
 		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 50);
 		new Carousel(el, {
-			plugins: [new Pagination()],
+			features: [new Pagination()],
 		});
 
 		const callback = jest.spyOn(el, 'scrollTo');
