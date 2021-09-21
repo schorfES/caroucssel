@@ -1,5 +1,5 @@
 build_clean:
-.PHONY:  validate tests build build_clean build_styles build_scripts web_clean web web_docs web_pages ghpages release watch
+.PHONY:  validate tests build build_clean build_styles build_scripts web_clean web web_docs web_pages ghpages release prerelease watch
 
 
 validate:
@@ -90,6 +90,14 @@ ghpages: web
 
 
 release: validate tests build ghpages
+	node_modules/.bin/np \
+		--no-yarn \
+		--no-tests \
+		--any-branch \
+		--tag
+
+
+prerelease: validate tests
 	node_modules/.bin/np \
 		--no-yarn \
 		--no-tests \
