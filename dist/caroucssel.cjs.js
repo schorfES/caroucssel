@@ -2,11 +2,26 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+}
+
 const __CACHE = new WeakMap();
 function fromCache(ref, key, factory) {
     const storage = __CACHE.get(ref) || {};
     if (key in storage) {
         return storage[key];
+    }
+    if (!factory) {
+        return undefined;
     }
     const value = factory();
     storage[key] = value;
@@ -30,17 +45,6 @@ function clearFullCache(ref) {
     __CACHE.delete(ref);
 }
 
-function debounce(func, delay) {
-    let timeout = null;
-    const debounced = (...args) => {
-        if (timeout !== null) {
-            clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => func(...args), delay);
-    };
-    return debounced;
-}
-
 function render(template, context) {
     const el = document.createElement('div');
     el.innerHTML = template(context);
@@ -50,6 +54,126 @@ function render(template, context) {
     }
     return ref;
 }
+
+const DEFAULTS$3 = {
+    template: ({ className, controls, label, title }) => `
+		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
+			<span>${label}</span>
+		</button>
+	`,
+    className: 'button',
+    nextClassName: 'is-next',
+    nextLabel: 'Next',
+    nextTitle: 'Go to next',
+    previousClassName: 'is-previous',
+    previousLabel: 'Previous',
+    previousTitle: 'Go to previous',
+};
+const CACHE_KEY_PROXY$3 = 'proxy';
+const CACHE_KEY_CONFIGURATION$3 = 'config';
+const CACHE_KEY_BUTTONS$1 = 'buttons';
+class Buttons {
+    constructor(options = {}) {
+        writeCache(this, CACHE_KEY_CONFIGURATION$3, Object.assign(Object.assign({}, DEFAULTS$3), options));
+        this._onPrevious = this._onPrevious.bind(this);
+        this._onNext = this._onNext.bind(this);
+    }
+    get name() {
+        return 'buildin:buttons';
+    }
+    init(proxy) {
+        writeCache(this, CACHE_KEY_PROXY$3, proxy);
+        this._render();
+    }
+    destroy() {
+        this._remove();
+        clearFullCache(this);
+    }
+    update() {
+        this._render();
+    }
+    _render() {
+        const proxy = fromCache(this, CACHE_KEY_PROXY$3);
+        const config = fromCache(this, CACHE_KEY_CONFIGURATION$3);
+        const { el, mask, pages, pageIndex } = proxy;
+        const target = mask !== null && mask !== void 0 ? mask : el;
+        const { template, className, previousClassName, previousLabel, previousTitle, nextClassName, nextLabel, nextTitle, } = config;
+        const settings = [
+            {
+                controls: el.id,
+                label: nextLabel,
+                title: nextTitle,
+                className: [className, nextClassName].join(' '),
+                handler: this._onNext,
+            },
+            {
+                controls: el.id,
+                label: previousLabel,
+                title: previousTitle,
+                className: [className, previousClassName].join(' '),
+                handler: this._onPrevious,
+            },
+        ];
+        const [next, previous] = fromCache(this, 'buttons', () => settings.map((_a) => {
+            var _b;
+            var { handler } = _a, params = __rest(_a, ["handler"]);
+            const button = render(template, params);
+            if (!button) {
+                return null;
+            }
+            button.addEventListener('click', handler);
+            (_b = target.parentNode) === null || _b === void 0 ? void 0 : _b.insertBefore(button, target.nextSibling);
+            return button;
+        }));
+        if (next) {
+            const lastPage = pages[pageIndex + 1];
+            const isLastPage = lastPage === undefined;
+            next.disabled = isLastPage;
+        }
+        if (previous) {
+            const firstPage = pages[pageIndex - 1];
+            const isFirstPage = firstPage === undefined;
+            previous.disabled = isFirstPage;
+        }
+    }
+    _remove() {
+        const buttons = fromCache(this, CACHE_KEY_BUTTONS$1);
+        if (!buttons) {
+            return;
+        }
+        buttons.forEach((button) => {
+            var _a;
+            button === null || button === void 0 ? void 0 : button.removeEventListener('click', this._onPrevious);
+            button === null || button === void 0 ? void 0 : button.removeEventListener('click', this._onNext);
+            (_a = button === null || button === void 0 ? void 0 : button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
+        });
+    }
+    _onPrevious() {
+        const proxy = fromCache(this, CACHE_KEY_PROXY$3);
+        const { pages, pageIndex } = proxy;
+        const index = pages[pageIndex - 1] || pages[0];
+        proxy.index = index;
+    }
+    _onNext() {
+        const proxy = fromCache(this, CACHE_KEY_PROXY$3);
+        const { pages, pageIndex } = proxy;
+        const index = pages[pageIndex + 1] || pages[pages.length - 1];
+        proxy.index = index;
+    }
+}
+
+var UpdateReason;
+(function (UpdateReason) {
+    UpdateReason["SCROLL"] = "scroll";
+    UpdateReason["RESIZE"] = "resize";
+    UpdateReason["FORCED"] = "forced";
+    UpdateReason["PLUGIN"] = "plugin";
+})(UpdateReason || (UpdateReason = {}));
+var ScrollBehaviour;
+(function (ScrollBehaviour) {
+    ScrollBehaviour["AUTO"] = "auto";
+    ScrollBehaviour["SMOOTH"] = "smooth";
+})(ScrollBehaviour || (ScrollBehaviour = {}));
 
 class Scrollbar {
     constructor() {
@@ -85,42 +209,88 @@ class Scrollbar {
     }
 }
 
-const ID_NAME = (count) => `caroucssel-${count}`;
-const ID_MATCH = /^caroucssel-[0-9]*$/;
-const CACHE_KEY_INDEX = 'index';
-const CACHE_KEY_ITEMS = 'items';
-const CACHE_KEY_PAGES = 'pages';
-const CACHE_KEY_PAGE_INDEX = 'page-index';
-const CACHE_KEY_SCROLLBAR = 'scrollbar';
-const VISIBILITY_OFFSET = 0.25;
-const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
-const EVENT_SCROLL = 'scroll';
-const EVENT_RESIZE = 'resize';
-const DEFAULTS_BUTTON_PREVIOUS = {
-    className: 'is-previous',
-    label: 'Previous',
-    title: 'Go to previous',
+let __scrollbar;
+const DEFAULTS$2 = {
+    enabled: true,
 };
-const DEFAULTS_BUTTON_NEXT = {
-    className: 'is-next',
-    label: 'Next',
-    title: 'Go to next',
-};
-const DEFAULTS = {
-    hasButtons: false,
-    buttonClassName: 'button',
-    buttonTemplate: ({ className, controls, label, title }) => `
-		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
-			<span>${label}</span>
-		</button>
-	`,
-    buttonPrevious: DEFAULTS_BUTTON_PREVIOUS,
-    buttonNext: DEFAULTS_BUTTON_NEXT,
-    hasPagination: false,
-    paginationClassName: 'pagination',
-    paginationLabel: ({ index }) => `${index + 1}`,
-    paginationTitle: ({ index }) => `Go to ${index + 1}. page`,
-    paginationTemplate: ({ className, controls, pages, label, title }) => `
+const CLASSNAME = 'caroucssel-mask';
+const CACHE_KEY_PROXY$2 = 'proxy';
+const CACHE_KEY_CONFIGURATION$2 = 'config';
+const CACHE_KEY_MASK$1 = 'mask';
+const CACHE_KEY_HEIGHT = 'scrollbar';
+class Mask {
+    constructor(options = {}) {
+        writeCache(this, CACHE_KEY_CONFIGURATION$2, Object.assign(Object.assign({}, DEFAULTS$2), options));
+    }
+    get name() {
+        return 'buildin:mask';
+    }
+    get el() {
+        var _a;
+        return (_a = fromCache(this, CACHE_KEY_MASK$1)) !== null && _a !== void 0 ? _a : null;
+    }
+    init(proxy) {
+        writeCache(this, CACHE_KEY_PROXY$2, proxy);
+        __scrollbar = __scrollbar || new Scrollbar();
+        this._render();
+    }
+    destroy() {
+        this._remove();
+        clearFullCache(this);
+    }
+    update(data) {
+        switch (data.reason) {
+            case UpdateReason.RESIZE:
+            case UpdateReason.FORCED:
+                clearCache(this, CACHE_KEY_HEIGHT);
+                this._render();
+                break;
+            default:
+                this._render();
+                break;
+        }
+    }
+    _render() {
+        const { enabled } = fromCache(this, CACHE_KEY_CONFIGURATION$2);
+        if (!enabled) {
+            return;
+        }
+        const proxy = fromCache(this, CACHE_KEY_PROXY$2);
+        const element = proxy.el;
+        let { height } = __scrollbar.dimensions;
+        if (element.scrollWidth <= element.clientWidth) {
+            height = 0;
+        }
+        fromCache(this, CACHE_KEY_MASK$1, () => {
+            var _a;
+            const mask = document.createElement('div');
+            mask.className = CLASSNAME;
+            mask.style.overflow = 'hidden';
+            mask.style.height = '100%';
+            (_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, element);
+            mask.appendChild(element);
+            return mask;
+        });
+        const cachedHeight = fromCache(this, CACHE_KEY_HEIGHT);
+        if (height === cachedHeight) {
+            return;
+        }
+        writeCache(this, CACHE_KEY_HEIGHT, height);
+        element.style.height = `calc(100% + ${height}px)`;
+        element.style.marginBottom = `${height * -1}px`;
+    }
+    _remove() {
+        var _a, _b;
+        const { el } = fromCache(this, CACHE_KEY_PROXY$2);
+        const mask = fromCache(this, CACHE_KEY_MASK$1);
+        (_a = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, mask);
+        (_b = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(mask);
+        el.removeAttribute('style');
+    }
+}
+
+const DEFAULTS$1 = {
+    template: ({ className, controls, pages, label, title }) => `
 		<ul class="${className}">
 			${pages.map((page, index) => {
         const data = { index, page, pages };
@@ -134,35 +304,189 @@ const DEFAULTS = {
     }).join('')}
 		</ul>
 	`,
-    hasScrollbars: false,
-    scrollbarsMaskClassName: 'caroucssel-mask',
+    className: 'pagination',
+    label: ({ index }) => `${index + 1}`,
+    title: ({ index }) => `Go to ${index + 1}. page`,
+};
+const CACHE_KEY_PROXY$1 = 'proxy';
+const CACHE_KEY_CONFIGURATION$1 = 'config';
+const CACHE_KEY_PAGINATION = 'pagination';
+const CACHE_KEY_BUTTONS = 'buttons';
+class Pagination {
+    constructor(options = {}) {
+        writeCache(this, CACHE_KEY_CONFIGURATION$1, Object.assign(Object.assign({}, DEFAULTS$1), options));
+        this._onClick = this._onClick.bind(this);
+    }
+    get name() {
+        return 'buildin:pagination';
+    }
+    init(proxy) {
+        writeCache(this, CACHE_KEY_PROXY$1, proxy);
+        this._add();
+    }
+    destroy() {
+        this._remove();
+        clearFullCache(this);
+    }
+    update(data) {
+        switch (data.reason) {
+            case UpdateReason.SCROLL:
+                this._update();
+                break;
+            default:
+                this._remove();
+                this._add();
+                break;
+        }
+    }
+    _add() {
+        var _a;
+        const proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        const config = fromCache(this, CACHE_KEY_CONFIGURATION$1);
+        const { el, mask, pages } = proxy;
+        const target = mask !== null && mask !== void 0 ? mask : el;
+        if (pages.length < 2) {
+            return;
+        }
+        const { template, className, label, title } = config;
+        const pagination = render(template, { label, title, pages, className, controls: el.id });
+        if (!pagination) {
+            return;
+        }
+        const buttons = Array.from(pagination.querySelectorAll('button'))
+            .map((button) => {
+            button.addEventListener('click', this._onClick, true);
+            return button;
+        });
+        (_a = target.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(pagination);
+        writeCache(this, CACHE_KEY_PAGINATION, pagination);
+        writeCache(this, CACHE_KEY_BUTTONS, buttons);
+        this._update();
+    }
+    _update() {
+        const proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        const buttons = fromCache(this, CACHE_KEY_BUTTONS);
+        const { pageIndex } = proxy;
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button, at) => button.disabled = (at === pageIndex));
+    }
+    _remove() {
+        var _a;
+        const pagination = fromCache(this, CACHE_KEY_PAGINATION);
+        const buttons = fromCache(this, CACHE_KEY_BUTTONS);
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button) => {
+            var _a;
+            button.removeEventListener('click', this._onClick);
+            (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
+        });
+        (_a = pagination === null || pagination === void 0 ? void 0 : pagination.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(pagination);
+        clearCache(this, CACHE_KEY_BUTTONS);
+        clearCache(this, CACHE_KEY_PAGINATION);
+    }
+    _onClick(event) {
+        var _a;
+        const proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        const buttons = fromCache(this, CACHE_KEY_BUTTONS);
+        const target = event.currentTarget;
+        const index = (_a = buttons === null || buttons === void 0 ? void 0 : buttons.indexOf(target)) !== null && _a !== void 0 ? _a : 0;
+        proxy.index = proxy.pages[index];
+    }
+}
+
+function debounce(func, delay) {
+    let timeout = null;
+    const debounced = (...args) => {
+        if (timeout !== null) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => func(...args), delay);
+    };
+    return debounced;
+}
+
+const ID_NAME = (count) => `caroucssel-${count}`;
+const ID_MATCH = /^caroucssel-[0-9]*$/;
+const CACHE_KEY_ELEMENT = 'element';
+const CACHE_KEY_ID = 'id';
+const CACHE_KEY_CONFIGURATION = 'config';
+const CACHE_KEY_INDEX = 'index';
+const CACHE_KEY_ITEMS = 'items';
+const CACHE_KEY_PAGES = 'pages';
+const CACHE_KEY_PAGE_INDEX = 'page-index';
+const CACHE_KEY_MASK = 'mask';
+const CACHE_KEY_PROXY = 'proxy';
+const CACHE_KEY_PLUGINS = 'plugins';
+const CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
+const CACHE_KEY_PROXY_PLUGIN = 'proxy:plugins';
+const VISIBILITY_OFFSET = 0.25;
+const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
+const EVENT_SCROLL = 'scroll';
+const EVENT_RESIZE = 'resize';
+const DEFAULTS = {
+    plugins: [],
     filterItem: () => true,
     onScroll: () => undefined,
 };
 let __instanceCount = 0;
-let __scrollbar;
+class Proxy {
+    constructor(instance, plugins) {
+        writeCache(this, CACHE_KEY_PROXY_INSTANCE, instance);
+        writeCache(this, CACHE_KEY_PROXY_PLUGIN, plugins);
+    }
+    get el() {
+        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.el;
+    }
+    get mask() {
+        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.mask;
+    }
+    get index() {
+        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.index;
+    }
+    set index(value) {
+        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        instance.index = value;
+    }
+    get items() {
+        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.items;
+    }
+    get pages() {
+        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.pages;
+    }
+    get pageIndex() {
+        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.pageIndex;
+    }
+    update(plugin) {
+    }
+}
 class Carousel {
     constructor(el, options = {}) {
-        this._mask = null;
-        this._isSmooth = false;
-        this._previous = null;
-        this._next = null;
-        this._pagination = null;
-        this._paginationButtons = null;
+        this.behavior = ScrollBehaviour.AUTO;
         if (!el || !(el instanceof Element)) {
             throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
         }
-        this._el = el;
-        __scrollbar = __scrollbar || new Scrollbar();
+        writeCache(this, CACHE_KEY_ELEMENT, el);
         __instanceCount++;
         el.id = el.id || ID_NAME(__instanceCount);
-        this._id = el.id;
-        this._mask = null;
-        const opts = Object.assign(Object.assign({}, DEFAULTS), options);
-        this._conf = opts;
-        this._addButtons();
-        this._addPagination();
-        this._updateScrollbars();
+        writeCache(this, CACHE_KEY_ID, el.id);
+        const configuration = Object.assign(Object.assign({}, DEFAULTS), options);
+        writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
+        const plugins = [...configuration.plugins];
+        const index = configuration.plugins.findIndex((plugin) => plugin instanceof Mask);
+        let mask = new Mask();
+        if (index > -1) {
+            [mask] = plugins.splice(index, 1);
+        }
+        plugins.unshift(mask);
+        writeCache(this, CACHE_KEY_MASK, mask);
+        const proxy = new Proxy(this, plugins);
+        writeCache(this, CACHE_KEY_PROXY, proxy);
+        writeCache(this, CACHE_KEY_PLUGINS, plugins);
+        plugins.forEach((plugin) => plugin.init(proxy));
         switch (true) {
             case Array.isArray(options.index):
                 this.index = options.index;
@@ -171,7 +495,7 @@ class Carousel {
                 this.index = [options.index];
                 break;
         }
-        this._isSmooth = true;
+        this.behavior = ScrollBehaviour.SMOOTH;
         this._onScroll = debounce(this._onScroll.bind(this), 25);
         this._onResize = debounce(this._onResize.bind(this), 25);
         el.addEventListener(EVENT_SCROLL, this._onScroll);
@@ -180,10 +504,15 @@ class Carousel {
     static resetInstanceCount() {
     }
     get el() {
-        return this._el;
+        return fromCache(this, CACHE_KEY_ELEMENT);
+    }
+    get mask() {
+        var _a;
+        const mask = fromCache(this, CACHE_KEY_MASK);
+        return (_a = mask.el) !== null && _a !== void 0 ? _a : null;
     }
     get id() {
-        return this._id;
+        return fromCache(this, CACHE_KEY_ID);
     }
     get index() {
         return fromCache(this, CACHE_KEY_INDEX, () => {
@@ -211,7 +540,7 @@ class Carousel {
         });
     }
     set index(values) {
-        const { el, items } = this;
+        const { behavior, el, items } = this;
         const { length } = items;
         if (!Array.isArray(values) || !values.length) {
             return;
@@ -231,12 +560,12 @@ class Carousel {
             return;
         }
         clearCache(this, CACHE_KEY_INDEX);
-        const behavior = this._isSmooth ? 'smooth' : 'auto';
         el.scrollTo(Object.assign(Object.assign({}, to), { behavior }));
     }
     get items() {
         return fromCache(this, CACHE_KEY_ITEMS, () => {
-            const { el, _conf: { filterItem } } = this;
+            const { filterItem } = fromCache(this, CACHE_KEY_CONFIGURATION);
+            const { el } = this;
             const children = Array.from(el.children);
             return children
                 .filter((item) => !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden)
@@ -310,192 +639,39 @@ class Carousel {
     destroy() {
         const { el } = this;
         ID_MATCH.test(el.id) && el.removeAttribute('id');
-        this._removeButtons();
-        this._removePagination();
-        this._removeScrollbars();
+        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.destroy());
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
         window.removeEventListener(EVENT_RESIZE, this._onResize);
         clearFullCache(this);
     }
     update() {
-        clearFullCache(this);
-        this._updateButtons();
-        this._updatePagination();
-        this._updateScrollbars();
-    }
-    _updateScrollbars() {
-        const { el, _conf: _options } = this;
-        const { hasScrollbars, scrollbarsMaskClassName } = _options;
-        if (hasScrollbars) {
-            return;
-        }
-        let { height } = __scrollbar.dimensions;
-        if (el.scrollWidth <= el.clientWidth) {
-            height = 0;
-        }
-        this._mask = this._mask || (() => {
-            var _a;
-            const mask = document.createElement('div');
-            mask.className = scrollbarsMaskClassName;
-            mask.style.overflow = 'hidden';
-            mask.style.height = '100%';
-            (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, this.el);
-            mask.appendChild(el);
-            return mask;
-        })();
-        const cachedHeight = fromCache(this, CACHE_KEY_SCROLLBAR, () => undefined);
-        if (height === cachedHeight) {
-            return;
-        }
-        writeCache(this, CACHE_KEY_SCROLLBAR, height);
-        const element = el;
-        element.style.height = `calc(100% + ${height}px)`;
-        element.style.marginBottom = `${height * -1}px`;
-    }
-    _removeScrollbars() {
-        var _a, _b;
-        const { _mask, el } = this;
-        if (!_mask) {
-            return;
-        }
-        (_a = _mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, _mask);
-        (_b = _mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(_mask);
-        el.removeAttribute('style');
-        this._mask = null;
-    }
-    _addButtons() {
-        var _a, _b;
-        const { el, id, _conf: _options } = this;
-        if (!_options.hasButtons) {
-            return;
-        }
-        const { buttonTemplate, buttonClassName, buttonPrevious, buttonNext } = _options;
-        const controls = id;
-        const [previous, next] = [
-            Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_PREVIOUS), buttonPrevious), { controls, className: [buttonClassName, buttonPrevious.className].join(' ') }),
-            Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_NEXT), buttonNext), { controls, className: [buttonClassName, buttonNext.className].join(' ') }),
-        ].map((params) => render(buttonTemplate, params));
-        if (previous) {
-            const onPrevious = () => {
-                const { pages, pageIndex } = this;
-                const index = pages[pageIndex - 1] || pages[0];
-                this.index = index;
-            };
-            previous.onclick = onPrevious;
-            (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(previous);
-        }
-        this._previous = previous;
-        if (next) {
-            const onNext = () => {
-                const { pages, pageIndex } = this;
-                const index = pages[pageIndex + 1] || pages[pages.length - 1];
-                this.index = index;
-            };
-            next.onclick = onNext;
-            (_b = el.parentNode) === null || _b === void 0 ? void 0 : _b.appendChild(next);
-        }
-        this._next = next;
-        this._updateButtons();
-    }
-    _updateButtons() {
-        const { _conf: _options } = this;
-        if (!_options.hasButtons) {
-            return;
-        }
-        const { pages, pageIndex, _previous, _next } = this;
-        if (_previous) {
-            const firstPage = pages[pageIndex - 1];
-            const isFirstPage = firstPage === undefined;
-            _previous.disabled = isFirstPage;
-        }
-        if (_next) {
-            const lastPage = pages[pageIndex + 1];
-            const isLastPage = lastPage === undefined;
-            _next.disabled = isLastPage;
-        }
-    }
-    _removeButtons() {
-        const { _previous, _next } = this;
-        [_previous, _next].forEach((button) => {
-            var _a;
-            if (!button) {
-                return;
-            }
-            button.onclick = null;
-            (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
-        });
-    }
-    _addPagination() {
-        const { _conf: _options } = this;
-        if (!_options.hasPagination) {
-            return;
-        }
-        const { _mask, el, id, pages } = this;
-        if (pages.length < 2) {
-            return;
-        }
-        const { paginationTemplate, paginationClassName, paginationLabel, paginationTitle } = _options;
-        const pagination = render(paginationTemplate, {
-            pages,
-            controls: id,
-            className: paginationClassName,
-            label: paginationLabel,
-            title: paginationTitle,
-        });
-        if (!pagination) {
-            return;
-        }
-        const buttons = Array.from(pagination.querySelectorAll('button'))
-            .map((button, index) => {
-            button.onclick = () => this.index = pages[index];
-            return button;
-        });
-        const target = (_mask || el).parentNode;
-        target === null || target === void 0 ? void 0 : target.appendChild(pagination);
-        this._pagination = pagination;
-        this._paginationButtons = buttons;
-        this._updatePagination();
-    }
-    _updatePagination() {
-        const { _conf: _options } = this;
-        if (!_options.hasPagination) {
-            return;
-        }
-        const { pageIndex, _paginationButtons } = this;
-        if (!_paginationButtons) {
-            return;
-        }
-        _paginationButtons.forEach((button, at) => button.disabled = (at === pageIndex));
-    }
-    _removePagination() {
-        var _a;
-        const { _pagination, _paginationButtons } = this;
-        (_paginationButtons || []).forEach((button) => {
-            var _a;
-            button.onclick = null;
-            (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
-        });
-        this._paginationButtons = null;
-        _pagination && ((_a = _pagination.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(_pagination));
-        this._pagination = null;
+        clearCache(this, CACHE_KEY_INDEX);
+        clearCache(this, CACHE_KEY_ITEMS);
+        clearCache(this, CACHE_KEY_PAGES);
+        clearCache(this, CACHE_KEY_PAGE_INDEX);
+        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
     }
     _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        this._updateButtons();
-        this._updatePagination();
-        const { index, _conf: { onScroll } } = this;
-        onScroll && onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
+        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.SCROLL }));
+        const { index } = this;
+        const configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
+        configuration === null || configuration === void 0 ? void 0 : configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
     }
     _onResize() {
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        this._updateButtons();
-        this._removePagination();
-        this._addPagination();
-        this._updateScrollbars();
+        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
     }
 }
 
+const plugins = { Buttons, Mask, Pagination };
+
 exports.Carousel = Carousel;
+exports.plugins = plugins;

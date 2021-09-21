@@ -1,4 +1,4 @@
-import { Configuration, Index, Options, Pages } from './types';
+import { Index, Options, Pages } from './types';
 export * from './types';
 /**
  * The carousel javascript instance.
@@ -10,15 +10,12 @@ export declare class Carousel {
      * @internal
      */
     static resetInstanceCount(): void;
-    protected _el: Element;
-    protected _id: string;
-    protected _conf: Configuration;
-    protected _mask: HTMLDivElement | null;
-    protected _isSmooth: boolean;
-    protected _previous: HTMLButtonElement | null;
-    protected _next: HTMLButtonElement | null;
-    protected _pagination: HTMLElement | null;
-    protected _paginationButtons: HTMLButtonElement[] | null;
+    /**
+     * Current scroll behavior. Possible values are:
+     * * `'auto'`
+     * * `'smooth'`
+     */
+    behavior: ScrollBehavior;
     /**
      * Creates an instance.
      * @param el is the dom element to control. This should be a container element
@@ -33,6 +30,13 @@ export declare class Carousel {
      * @return the controlled dom element
      */
     get el(): Element;
+    /**
+     * Returns the dom element reference of the mask element that wraps the
+     * carousel element.
+     * @public
+     * @return the mask dom element
+     */
+    get mask(): Element | null;
     /**
      * Returns the id-attribute value of the carousel.
      * @public
@@ -85,14 +89,6 @@ export declare class Carousel {
      * @public
      */
     update(): void;
-    protected _updateScrollbars(): void;
-    protected _removeScrollbars(): void;
-    protected _addButtons(): void;
-    protected _updateButtons(): void;
-    protected _removeButtons(): void;
-    protected _addPagination(): void;
-    protected _updatePagination(): void;
-    protected _removePagination(): void;
     protected _onScroll(event: Event): void;
     protected _onResize(): void;
 }
