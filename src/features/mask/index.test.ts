@@ -17,7 +17,7 @@ jest.mock('../../utils/scrollbar', () => {
 	};
 });
 
-describe('Mask plugin', () => {
+describe('Mask feature', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers();
@@ -105,7 +105,7 @@ describe('Mask plugin', () => {
 		const el = querySelector('.caroucssel');
 
 		new Carousel(el, {
-			plugins: [new Mask({ enabled: false })],
+			features: [new Mask({ enabled: false })],
 		});
 		expect(el.getAttribute('style')).toBeNull();
 	});

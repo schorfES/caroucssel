@@ -1,8 +1,8 @@
 import { fixture, querySelector, triggerScroll } from './__setup__/helpers';
 import { Carousel } from './carousel';
-import { Buttons } from './plugins/buttons';
-import { Mask } from './plugins/mask';
-import { Pagination } from './plugins/pagination';
+import { Buttons } from './features/buttons';
+import { Mask } from './features/mask';
+import { Pagination } from './features/pagination';
 import { FilterItemFn } from './types';
 import { ScrollbarDimensions } from './utils/scrollbar';
 
@@ -430,7 +430,7 @@ describe('Carousel', () => {
 			document.body.innerHTML = structure;
 			const el = querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
-				plugins: [
+				features: [
 					new Buttons(),
 					new Pagination(),
 				],
@@ -445,7 +445,7 @@ describe('Carousel', () => {
 			document.body.innerHTML = structure;
 			const el = querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
-				plugins: [
+				features: [
 					new Buttons(),
 					new Pagination(),
 				],
@@ -460,7 +460,7 @@ describe('Carousel', () => {
 			document.body.innerHTML = structure;
 			const el = querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
-				plugins: [
+				features: [
 					new Mask({ enabled: false }),
 					new Buttons(),
 					new Pagination(),

@@ -1,17 +1,17 @@
-import { CarouselPlugin, CarouselProxy, UpdateData } from '../../types';
+import { IFeature, IProxy, UpdateData } from '../../types';
 import { writeCache } from '../../utils/cache';
 
 /**
- * Plugin to enable mouse controls
+ * Feature to enable mouse controls
  * @hidden
  */
-export class Mouse implements CarouselPlugin {
+export class Mouse implements IFeature {
 
 	get name(): string {
 		return 'buildin:mouse';
 	}
 
-	public init(proxy: CarouselProxy): void {
+	public init(proxy: IProxy): void {
 		writeCache(this, 'proxy', proxy);
 	}
 
