@@ -61,13 +61,22 @@ function createBundle(output: rollup.OutputOptions = {}, plugins: rollup.Plugin[
 export default [
 	createBundle(
 		{
-			file: path.join(__dirname, 'dist/caroucssel.cjs.js'),
+			file: path.join(__dirname, 'dist/formats/cjs/caroucssel.js'),
 			format: 'cjs',
 		},
 	),
 	createBundle(
 		{
-			file: path.join(__dirname, 'dist/caroucssel.umd.js'),
+			file: path.join(__dirname, 'dist/formats/cjs/caroucssel.min.js'),
+			format: 'cjs',
+		},
+		[
+			terser(PLUGIN_SETTINGS_TERSER),
+		],
+	),
+	createBundle(
+		{
+			file: path.join(__dirname, 'dist/formats/umd/caroucssel.js'),
 		},
 		[
 			babel(PLUGIN_SETTINGS_BABEL),
@@ -75,7 +84,7 @@ export default [
 	),
 	createBundle(
 		{
-			file: path.join(__dirname, 'dist/caroucssel.min.js'),
+			file: path.join(__dirname, 'dist/formats/umd/caroucssel.min.js'),
 		},
 		[
 			babel(PLUGIN_SETTINGS_BABEL),
