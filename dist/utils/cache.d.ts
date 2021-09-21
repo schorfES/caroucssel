@@ -11,6 +11,7 @@ declare type Storage = {
  * @param factory the factory function
  * @returns the cached value
  */
+export declare function fromCache<T = unknown>(ref: Reference, key: string): T | undefined;
 export declare function fromCache<T = unknown>(ref: Reference, key: string, factory: () => T): T;
 /**
  * Explicitly writes a value into the cache.

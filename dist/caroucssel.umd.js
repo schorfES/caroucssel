@@ -16,7 +16,17 @@
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.Carousel = void 0;
+  _exports.plugins = _exports.Carousel = void 0;
+
+  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+  function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+  function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
   function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -30,13 +40,24 @@
 
   function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-  function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+  function __rest(s, e) {
+    var t = {};
+
+    for (var p in s) {
+      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    }
+
+    if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+      if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
+    }
+    return t;
+  }
 
   var __CACHE = new WeakMap();
 
@@ -45,6 +66,10 @@
 
     if (key in storage) {
       return storage[key];
+    }
+
+    if (!factory) {
+      return undefined;
     }
 
     var value = factory();
@@ -77,26 +102,6 @@
     __CACHE.delete(ref);
   }
 
-  function debounce(func, delay) {
-    var timeout = null;
-
-    var debounced = function debounced() {
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      if (timeout !== null) {
-        clearTimeout(timeout);
-      }
-
-      timeout = setTimeout(function () {
-        return func.apply(void 0, args);
-      }, delay);
-    };
-
-    return debounced;
-  }
-
   function render(template, context) {
     var el = document.createElement('div');
     el.innerHTML = template(context);
@@ -109,14 +114,193 @@
     return ref;
   }
 
+  var DEFAULTS$3 = {
+    template: function template(_ref) {
+      var className = _ref.className,
+          controls = _ref.controls,
+          label = _ref.label,
+          title = _ref.title;
+      return "\n\t\t<button type=\"button\" class=\"".concat(className, "\" aria-label=\"").concat(label, "\" title=\"").concat(title, "\" aria-controls=\"").concat(controls, "\">\n\t\t\t<span>").concat(label, "</span>\n\t\t</button>\n\t");
+    },
+    className: 'button',
+    nextClassName: 'is-next',
+    nextLabel: 'Next',
+    nextTitle: 'Go to next',
+    previousClassName: 'is-previous',
+    previousLabel: 'Previous',
+    previousTitle: 'Go to previous'
+  };
+  var CACHE_KEY_PROXY$3 = 'proxy';
+  var CACHE_KEY_CONFIGURATION$3 = 'config';
+  var CACHE_KEY_BUTTONS$1 = 'buttons';
+
+  var Buttons = /*#__PURE__*/function () {
+    function Buttons() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Buttons);
+
+      writeCache(this, CACHE_KEY_CONFIGURATION$3, Object.assign(Object.assign({}, DEFAULTS$3), options));
+      this._onPrevious = this._onPrevious.bind(this);
+      this._onNext = this._onNext.bind(this);
+    }
+
+    _createClass(Buttons, [{
+      key: "name",
+      get: function get() {
+        return 'buildin:buttons';
+      }
+    }, {
+      key: "init",
+      value: function init(proxy) {
+        writeCache(this, CACHE_KEY_PROXY$3, proxy);
+
+        this._render();
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this._remove();
+
+        clearFullCache(this);
+      }
+    }, {
+      key: "update",
+      value: function update() {
+        this._render();
+      }
+    }, {
+      key: "_render",
+      value: function _render() {
+        var proxy = fromCache(this, CACHE_KEY_PROXY$3);
+        var config = fromCache(this, CACHE_KEY_CONFIGURATION$3);
+        var el = proxy.el,
+            mask = proxy.mask,
+            pages = proxy.pages,
+            pageIndex = proxy.pageIndex;
+        var target = mask !== null && mask !== void 0 ? mask : el;
+        var template = config.template,
+            className = config.className,
+            previousClassName = config.previousClassName,
+            previousLabel = config.previousLabel,
+            previousTitle = config.previousTitle,
+            nextClassName = config.nextClassName,
+            nextLabel = config.nextLabel,
+            nextTitle = config.nextTitle;
+        var settings = [{
+          controls: el.id,
+          label: nextLabel,
+          title: nextTitle,
+          className: [className, nextClassName].join(' '),
+          handler: this._onNext
+        }, {
+          controls: el.id,
+          label: previousLabel,
+          title: previousTitle,
+          className: [className, previousClassName].join(' '),
+          handler: this._onPrevious
+        }];
+
+        var _fromCache = fromCache(this, 'buttons', function () {
+          return settings.map(function (_a) {
+            var _b;
+
+            var handler = _a.handler,
+                params = __rest(_a, ["handler"]);
+
+            var button = render(template, params);
+
+            if (!button) {
+              return null;
+            }
+
+            button.addEventListener('click', handler);
+            (_b = target.parentNode) === null || _b === void 0 ? void 0 : _b.insertBefore(button, target.nextSibling);
+            return button;
+          });
+        }),
+            _fromCache2 = _slicedToArray(_fromCache, 2),
+            next = _fromCache2[0],
+            previous = _fromCache2[1];
+
+        if (next) {
+          var lastPage = pages[pageIndex + 1];
+          var isLastPage = lastPage === undefined;
+          next.disabled = isLastPage;
+        }
+
+        if (previous) {
+          var firstPage = pages[pageIndex - 1];
+          var isFirstPage = firstPage === undefined;
+          previous.disabled = isFirstPage;
+        }
+      }
+    }, {
+      key: "_remove",
+      value: function _remove() {
+        var _this = this;
+
+        var buttons = fromCache(this, CACHE_KEY_BUTTONS$1);
+
+        if (!buttons) {
+          return;
+        }
+
+        buttons.forEach(function (button) {
+          var _a;
+
+          button === null || button === void 0 ? void 0 : button.removeEventListener('click', _this._onPrevious);
+          button === null || button === void 0 ? void 0 : button.removeEventListener('click', _this._onNext);
+          (_a = button === null || button === void 0 ? void 0 : button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
+        });
+      }
+    }, {
+      key: "_onPrevious",
+      value: function _onPrevious() {
+        var proxy = fromCache(this, CACHE_KEY_PROXY$3);
+        var pages = proxy.pages,
+            pageIndex = proxy.pageIndex;
+        var index = pages[pageIndex - 1] || pages[0];
+        proxy.index = index;
+      }
+    }, {
+      key: "_onNext",
+      value: function _onNext() {
+        var proxy = fromCache(this, CACHE_KEY_PROXY$3);
+        var pages = proxy.pages,
+            pageIndex = proxy.pageIndex;
+        var index = pages[pageIndex + 1] || pages[pages.length - 1];
+        proxy.index = index;
+      }
+    }]);
+
+    return Buttons;
+  }();
+
+  var UpdateReason;
+
+  (function (UpdateReason) {
+    UpdateReason["SCROLL"] = "scroll";
+    UpdateReason["RESIZE"] = "resize";
+    UpdateReason["FORCED"] = "forced";
+    UpdateReason["PLUGIN"] = "plugin";
+  })(UpdateReason || (UpdateReason = {}));
+
+  var ScrollBehaviour;
+
+  (function (ScrollBehaviour) {
+    ScrollBehaviour["AUTO"] = "auto";
+    ScrollBehaviour["SMOOTH"] = "smooth";
+  })(ScrollBehaviour || (ScrollBehaviour = {}));
+
   var Scrollbar = /*#__PURE__*/function () {
     function Scrollbar() {
-      var _this = this;
+      var _this2 = this;
 
       _classCallCheck(this, Scrollbar);
 
       window.addEventListener('resize', function () {
-        clearCache(_this, 'dimensions');
+        clearCache(_this2, 'dimensions');
       });
     }
 
@@ -153,58 +337,135 @@
     return Scrollbar;
   }();
 
-  var ID_NAME = function ID_NAME(count) {
-    return "caroucssel-".concat(count);
-  };
+  var __scrollbar;
 
-  var ID_MATCH = /^caroucssel-[0-9]*$/;
-  var CACHE_KEY_INDEX = 'index';
-  var CACHE_KEY_ITEMS = 'items';
-  var CACHE_KEY_PAGES = 'pages';
-  var CACHE_KEY_PAGE_INDEX = 'page-index';
-  var CACHE_KEY_SCROLLBAR = 'scrollbar';
-  var VISIBILITY_OFFSET = 0.25;
-  var INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
-  var EVENT_SCROLL = 'scroll';
-  var EVENT_RESIZE = 'resize';
-  var DEFAULTS_BUTTON_PREVIOUS = {
-    className: 'is-previous',
-    label: 'Previous',
-    title: 'Go to previous'
+  var DEFAULTS$2 = {
+    enabled: true
   };
-  var DEFAULTS_BUTTON_NEXT = {
-    className: 'is-next',
-    label: 'Next',
-    title: 'Go to next'
-  };
-  var DEFAULTS = {
-    hasButtons: false,
-    buttonClassName: 'button',
-    buttonTemplate: function buttonTemplate(_ref) {
-      var className = _ref.className,
-          controls = _ref.controls,
-          label = _ref.label,
-          title = _ref.title;
-      return "\n\t\t<button type=\"button\" class=\"".concat(className, "\" aria-label=\"").concat(label, "\" title=\"").concat(title, "\" aria-controls=\"").concat(controls, "\">\n\t\t\t<span>").concat(label, "</span>\n\t\t</button>\n\t");
-    },
-    buttonPrevious: DEFAULTS_BUTTON_PREVIOUS,
-    buttonNext: DEFAULTS_BUTTON_NEXT,
-    hasPagination: false,
-    paginationClassName: 'pagination',
-    paginationLabel: function paginationLabel(_ref2) {
-      var index = _ref2.index;
-      return "".concat(index + 1);
-    },
-    paginationTitle: function paginationTitle(_ref3) {
-      var index = _ref3.index;
-      return "Go to ".concat(index + 1, ". page");
-    },
-    paginationTemplate: function paginationTemplate(_ref4) {
-      var className = _ref4.className,
-          controls = _ref4.controls,
-          pages = _ref4.pages,
-          label = _ref4.label,
-          title = _ref4.title;
+  var CLASSNAME = 'caroucssel-mask';
+  var CACHE_KEY_PROXY$2 = 'proxy';
+  var CACHE_KEY_CONFIGURATION$2 = 'config';
+  var CACHE_KEY_MASK$1 = 'mask';
+  var CACHE_KEY_HEIGHT = 'scrollbar';
+
+  var Mask = /*#__PURE__*/function () {
+    function Mask() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Mask);
+
+      writeCache(this, CACHE_KEY_CONFIGURATION$2, Object.assign(Object.assign({}, DEFAULTS$2), options));
+    }
+
+    _createClass(Mask, [{
+      key: "name",
+      get: function get() {
+        return 'buildin:mask';
+      }
+    }, {
+      key: "el",
+      get: function get() {
+        var _a;
+
+        return (_a = fromCache(this, CACHE_KEY_MASK$1)) !== null && _a !== void 0 ? _a : null;
+      }
+    }, {
+      key: "init",
+      value: function init(proxy) {
+        writeCache(this, CACHE_KEY_PROXY$2, proxy);
+        __scrollbar = __scrollbar || new Scrollbar();
+
+        this._render();
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this._remove();
+
+        clearFullCache(this);
+      }
+    }, {
+      key: "update",
+      value: function update(data) {
+        switch (data.reason) {
+          case UpdateReason.RESIZE:
+          case UpdateReason.FORCED:
+            clearCache(this, CACHE_KEY_HEIGHT);
+
+            this._render();
+
+            break;
+
+          default:
+            this._render();
+
+            break;
+        }
+      }
+    }, {
+      key: "_render",
+      value: function _render() {
+        var _fromCache3 = fromCache(this, CACHE_KEY_CONFIGURATION$2),
+            enabled = _fromCache3.enabled;
+
+        if (!enabled) {
+          return;
+        }
+
+        var proxy = fromCache(this, CACHE_KEY_PROXY$2);
+        var element = proxy.el;
+        var height = __scrollbar.dimensions.height;
+
+        if (element.scrollWidth <= element.clientWidth) {
+          height = 0;
+        }
+
+        fromCache(this, CACHE_KEY_MASK$1, function () {
+          var _a;
+
+          var mask = document.createElement('div');
+          mask.className = CLASSNAME;
+          mask.style.overflow = 'hidden';
+          mask.style.height = '100%';
+          (_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, element);
+          mask.appendChild(element);
+          return mask;
+        });
+        var cachedHeight = fromCache(this, CACHE_KEY_HEIGHT);
+
+        if (height === cachedHeight) {
+          return;
+        }
+
+        writeCache(this, CACHE_KEY_HEIGHT, height);
+        element.style.height = "calc(100% + ".concat(height, "px)");
+        element.style.marginBottom = "".concat(height * -1, "px");
+      }
+    }, {
+      key: "_remove",
+      value: function _remove() {
+        var _a, _b;
+
+        var _fromCache4 = fromCache(this, CACHE_KEY_PROXY$2),
+            el = _fromCache4.el;
+
+        var mask = fromCache(this, CACHE_KEY_MASK$1);
+        (_a = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, mask);
+        (_b = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(mask);
+        el.removeAttribute('style');
+      }
+    }]);
+
+    return Mask;
+  }();
+
+  var DEFAULTS$1 = {
+    template: function template(_ref2) {
+      var className = _ref2.className,
+          controls = _ref2.controls,
+          pages = _ref2.pages,
+          label = _ref2.label,
+          title = _ref2.title;
       return "\n\t\t<ul class=\"".concat(className, "\">\n\t\t\t").concat(pages.map(function (page, index) {
         var data = {
           index: index,
@@ -216,8 +477,199 @@
         return "<li>\n\t\t\t\t\t<button type=\"button\" aria-controls=\"".concat(controls, "\" aria-label=\"").concat(titleStr, "\" title=\"").concat(titleStr, "\">\n\t\t\t\t\t\t<span>").concat(labelStr, "</span>\n\t\t\t\t\t</button>\n\t\t\t\t</li>");
       }).join(''), "\n\t\t</ul>\n\t");
     },
-    hasScrollbars: false,
-    scrollbarsMaskClassName: 'caroucssel-mask',
+    className: 'pagination',
+    label: function label(_ref3) {
+      var index = _ref3.index;
+      return "".concat(index + 1);
+    },
+    title: function title(_ref4) {
+      var index = _ref4.index;
+      return "Go to ".concat(index + 1, ". page");
+    }
+  };
+  var CACHE_KEY_PROXY$1 = 'proxy';
+  var CACHE_KEY_CONFIGURATION$1 = 'config';
+  var CACHE_KEY_PAGINATION = 'pagination';
+  var CACHE_KEY_BUTTONS = 'buttons';
+
+  var Pagination = /*#__PURE__*/function () {
+    function Pagination() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Pagination);
+
+      writeCache(this, CACHE_KEY_CONFIGURATION$1, Object.assign(Object.assign({}, DEFAULTS$1), options));
+      this._onClick = this._onClick.bind(this);
+    }
+
+    _createClass(Pagination, [{
+      key: "name",
+      get: function get() {
+        return 'buildin:pagination';
+      }
+    }, {
+      key: "init",
+      value: function init(proxy) {
+        writeCache(this, CACHE_KEY_PROXY$1, proxy);
+
+        this._add();
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this._remove();
+
+        clearFullCache(this);
+      }
+    }, {
+      key: "update",
+      value: function update(data) {
+        switch (data.reason) {
+          case UpdateReason.SCROLL:
+            this._update();
+
+            break;
+
+          default:
+            this._remove();
+
+            this._add();
+
+            break;
+        }
+      }
+    }, {
+      key: "_add",
+      value: function _add() {
+        var _this3 = this;
+
+        var _a;
+
+        var proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        var config = fromCache(this, CACHE_KEY_CONFIGURATION$1);
+        var el = proxy.el,
+            mask = proxy.mask,
+            pages = proxy.pages;
+        var target = mask !== null && mask !== void 0 ? mask : el;
+
+        if (pages.length < 2) {
+          return;
+        }
+
+        var template = config.template,
+            className = config.className,
+            label = config.label,
+            title = config.title;
+        var pagination = render(template, {
+          label: label,
+          title: title,
+          pages: pages,
+          className: className,
+          controls: el.id
+        });
+
+        if (!pagination) {
+          return;
+        }
+
+        var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button) {
+          button.addEventListener('click', _this3._onClick, true);
+          return button;
+        });
+        (_a = target.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(pagination);
+        writeCache(this, CACHE_KEY_PAGINATION, pagination);
+        writeCache(this, CACHE_KEY_BUTTONS, buttons);
+
+        this._update();
+      }
+    }, {
+      key: "_update",
+      value: function _update() {
+        var proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        var buttons = fromCache(this, CACHE_KEY_BUTTONS);
+        var pageIndex = proxy.pageIndex;
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach(function (button, at) {
+          return button.disabled = at === pageIndex;
+        });
+      }
+    }, {
+      key: "_remove",
+      value: function _remove() {
+        var _this4 = this;
+
+        var _a;
+
+        var pagination = fromCache(this, CACHE_KEY_PAGINATION);
+        var buttons = fromCache(this, CACHE_KEY_BUTTONS);
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach(function (button) {
+          var _a;
+
+          button.removeEventListener('click', _this4._onClick);
+          (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
+        });
+        (_a = pagination === null || pagination === void 0 ? void 0 : pagination.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(pagination);
+        clearCache(this, CACHE_KEY_BUTTONS);
+        clearCache(this, CACHE_KEY_PAGINATION);
+      }
+    }, {
+      key: "_onClick",
+      value: function _onClick(event) {
+        var _a;
+
+        var proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        var buttons = fromCache(this, CACHE_KEY_BUTTONS);
+        var target = event.currentTarget;
+        var index = (_a = buttons === null || buttons === void 0 ? void 0 : buttons.indexOf(target)) !== null && _a !== void 0 ? _a : 0;
+        proxy.index = proxy.pages[index];
+      }
+    }]);
+
+    return Pagination;
+  }();
+
+  function debounce(func, delay) {
+    var timeout = null;
+
+    var debounced = function debounced() {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      if (timeout !== null) {
+        clearTimeout(timeout);
+      }
+
+      timeout = setTimeout(function () {
+        return func.apply(void 0, args);
+      }, delay);
+    };
+
+    return debounced;
+  }
+
+  var ID_NAME = function ID_NAME(count) {
+    return "caroucssel-".concat(count);
+  };
+
+  var ID_MATCH = /^caroucssel-[0-9]*$/;
+  var CACHE_KEY_ELEMENT = 'element';
+  var CACHE_KEY_ID = 'id';
+  var CACHE_KEY_CONFIGURATION = 'config';
+  var CACHE_KEY_INDEX = 'index';
+  var CACHE_KEY_ITEMS = 'items';
+  var CACHE_KEY_PAGES = 'pages';
+  var CACHE_KEY_PAGE_INDEX = 'page-index';
+  var CACHE_KEY_MASK = 'mask';
+  var CACHE_KEY_PROXY = 'proxy';
+  var CACHE_KEY_PLUGINS = 'plugins';
+  var CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
+  var CACHE_KEY_PROXY_PLUGIN = 'proxy:plugins';
+  var VISIBILITY_OFFSET = 0.25;
+  var INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
+  var EVENT_SCROLL = 'scroll';
+  var EVENT_RESIZE = 'resize';
+  var DEFAULTS = {
+    plugins: [],
     filterItem: function filterItem() {
       return true;
     },
@@ -227,7 +679,61 @@
   };
   var __instanceCount = 0;
 
-  var __scrollbar;
+  var Proxy = /*#__PURE__*/function () {
+    function Proxy(instance, plugins) {
+      _classCallCheck(this, Proxy);
+
+      writeCache(this, CACHE_KEY_PROXY_INSTANCE, instance);
+      writeCache(this, CACHE_KEY_PROXY_PLUGIN, plugins);
+    }
+
+    _createClass(Proxy, [{
+      key: "el",
+      get: function get() {
+        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.el;
+      }
+    }, {
+      key: "mask",
+      get: function get() {
+        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.mask;
+      }
+    }, {
+      key: "index",
+      get: function get() {
+        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.index;
+      },
+      set: function set(value) {
+        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        instance.index = value;
+      }
+    }, {
+      key: "items",
+      get: function get() {
+        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.items;
+      }
+    }, {
+      key: "pages",
+      get: function get() {
+        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.pages;
+      }
+    }, {
+      key: "pageIndex",
+      get: function get() {
+        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
+        return instance.pageIndex;
+      }
+    }, {
+      key: "update",
+      value: function update(plugin) {}
+    }]);
+
+    return Proxy;
+  }();
 
   var Carousel = /*#__PURE__*/function () {
     function Carousel(el) {
@@ -235,31 +741,42 @@
 
       _classCallCheck(this, Carousel);
 
-      this._mask = null;
-      this._isSmooth = false;
-      this._previous = null;
-      this._next = null;
-      this._pagination = null;
-      this._paginationButtons = null;
+      this.behavior = ScrollBehaviour.AUTO;
 
       if (!el || !(el instanceof Element)) {
         throw new Error("Carousel needs a dom element but \"".concat(_typeof(el), "\" was passed."));
       }
 
-      this._el = el;
-      __scrollbar = __scrollbar || new Scrollbar();
+      writeCache(this, CACHE_KEY_ELEMENT, el);
       __instanceCount++;
       el.id = el.id || ID_NAME(__instanceCount);
-      this._id = el.id;
-      this._mask = null;
-      var opts = Object.assign(Object.assign({}, DEFAULTS), options);
-      this._conf = opts;
+      writeCache(this, CACHE_KEY_ID, el.id);
+      var configuration = Object.assign(Object.assign({}, DEFAULTS), options);
+      writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
 
-      this._addButtons();
+      var plugins = _toConsumableArray(configuration.plugins);
 
-      this._addPagination();
+      var index = configuration.plugins.findIndex(function (plugin) {
+        return plugin instanceof Mask;
+      });
+      var mask = new Mask();
 
-      this._updateScrollbars();
+      if (index > -1) {
+        var _plugins$splice = plugins.splice(index, 1);
+
+        var _plugins$splice2 = _slicedToArray(_plugins$splice, 1);
+
+        mask = _plugins$splice2[0];
+      }
+
+      plugins.unshift(mask);
+      writeCache(this, CACHE_KEY_MASK, mask);
+      var proxy = new Proxy(this, plugins);
+      writeCache(this, CACHE_KEY_PROXY, proxy);
+      writeCache(this, CACHE_KEY_PLUGINS, plugins);
+      plugins.forEach(function (plugin) {
+        return plugin.init(proxy);
+      });
 
       switch (true) {
         case Array.isArray(options.index):
@@ -271,7 +788,7 @@
           break;
       }
 
-      this._isSmooth = true;
+      this.behavior = ScrollBehaviour.SMOOTH;
       this._onScroll = debounce(this._onScroll.bind(this), 25);
       this._onResize = debounce(this._onResize.bind(this), 25);
       el.addEventListener(EVENT_SCROLL, this._onScroll);
@@ -281,21 +798,29 @@
     _createClass(Carousel, [{
       key: "el",
       get: function get() {
-        return this._el;
+        return fromCache(this, CACHE_KEY_ELEMENT);
+      }
+    }, {
+      key: "mask",
+      get: function get() {
+        var _a;
+
+        var mask = fromCache(this, CACHE_KEY_MASK);
+        return (_a = mask.el) !== null && _a !== void 0 ? _a : null;
       }
     }, {
       key: "id",
       get: function get() {
-        return this._id;
+        return fromCache(this, CACHE_KEY_ID);
       }
     }, {
       key: "index",
       get: function get() {
-        var _this2 = this;
+        var _this5 = this;
 
         return fromCache(this, CACHE_KEY_INDEX, function () {
-          var el = _this2.el,
-              items = _this2.items;
+          var el = _this5.el,
+              items = _this5.items;
           var length = items.length;
           var clientWidth = el.clientWidth;
           var outerLeft = el.getBoundingClientRect().left;
@@ -322,7 +847,8 @@
         });
       },
       set: function set(values) {
-        var el = this.el,
+        var behavior = this.behavior,
+            el = this.el,
             items = this.items;
         var length = items.length;
 
@@ -353,7 +879,6 @@
         }
 
         clearCache(this, CACHE_KEY_INDEX);
-        var behavior = this._isSmooth ? 'smooth' : 'auto';
         el.scrollTo(Object.assign(Object.assign({}, to), {
           behavior: behavior
         }));
@@ -361,11 +886,13 @@
     }, {
       key: "items",
       get: function get() {
-        var _this3 = this;
+        var _this6 = this;
 
         return fromCache(this, CACHE_KEY_ITEMS, function () {
-          var el = _this3.el,
-              filterItem = _this3._conf.filterItem;
+          var _fromCache5 = fromCache(_this6, CACHE_KEY_CONFIGURATION),
+              filterItem = _fromCache5.filterItem;
+
+          var el = _this6.el;
           var children = Array.from(el.children);
           return children.filter(function (item) {
             return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
@@ -375,11 +902,11 @@
     }, {
       key: "pages",
       get: function get() {
-        var _this4 = this;
+        var _this7 = this;
 
         return fromCache(this, CACHE_KEY_PAGES, function () {
-          var el = _this4.el,
-              items = _this4.items;
+          var el = _this7.el,
+              items = _this7.items;
           var viewport = el.clientWidth;
 
           if (viewport === 0) {
@@ -435,13 +962,13 @@
     }, {
       key: "pageIndex",
       get: function get() {
-        var _this5 = this;
+        var _this8 = this;
 
         return fromCache(this, CACHE_KEY_PAGE_INDEX, function () {
-          var el = _this5.el,
-              items = _this5.items,
-              index = _this5.index,
-              pages = _this5.pages;
+          var el = _this8.el,
+              items = _this8.items,
+              index = _this8.index,
+              pages = _this8.pages;
           var outerLeft = el.getBoundingClientRect().left;
           var clientWidth = el.clientWidth;
           var visibles = index.reduce(function (acc, at) {
@@ -482,13 +1009,10 @@
       value: function destroy() {
         var el = this.el;
         ID_MATCH.test(el.id) && el.removeAttribute('id');
-
-        this._removeButtons();
-
-        this._removePagination();
-
-        this._removeScrollbars();
-
+        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
+          return plugin.destroy();
+        });
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
         window.removeEventListener(EVENT_RESIZE, this._onResize);
         clearFullCache(this);
@@ -496,284 +1020,31 @@
     }, {
       key: "update",
       value: function update() {
-        clearFullCache(this);
-
-        this._updateButtons();
-
-        this._updatePagination();
-
-        this._updateScrollbars();
-      }
-    }, {
-      key: "_updateScrollbars",
-      value: function _updateScrollbars() {
-        var _this6 = this;
-
-        var el = this.el,
-            _options = this._conf;
-        var hasScrollbars = _options.hasScrollbars,
-            scrollbarsMaskClassName = _options.scrollbarsMaskClassName;
-
-        if (hasScrollbars) {
-          return;
-        }
-
-        var height = __scrollbar.dimensions.height;
-
-        if (el.scrollWidth <= el.clientWidth) {
-          height = 0;
-        }
-
-        this._mask = this._mask || function () {
-          var _a;
-
-          var mask = document.createElement('div');
-          mask.className = scrollbarsMaskClassName;
-          mask.style.overflow = 'hidden';
-          mask.style.height = '100%';
-          (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, _this6.el);
-          mask.appendChild(el);
-          return mask;
-        }();
-
-        var cachedHeight = fromCache(this, CACHE_KEY_SCROLLBAR, function () {
-          return undefined;
+        clearCache(this, CACHE_KEY_INDEX);
+        clearCache(this, CACHE_KEY_ITEMS);
+        clearCache(this, CACHE_KEY_PAGES);
+        clearCache(this, CACHE_KEY_PAGE_INDEX);
+        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
+          return plugin.update({
+            reason: UpdateReason.FORCED
+          });
         });
-
-        if (height === cachedHeight) {
-          return;
-        }
-
-        writeCache(this, CACHE_KEY_SCROLLBAR, height);
-        var element = el;
-        element.style.height = "calc(100% + ".concat(height, "px)");
-        element.style.marginBottom = "".concat(height * -1, "px");
-      }
-    }, {
-      key: "_removeScrollbars",
-      value: function _removeScrollbars() {
-        var _a, _b;
-
-        var _mask = this._mask,
-            el = this.el;
-
-        if (!_mask) {
-          return;
-        }
-
-        (_a = _mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, _mask);
-        (_b = _mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(_mask);
-        el.removeAttribute('style');
-        this._mask = null;
-      }
-    }, {
-      key: "_addButtons",
-      value: function _addButtons() {
-        var _this7 = this;
-
-        var _a, _b;
-
-        var el = this.el,
-            id = this.id,
-            _options = this._conf;
-
-        if (!_options.hasButtons) {
-          return;
-        }
-
-        var buttonTemplate = _options.buttonTemplate,
-            buttonClassName = _options.buttonClassName,
-            buttonPrevious = _options.buttonPrevious,
-            buttonNext = _options.buttonNext;
-        var controls = id;
-
-        var _map = [Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_PREVIOUS), buttonPrevious), {
-          controls: controls,
-          className: [buttonClassName, buttonPrevious.className].join(' ')
-        }), Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_NEXT), buttonNext), {
-          controls: controls,
-          className: [buttonClassName, buttonNext.className].join(' ')
-        })].map(function (params) {
-          return render(buttonTemplate, params);
-        }),
-            _map2 = _slicedToArray(_map, 2),
-            previous = _map2[0],
-            next = _map2[1];
-
-        if (previous) {
-          var onPrevious = function onPrevious() {
-            var pages = _this7.pages,
-                pageIndex = _this7.pageIndex;
-            var index = pages[pageIndex - 1] || pages[0];
-            _this7.index = index;
-          };
-
-          previous.onclick = onPrevious;
-          (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(previous);
-        }
-
-        this._previous = previous;
-
-        if (next) {
-          var onNext = function onNext() {
-            var pages = _this7.pages,
-                pageIndex = _this7.pageIndex;
-            var index = pages[pageIndex + 1] || pages[pages.length - 1];
-            _this7.index = index;
-          };
-
-          next.onclick = onNext;
-          (_b = el.parentNode) === null || _b === void 0 ? void 0 : _b.appendChild(next);
-        }
-
-        this._next = next;
-
-        this._updateButtons();
-      }
-    }, {
-      key: "_updateButtons",
-      value: function _updateButtons() {
-        var _options = this._conf;
-
-        if (!_options.hasButtons) {
-          return;
-        }
-
-        var pages = this.pages,
-            pageIndex = this.pageIndex,
-            _previous = this._previous,
-            _next = this._next;
-
-        if (_previous) {
-          var firstPage = pages[pageIndex - 1];
-          var isFirstPage = firstPage === undefined;
-          _previous.disabled = isFirstPage;
-        }
-
-        if (_next) {
-          var lastPage = pages[pageIndex + 1];
-          var isLastPage = lastPage === undefined;
-          _next.disabled = isLastPage;
-        }
-      }
-    }, {
-      key: "_removeButtons",
-      value: function _removeButtons() {
-        var _previous = this._previous,
-            _next = this._next;
-        [_previous, _next].forEach(function (button) {
-          var _a;
-
-          if (!button) {
-            return;
-          }
-
-          button.onclick = null;
-          (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
-        });
-      }
-    }, {
-      key: "_addPagination",
-      value: function _addPagination() {
-        var _this8 = this;
-
-        var _options = this._conf;
-
-        if (!_options.hasPagination) {
-          return;
-        }
-
-        var _mask = this._mask,
-            el = this.el,
-            id = this.id,
-            pages = this.pages;
-
-        if (pages.length < 2) {
-          return;
-        }
-
-        var paginationTemplate = _options.paginationTemplate,
-            paginationClassName = _options.paginationClassName,
-            paginationLabel = _options.paginationLabel,
-            paginationTitle = _options.paginationTitle;
-        var pagination = render(paginationTemplate, {
-          pages: pages,
-          controls: id,
-          className: paginationClassName,
-          label: paginationLabel,
-          title: paginationTitle
-        });
-
-        if (!pagination) {
-          return;
-        }
-
-        var buttons = Array.from(pagination.querySelectorAll('button')).map(function (button, index) {
-          button.onclick = function () {
-            return _this8.index = pages[index];
-          };
-
-          return button;
-        });
-        var target = (_mask || el).parentNode;
-        target === null || target === void 0 ? void 0 : target.appendChild(pagination);
-        this._pagination = pagination;
-        this._paginationButtons = buttons;
-
-        this._updatePagination();
-      }
-    }, {
-      key: "_updatePagination",
-      value: function _updatePagination() {
-        var _options = this._conf;
-
-        if (!_options.hasPagination) {
-          return;
-        }
-
-        var pageIndex = this.pageIndex,
-            _paginationButtons = this._paginationButtons;
-
-        if (!_paginationButtons) {
-          return;
-        }
-
-        _paginationButtons.forEach(function (button, at) {
-          return button.disabled = at === pageIndex;
-        });
-      }
-    }, {
-      key: "_removePagination",
-      value: function _removePagination() {
-        var _a;
-
-        var _pagination = this._pagination,
-            _paginationButtons = this._paginationButtons;
-
-        (_paginationButtons || []).forEach(function (button) {
-          var _a;
-
-          button.onclick = null;
-          (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
-        });
-
-        this._paginationButtons = null;
-        _pagination && ((_a = _pagination.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(_pagination));
-        this._pagination = null;
       }
     }, {
       key: "_onScroll",
       value: function _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-
-        this._updateButtons();
-
-        this._updatePagination();
-
-        var index = this.index,
-            onScroll = this._conf.onScroll;
-        onScroll && onScroll({
+        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
+          return plugin.update({
+            reason: UpdateReason.SCROLL
+          });
+        });
+        var index = this.index;
+        var configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
+        configuration === null || configuration === void 0 ? void 0 : configuration.onScroll({
           index: index,
           type: EVENT_SCROLL,
           target: this,
@@ -786,14 +1057,12 @@
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-
-        this._updateButtons();
-
-        this._removePagination();
-
-        this._addPagination();
-
-        this._updateScrollbars();
+        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
+        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
+          return plugin.update({
+            reason: UpdateReason.RESIZE
+          });
+        });
       }
     }], [{
       key: "resetInstanceCount",
@@ -804,4 +1073,10 @@
   }();
 
   _exports.Carousel = Carousel;
+  var plugins = {
+    Buttons: Buttons,
+    Mask: Mask,
+    Pagination: Pagination
+  };
+  _exports.plugins = plugins;
 });

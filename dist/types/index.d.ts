@@ -1,33 +1,34 @@
 export declare type Index = [number, ...number[]];
 export declare type Pages = [Index, ...Index[]];
-export declare type ButtonParams = {
-    controls: string;
-    className: string;
-    label: string;
-    title: string;
+export declare enum UpdateReason {
+    SCROLL = "scroll",
+    RESIZE = "resize",
+    FORCED = "forced",
+    PLUGIN = "plugin"
+}
+export declare type UpdateData = {
+    reason: UpdateReason;
 };
-export declare type ButtonTemplate = (params: ButtonParams) => string;
-export declare type ButtonOptions = {
-    className?: string;
-    label?: string;
-    title?: string;
-};
-export declare type PaginationTextParams = {
-    index: number;
-    page: number[];
-    pages: number[][];
-};
-export declare type PaginationText = (params: PaginationTextParams) => string;
-export declare type PaginationParams = {
-    controls: string;
-    className: string;
-    label: PaginationText;
-    title: PaginationText;
-    pages: number[][];
-};
-export declare type PaginationTemplate = (params: PaginationParams) => string;
-export declare type PaginationLabelTemplate = PaginationText;
-export declare type PaginationTitleTemplate = PaginationText;
+export interface PluginProxy {
+    get el(): Element;
+    get mask(): Element | null;
+    get index(): Index;
+    set index(value: Index);
+    get items(): HTMLElement[];
+    get pages(): Pages;
+    get pageIndex(): number;
+    update(plugin: Plugin): void;
+}
+export interface Plugin {
+    get name(): string;
+    init(proxy: PluginProxy): void;
+    destroy(): void;
+    update(data: UpdateData): void;
+}
+export declare enum ScrollBehaviour {
+    AUTO = "auto",
+    SMOOTH = "smooth"
+}
 export declare type ScrollHook = <T>(event: {
     index: number[];
     type: 'scroll';
@@ -37,18 +38,7 @@ export declare type ScrollHook = <T>(event: {
 export declare type FilterItemFn = ((item: HTMLElement) => boolean) | ((item: HTMLElement, index: number) => boolean) | ((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
 export declare type Configuration = {
     index?: Index | number;
-    hasButtons: boolean;
-    buttonClassName: string;
-    buttonTemplate: ButtonTemplate;
-    buttonPrevious: ButtonOptions;
-    buttonNext: ButtonOptions;
-    hasPagination: boolean;
-    paginationClassName: string;
-    paginationTemplate: PaginationTemplate;
-    paginationLabel: PaginationLabelTemplate;
-    paginationTitle: PaginationTitleTemplate;
-    hasScrollbars: boolean;
-    scrollbarsMaskClassName: string;
+    plugins: Plugin[];
     filterItem: FilterItemFn;
     onScroll: ScrollHook;
 };
