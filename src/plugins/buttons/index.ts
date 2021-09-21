@@ -15,12 +15,14 @@ export type Template = (params: Params) => string;
 export type Configuration = {
 	template: Template;
 	className: string;
-	previousClassName: string;
-	previousLabel: string;
-	previousTitle: string;
+
 	nextClassName: string;
 	nextLabel: string;
 	nextTitle: string;
+
+	previousClassName: string;
+	previousLabel: string;
+	previousTitle: string;
 };
 
 const DEFAULTS: Configuration = {
@@ -29,20 +31,20 @@ const DEFAULTS: Configuration = {
 			<span>${label}</span>
 		</button>
 	`,
-
 	className: 'button',
-
-	previousClassName: 'is-previous',
-	previousLabel: 'Previous',
-	previousTitle: 'Go to previous',
 
 	nextClassName: 'is-next',
 	nextLabel: 'Next',
 	nextTitle: 'Go to next',
+
+	previousClassName: 'is-previous',
+	previousLabel: 'Previous',
+	previousTitle: 'Go to previous',
 };
 
 const CACHE_KEY_PROXY = 'proxy';
 const CACHE_KEY_CONFIGURATION = 'config';
+const CACHE_KEY_BUTTONS = 'buttons';
 
 /**
  * The plugin to enable button controls.
@@ -77,7 +79,8 @@ export class Buttons implements Plugin {
 		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 
-		const { el, pages, pageIndex } = proxy;
+		const { el, mask, pages, pageIndex } = proxy;
+		const target = mask ?? el;
 		const {
 			template, className,
 			previousClassName, previousLabel, previousTitle,
@@ -88,23 +91,23 @@ export class Buttons implements Plugin {
 		const settings = [
 			{
 				controls: el.id,
-				label: previousLabel,
-				title: previousTitle,
-				className: [className, previousClassName].join(' '),
-				// eslint-disable-next-line @typescript-eslint/unbound-method
-				handler: this._onPrevious,
-			},
-			{
-				controls: el.id,
 				label: nextLabel,
 				title: nextTitle,
 				className: [className, nextClassName].join(' '),
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				handler: this._onNext,
 			},
+			{
+				controls: el.id,
+				label: previousLabel,
+				title: previousTitle,
+				className: [className, previousClassName].join(' '),
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				handler: this._onPrevious,
+			},
 		];
 
-		const [previous, next] = fromCache<(HTMLButtonElement | null)[]>(
+		const [next, previous] = fromCache<(HTMLButtonElement | null)[]>(
 			this, 'buttons', () => settings.map(({ handler, ...params }) => {
 				const button = render<HTMLButtonElement, Params>(template, params);
 				if (!button) {
@@ -112,28 +115,26 @@ export class Buttons implements Plugin {
 				}
 
 				button.addEventListener('click', handler);
-				// @TODO: Check where to add: Mask or Element?
-				// el.parentNode?.insertBefore(button, el.nextSibling);
-				el.parentNode?.appendChild(button);
+				target.parentNode?.insertBefore(button, target.nextSibling);
 				return button;
 			}),
 		);
-
-		if (previous) {
-			const firstPage = pages[pageIndex - 1];
-			const isFirstPage = firstPage === undefined;
-			previous.disabled = isFirstPage;
-		}
 
 		if (next) {
 			const lastPage = pages[pageIndex + 1];
 			const isLastPage = lastPage === undefined;
 			next.disabled = isLastPage;
 		}
+
+		if (previous) {
+			const firstPage = pages[pageIndex - 1];
+			const isFirstPage = firstPage === undefined;
+			previous.disabled = isFirstPage;
+		}
 	}
 
 	private _remove(): void {
-		const buttons = fromCache<(HTMLButtonElement | null)[]>(this, 'buttons');
+		const buttons = fromCache<(HTMLButtonElement | null)[]>(this, CACHE_KEY_BUTTONS);
 		if (!buttons) {
 			return;
 		}

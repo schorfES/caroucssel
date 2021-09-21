@@ -1,7 +1,7 @@
+import { Mask } from './plugins/mask';
 import { Configuration, Index, Options, Pages, Plugin, PluginProxy, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
-import { Scrollbar } from './utils/scrollbar';
 
 
 // Export all types
@@ -16,7 +16,7 @@ const CACHE_KEY_INDEX = 'index';
 const CACHE_KEY_ITEMS = 'items';
 const CACHE_KEY_PAGES = 'pages';
 const CACHE_KEY_PAGE_INDEX = 'page-index';
-const CACHE_KEY_SCROLLBAR = 'scrollbar';
+const CACHE_KEY_MASK = 'mask';
 const CACHE_KEY_PROXY = 'proxy';
 const CACHE_KEY_PLUGINS = 'plugins';
 const CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
@@ -34,10 +34,6 @@ const DEFAULTS: Configuration = {
 	// Plugins:
 	plugins: [],
 
-	// Scrollbars, set to true when use default scrolling behaviour
-	hasScrollbars: false,
-	scrollbarsMaskClassName: 'caroucssel-mask',
-
 	// filter
 	filterItem: () => true,
 
@@ -49,12 +45,6 @@ const DEFAULTS: Configuration = {
  * Internal counter for created instances. Will be used to create unique IDs.
  */
 let __instanceCount = 0;
-
-/*
- * Singleton of scrollbar util. Is shared across all instances of carousel to
- * reduce redundant calculations.
- */
-let __scrollbar: Scrollbar;
 
 
 /**
@@ -71,6 +61,11 @@ class Proxy implements PluginProxy {
 	public get el(): Element {
 		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
 		return instance.el;
+	}
+
+	public get mask(): Element | null {
+		const instance = fromCache<Carousel>(this, CACHE_KEY_PROXY_INSTANCE) as Carousel;
+		return instance.mask;
 	}
 
 	public get index(): Index {
@@ -128,8 +123,6 @@ export class Carousel {
 
 	protected _conf: Configuration;
 
-	protected _mask: HTMLDivElement | null = null;
-
 	protected _isSmooth = false;
 
 	/**
@@ -145,31 +138,32 @@ export class Carousel {
 
 		this._el = el;
 
-		// Create a singleton instance of scrollbar for all carousel instances:
-		__scrollbar = __scrollbar || new Scrollbar();
-
 		// Count all created instances to create unique id, if given dom element
 		// has no id-attribute:
 		__instanceCount++;
 		el.id = el.id || ID_NAME(__instanceCount);
 		this._id = el.id;
 
-		// Mask will be rendered after scrollbar detection.
-		this._mask = null;
-
 		// extend options and defaults:
 		const opts = { ...DEFAULTS, ...options };
 		this._conf = opts;
 
+		// Detect if there is a "Mask" plugin passed as option. Then use this one,
+		// otherwise add a mandatory instance by default:
+		const plugins = [...opts.plugins];
+		const index = opts.plugins.findIndex((plugin) => plugin instanceof Mask);
+		let mask: Plugin = new Mask();
+		if (index > -1) {
+			[mask] = plugins.splice(index, 1);
+		}
+		plugins.unshift(mask);
+		writeCache(this, CACHE_KEY_MASK, mask);
+
 		// Plugins:
-		const { plugins } = opts;
 		const proxy = new Proxy(this, plugins);
 		writeCache(this, CACHE_KEY_PROXY, proxy);
 		writeCache(this, CACHE_KEY_PLUGINS, plugins);
 		plugins.forEach((plugin) => plugin.init(proxy));
-
-		// Render:
-		this._updateScrollbars();
 
 		// Set initial index and set smooth scrolling:
 		switch (true) {
@@ -207,6 +201,17 @@ export class Carousel {
 	 */
 	get el(): Element {
 		return this._el;
+	}
+
+	/**
+	 * Returns the dom element reference of the mask element that wraps the
+	 * carousel element.
+	 * @public
+	 * @return the mask dom element
+	 */
+	get mask(): Element | null {
+		const mask = fromCache<Mask>(this, CACHE_KEY_MASK) as Mask;
+		return mask.el ?? null;
 	}
 
 	/**
@@ -472,9 +477,6 @@ export class Carousel {
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.destroy());
 
-		// Remove scrollbars:
-		this._removeScrollbars();
-
 		// Remove events:
 		//
 		// We need to work the the function reference. Using .bind() would create a
@@ -503,59 +505,6 @@ export class Carousel {
 
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
-
-		this._updateScrollbars();
-	}
-
-	protected _updateScrollbars(): void {
-		const { el , _conf: _options } = this;
-		const { hasScrollbars, scrollbarsMaskClassName } = _options;
-		if (hasScrollbars) {
-			return;
-		}
-
-		let { height } = __scrollbar.dimensions;
-
-		if (el.scrollWidth <= el.clientWidth) {
-			// If the contents are not scrollable because their width are less
-			// than the container, there will be no visible scrollbar. In this
-			// case, the scrollbar height is 0:
-			height = 0;
-		}
-
-		this._mask = this._mask || (() => {
-			const mask = document.createElement('div');
-			mask.className = scrollbarsMaskClassName;
-			mask.style.overflow = 'hidden';
-			mask.style.height = '100%';
-			el.parentNode?.insertBefore(mask, this.el);
-			mask.appendChild(el);
-			return mask;
-		})();
-
-		const cachedHeight = fromCache<number | undefined>(this, CACHE_KEY_SCROLLBAR, () => undefined);
-		if (height === cachedHeight) {
-			return;
-		}
-
-		writeCache(this, CACHE_KEY_SCROLLBAR, height);
-
-		const element = el as HTMLElement | SVGElement;
-		element.style.height = `calc(100% + ${height}px)`;
-		element.style.marginBottom = `${height * -1}px`;
-	}
-
-	protected _removeScrollbars(): void {
-		const { _mask, el } = this;
-		if (!_mask) {
-			return;
-		}
-
-		_mask.parentNode?.insertBefore(el, _mask);
-		_mask.parentNode?.removeChild(_mask);
-		el.removeAttribute('style');
-
-		this._mask = null;
 	}
 
 	protected _onScroll(event: Event): void {
@@ -576,8 +525,6 @@ export class Carousel {
 
 		const plugins = fromCache<Plugin[]>(this, CACHE_KEY_PLUGINS);
 		plugins?.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
-
-		this._updateScrollbars();
 	}
 
 }
