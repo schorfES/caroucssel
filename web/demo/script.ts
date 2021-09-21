@@ -1,6 +1,6 @@
 import { Carousel } from '../../src/carousel';
-import { Buttons } from '../../src/plugins/buttons';
-import { Pagination } from '../../src/plugins/pagination';
+import { Buttons } from '../../src/features/buttons';
+import { Pagination } from '../../src/features/pagination';
 
 const elements = Array.from(document.querySelectorAll<HTMLDivElement>('.caroucssel'));
 
@@ -25,7 +25,7 @@ elements.forEach((element) => {
 	});
 
 	new Carousel(element, {
-		plugins: [
+		features: [
 			new Buttons(),
 			new Pagination(),
 		],

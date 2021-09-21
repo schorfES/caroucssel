@@ -1,70 +1,70 @@
-import { CarouselCore, CarouselPlugin, CarouselProxy, Index, Pages, UpdateReason } from "./types";
+import { ICarousel, IFeature, Index, IProxy, Pages, UpdateReason } from "./types";
 import { fromCache, writeCache } from './utils/cache';
 
 
 const CACHE_KEY_INSTANCE = 'instance';
-const CACHE_KEY_PLUGINS = 'plugins';
+const CACHE_KEY_FEATURES = 'features';
 
 
 /**
- * A proxy instance between carousel and each plugin.
+ * A proxy instance between carousel and each feature.
  * @internal
  */
-export class Proxy implements CarouselProxy {
+export class Proxy implements IProxy {
 
-	constructor(instance: CarouselCore, plugins: CarouselPlugin[]) {
+	constructor(instance: ICarousel, features: IFeature[]) {
 		writeCache(this, CACHE_KEY_INSTANCE, instance);
-		writeCache(this, CACHE_KEY_PLUGINS, plugins);
+		writeCache(this, CACHE_KEY_FEATURES, features);
 	}
 
 	public get el(): Element {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		return instance.el;
 	}
 
 	public get mask(): Element | null {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		return instance.mask;
 	}
 
 	public get index(): Index {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		return instance.index;
 	}
 
 	public set index(value: Index) {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		instance.index = value;
 	}
 
 	public get items(): HTMLElement[] {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		return instance.items;
 	}
 
 	public get pages(): Pages {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		return instance.pages;
 	}
 
 	public get pageIndex(): number {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		return instance.pageIndex;
 	}
 
-	public update(sender: CarouselPlugin): void {
-		const instance = fromCache<CarouselCore>(this, CACHE_KEY_INSTANCE) as CarouselCore;
+	public update(sender: IFeature): void {
+		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
 		instance.update();
 
-		// Trigger update in all other plugins except the source plugin that
+		// Trigger update in all other features except the source feature that
 		// triggered the event:
-		const plugins = fromCache<CarouselPlugin[]>(this, CACHE_KEY_PLUGINS) as CarouselPlugin[];
-		plugins.forEach((plugin): void => {
-			if (plugin === sender) {
+		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
+		features.forEach((feature): void => {
+			if (feature === sender) {
 				return;
 			}
 
-			plugin.update({ reason: UpdateReason.PLUGIN });
+			feature.update({ reason: UpdateReason.FEATURE });
 		});
 	}
 
