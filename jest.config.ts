@@ -3,6 +3,9 @@ const config = {
   setupFiles: [
     './src/__setup__/element.ts',
   ],
+	snapshotSerializers: [
+		'jest-serializer-html',
+	],
   testEnvironment: 'jsdom',
 };
 
