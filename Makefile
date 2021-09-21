@@ -69,7 +69,7 @@ web_docs:
 	node_modules/.bin/typedoc \
 		./src/carousel.ts \
 		./src/types.ts \
-		./src/plugins/**/*.ts \
+		./src/features/**/*.ts \
 		--out public/docs/ \
 		--readme none \
 		--excludeProtected \

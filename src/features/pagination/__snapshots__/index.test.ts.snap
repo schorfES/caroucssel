@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Pagination plugin should add pagination 1`] = `
+exports[`Pagination feature should add pagination 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -59,7 +59,7 @@ exports[`Pagination plugin should add pagination 1`] = `
 </div>
 `;
 
-exports[`Pagination plugin should add pagination with custom options 1`] = `
+exports[`Pagination feature should add pagination with custom options 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -118,7 +118,7 @@ exports[`Pagination plugin should add pagination with custom options 1`] = `
 </div>
 `;
 
-exports[`Pagination plugin should add pagination with custom template 1`] = `
+exports[`Pagination feature should add pagination with custom template 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -160,7 +160,7 @@ exports[`Pagination plugin should add pagination with custom template 1`] = `
 </div>
 `;
 
-exports[`Pagination plugin should handle pagination with custom template that returns empty string 1`] = `
+exports[`Pagination feature should handle pagination with custom template that returns empty string 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -183,7 +183,7 @@ exports[`Pagination plugin should handle pagination with custom template that re
 </div>
 `;
 
-exports[`Pagination plugin should handle pagination with custom template that returns null 1`] = `
+exports[`Pagination feature should handle pagination with custom template that returns null 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"
@@ -206,7 +206,7 @@ exports[`Pagination plugin should handle pagination with custom template that re
 </div>
 `;
 
-exports[`Pagination plugin should handle pagination with custom template that returns undefined 1`] = `
+exports[`Pagination feature should handle pagination with custom template that returns undefined 1`] = `
 <div class="container">
   <div class="caroucssel-mask"
        style="overflow: hidden; height: 100%;"

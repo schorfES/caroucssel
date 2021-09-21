@@ -1,6 +1,6 @@
 import { Carousel } from '../src/carousel';
-import { Buttons } from '../src/plugins/buttons';
-import { Pagination } from '../src/plugins/pagination';
+import { Buttons } from '../src/features/buttons';
+import { Pagination } from '../src/features/pagination';
 
 var element = document.querySelector('.caroucssel');
 var items = Array.from(document.querySelectorAll('.item'));
@@ -10,7 +10,7 @@ if (!element) {
 }
 
 new Carousel(element, {
-	plugins: [
+	features: [
 		new Buttons(),
 		new Pagination(),
 	],

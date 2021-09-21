@@ -1,4 +1,4 @@
-import { CarouselPlugin, CarouselProxy, UpdateData, UpdateReason } from '../../types';
+import { IFeature, IProxy, UpdateData, UpdateReason } from '../../types';
 import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/cache';
 import { render } from '../../utils/render';
 
@@ -55,9 +55,9 @@ const CACHE_KEY_PAGINATION = 'pagination';
 const CACHE_KEY_BUTTONS = 'buttons';
 
 /**
- * The plugin to enable pagination controls.
+ * The feature to enable pagination controls.
  */
-export class Pagination implements CarouselPlugin {
+export class Pagination implements IFeature {
 
 	constructor(options: Partial<Configuration> = {}) {
 		writeCache(this, CACHE_KEY_CONFIGURATION, { ...DEFAULTS, ...options });
@@ -68,7 +68,7 @@ export class Pagination implements CarouselPlugin {
 		return 'buildin:pagination';
 	}
 
-	public init(proxy: CarouselProxy): void {
+	public init(proxy: IProxy): void {
 		writeCache(this, CACHE_KEY_PROXY, proxy);
 		this._add();
 	}
@@ -91,7 +91,7 @@ export class Pagination implements CarouselPlugin {
 	}
 
 	private _add(): void {
-		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
+		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 		const { el, mask, pages } = proxy;
 		const target = mask ?? el;
@@ -123,7 +123,7 @@ export class Pagination implements CarouselPlugin {
 	}
 
 	private _update(): void {
-		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
+		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 
 		const { pageIndex } = proxy;
@@ -146,7 +146,7 @@ export class Pagination implements CarouselPlugin {
 	}
 
 	private _onClick(event: MouseEvent): void {
-		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
+		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 		const target = event.currentTarget as HTMLButtonElement;
 		const index = buttons?.indexOf(target) ?? 0;
