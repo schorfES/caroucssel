@@ -4,11 +4,6 @@ import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache
 import { debounce } from './utils/debounce';
 
 
-// Export all types
-// (is required to expose all types in dist/caroucssel.d.ts)
-export * from './types';
-
-
 const ID_NAME = (count: number) => `caroucssel-${count}`;
 const ID_MATCH = /^caroucssel-[0-9]*$/;
 
