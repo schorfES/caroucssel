@@ -67,9 +67,9 @@ web_clean:
 
 web_docs:
 	node_modules/.bin/typedoc \
-		./src/caroucssel.ts \
+		./src/carousel.ts \
+		./src/types.ts \
 		./src/plugins/**/*.ts \
-		./src/utils/**.ts \
 		--out public/docs/ \
 		--readme none \
 		--excludeProtected \

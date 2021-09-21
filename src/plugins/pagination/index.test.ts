@@ -1,5 +1,5 @@
 import { fixture, querySelector, triggerClick, triggerResize, triggerScroll } from '../../__setup__/helpers';
-import { Carousel } from '../../caroucssel';
+import { Carousel } from '../../carousel';
 import { ScrollbarDimensions } from '../../utils/scrollbar';
 
 import { Pagination, Params, TextParams } from './index';

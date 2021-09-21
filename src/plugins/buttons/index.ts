@@ -1,4 +1,4 @@
-import { Plugin, PluginProxy } from '../../types';
+import { CarouselPlugin, CarouselProxy } from '../../types';
 import { clearFullCache, fromCache, writeCache } from '../../utils/cache';
 import { render } from '../../utils/render';
 
@@ -49,7 +49,7 @@ const CACHE_KEY_BUTTONS = 'buttons';
 /**
  * The plugin to enable button controls.
  */
-export class Buttons implements Plugin {
+export class Buttons implements CarouselPlugin {
 
 	constructor(options: Partial<Configuration> = {}) {
 		writeCache(this, CACHE_KEY_CONFIGURATION, { ...DEFAULTS, ...options });
@@ -61,7 +61,7 @@ export class Buttons implements Plugin {
 		return 'buildin:buttons';
 	}
 
-	public init(proxy: PluginProxy): void {
+	public init(proxy: CarouselProxy): void {
 		writeCache(this, CACHE_KEY_PROXY, proxy);
 		this._render();
 	}
@@ -76,7 +76,7 @@ export class Buttons implements Plugin {
 	}
 
 	private _render(): void {
-		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 
 		const { el, mask, pages, pageIndex } = proxy;
@@ -149,14 +149,14 @@ export class Buttons implements Plugin {
 	}
 
 	private _onPrevious(): void {
-		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const { pages, pageIndex } = proxy;
 		const index = pages[pageIndex - 1] || pages[0];
 		proxy.index = index;
 	}
 
 	private _onNext(): void {
-		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const { pages, pageIndex } = proxy;
 		const index = pages[pageIndex + 1] || pages[pages.length - 1];
 		proxy.index = index;

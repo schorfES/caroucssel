@@ -1,4 +1,4 @@
-import { Plugin, PluginProxy, UpdateData, UpdateReason } from '../../types';
+import { CarouselPlugin, CarouselProxy, UpdateData, UpdateReason } from '../../types';
 import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/cache';
 import { Scrollbar } from '../../utils/scrollbar';
 
@@ -34,7 +34,7 @@ const CACHE_KEY_HEIGHT = 'scrollbar';
  * The plugin to enable/disabled mask and scrollbar features. This plugin will
  * be added by default to each carousel. Use this plugin to customize the default behaviour.
  */
-export class Mask implements Plugin {
+export class Mask implements CarouselPlugin {
 
 	constructor(options: Partial<Configuration> = {}) {
 		writeCache(this, CACHE_KEY_CONFIGURATION, { ...DEFAULTS, ...options });
@@ -48,7 +48,7 @@ export class Mask implements Plugin {
 		return fromCache<Element>(this, CACHE_KEY_MASK) ?? null;
 	}
 
-	public init(proxy: PluginProxy): void {
+	public init(proxy: CarouselProxy): void {
 		writeCache(this, CACHE_KEY_PROXY, proxy);
 
 		// Create a singleton instance of scrollbar for all carousel instances:
@@ -81,7 +81,7 @@ export class Mask implements Plugin {
 			return;
 		}
 
-		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const element = proxy.el as HTMLElement | SVGElement;
 		let { height } = __scrollbar.dimensions;
 
@@ -115,7 +115,7 @@ export class Mask implements Plugin {
 	}
 
 	private _remove(): void {
-		const { el } = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const { el } = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const mask = fromCache<HTMLDivElement>(this, CACHE_KEY_MASK);
 
 		mask?.parentNode?.insertBefore(el, mask);

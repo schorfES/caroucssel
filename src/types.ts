@@ -2,6 +2,34 @@ export type Index = [number, ...number[]];
 
 export type Pages = [Index, ...Index[]];
 
+interface Carousel {
+	get el(): Element;
+	get mask(): Element | null;
+	get index(): Index;
+	set index(value: Index);
+	get items(): HTMLElement[];
+	get pages(): Pages;
+	get pageIndex(): number;
+}
+
+export interface CarouselCore extends Carousel {
+	behavior: ScrollBehavior;
+	destroy(): void;
+	update(): void;
+}
+
+export interface CarouselProxy extends Carousel {
+	update(sender: CarouselPlugin): void;
+}
+
+export interface CarouselPlugin {
+	get name(): string;
+
+	init(proxy: CarouselProxy): void;
+	destroy(): void;
+	update(data :UpdateData): void;
+}
+
 export enum UpdateReason {
 	SCROLL = 'scroll',
 	RESIZE = 'resize',
@@ -13,25 +41,7 @@ export type UpdateData = {
 	reason: UpdateReason;
 };
 
-export interface PluginProxy {
-	get el(): Element;
-	get mask(): Element | null;
-	get index(): Index;
-	set index(value: Index);
-	get items(): HTMLElement[];
-	get pages(): Pages;
-	get pageIndex(): number;
 
-	update(plugin: Plugin): void;
-}
-
-export interface Plugin {
-	get name(): string;
-
-	init(proxy: PluginProxy): void;
-	destroy(): void;
-	update(data :UpdateData): void;
-}
 
 export enum ScrollBehavior {
 	AUTO = 'auto',
@@ -55,7 +65,7 @@ export type Configuration = {
 	index?: Index | number;
 
 	// Plugins:
-	plugins: Plugin[],
+	plugins: CarouselPlugin[],
 
 	// Filter:
 	filterItem: FilterItemFn;

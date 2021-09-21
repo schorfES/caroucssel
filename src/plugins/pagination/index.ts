@@ -1,4 +1,4 @@
-import { Plugin, PluginProxy, UpdateData, UpdateReason } from '../../types';
+import { CarouselPlugin, CarouselProxy, UpdateData, UpdateReason } from '../../types';
 import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/cache';
 import { render } from '../../utils/render';
 
@@ -57,7 +57,7 @@ const CACHE_KEY_BUTTONS = 'buttons';
 /**
  * The plugin to enable pagination controls.
  */
-export class Pagination implements Plugin {
+export class Pagination implements CarouselPlugin {
 
 	constructor(options: Partial<Configuration> = {}) {
 		writeCache(this, CACHE_KEY_CONFIGURATION, { ...DEFAULTS, ...options });
@@ -68,7 +68,7 @@ export class Pagination implements Plugin {
 		return 'buildin:pagination';
 	}
 
-	public init(proxy: PluginProxy): void {
+	public init(proxy: CarouselProxy): void {
 		writeCache(this, CACHE_KEY_PROXY, proxy);
 		this._add();
 	}
@@ -91,7 +91,7 @@ export class Pagination implements Plugin {
 	}
 
 	private _add(): void {
-		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 		const { el, mask, pages } = proxy;
 		const target = mask ?? el;
@@ -123,7 +123,7 @@ export class Pagination implements Plugin {
 	}
 
 	private _update(): void {
-		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 
 		const { pageIndex } = proxy;
@@ -146,7 +146,7 @@ export class Pagination implements Plugin {
 	}
 
 	private _onClick(event: MouseEvent): void {
-		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
+		const proxy = fromCache<CarouselProxy>(this, CACHE_KEY_PROXY) as CarouselProxy;
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 		const target = event.currentTarget as HTMLButtonElement;
 		const index = buttons?.indexOf(target) ?? 0;

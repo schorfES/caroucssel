@@ -1,5 +1,5 @@
 import { fixture, querySelector, triggerScroll } from './__setup__/helpers';
-import { Carousel } from './caroucssel';
+import { Carousel } from './carousel';
 import { Buttons } from './plugins/buttons';
 import { Mask } from './plugins/mask';
 import { Pagination } from './plugins/pagination';
@@ -20,7 +20,7 @@ jest.mock('./utils/scrollbar', () => {
 });
 
 
-describe('Caroucssel', () => {
+describe('Carousel', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers();
