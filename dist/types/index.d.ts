@@ -25,7 +25,7 @@ export interface Plugin {
     destroy(): void;
     update(data: UpdateData): void;
 }
-export declare enum ScrollBehaviour {
+export declare enum ScrollBehavior {
     AUTO = "auto",
     SMOOTH = "smooth"
 }

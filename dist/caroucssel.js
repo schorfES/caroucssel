@@ -1,5 +1,5 @@
 import { Mask } from './plugins/mask';
-import { ScrollBehaviour, UpdateReason } from './types';
+import { ScrollBehavior, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 // Export all types
@@ -92,7 +92,7 @@ export class Carousel {
          * * `'auto'`
          * * `'smooth'`
          */
-        this.behavior = ScrollBehaviour.AUTO;
+        this.behavior = ScrollBehavior.AUTO;
         if (!el || !(el instanceof Element)) {
             throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
         }
@@ -131,7 +131,7 @@ export class Carousel {
                 this.index = [options.index];
                 break;
         }
-        this.behavior = ScrollBehaviour.SMOOTH;
+        this.behavior = ScrollBehavior.SMOOTH;
         // Events:
         //
         // We disable @typescript-eslint/unbound-method here because we already bound

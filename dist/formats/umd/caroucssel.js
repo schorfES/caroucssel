@@ -16,7 +16,7 @@
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.plugins = _exports.Carousel = void 0;
+  _exports.UpdateReason = _exports.ScrollBehavior = _exports.Pagination = _exports.Mouse = _exports.Mask = _exports.Carousel = _exports.Buttons = void 0;
 
   function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -277,21 +277,24 @@
     return Buttons;
   }();
 
+  _exports.Buttons = Buttons;
   var UpdateReason;
+  _exports.UpdateReason = UpdateReason;
 
   (function (UpdateReason) {
     UpdateReason["SCROLL"] = "scroll";
     UpdateReason["RESIZE"] = "resize";
     UpdateReason["FORCED"] = "forced";
     UpdateReason["PLUGIN"] = "plugin";
-  })(UpdateReason || (UpdateReason = {}));
+  })(UpdateReason || (_exports.UpdateReason = UpdateReason = {}));
 
-  var ScrollBehaviour;
+  var ScrollBehavior;
+  _exports.ScrollBehavior = ScrollBehavior;
 
-  (function (ScrollBehaviour) {
-    ScrollBehaviour["AUTO"] = "auto";
-    ScrollBehaviour["SMOOTH"] = "smooth";
-  })(ScrollBehaviour || (ScrollBehaviour = {}));
+  (function (ScrollBehavior) {
+    ScrollBehavior["AUTO"] = "auto";
+    ScrollBehavior["SMOOTH"] = "smooth";
+  })(ScrollBehavior || (_exports.ScrollBehavior = ScrollBehavior = {}));
 
   var Scrollbar = /*#__PURE__*/function () {
     function Scrollbar() {
@@ -459,6 +462,39 @@
     return Mask;
   }();
 
+  _exports.Mask = Mask;
+
+  var Mouse = /*#__PURE__*/function () {
+    function Mouse() {
+      _classCallCheck(this, Mouse);
+    }
+
+    _createClass(Mouse, [{
+      key: "name",
+      get: function get() {
+        return 'buildin:mouse';
+      }
+    }, {
+      key: "init",
+      value: function init(proxy) {
+        writeCache(this, 'proxy', proxy);
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        console.log('Destroy mouse');
+      }
+    }, {
+      key: "update",
+      value: function update(data) {
+        console.log('Update mouse:', data.reason);
+      }
+    }]);
+
+    return Mouse;
+  }();
+
+  _exports.Mouse = Mouse;
   var DEFAULTS$1 = {
     template: function template(_ref2) {
       var className = _ref2.className,
@@ -627,6 +663,8 @@
     return Pagination;
   }();
 
+  _exports.Pagination = Pagination;
+
   function debounce(func, delay) {
     var timeout = null;
 
@@ -741,7 +779,7 @@
 
       _classCallCheck(this, Carousel);
 
-      this.behavior = ScrollBehaviour.AUTO;
+      this.behavior = ScrollBehavior.AUTO;
 
       if (!el || !(el instanceof Element)) {
         throw new Error("Carousel needs a dom element but \"".concat(_typeof(el), "\" was passed."));
@@ -788,7 +826,7 @@
           break;
       }
 
-      this.behavior = ScrollBehaviour.SMOOTH;
+      this.behavior = ScrollBehavior.SMOOTH;
       this._onScroll = debounce(this._onScroll.bind(this), 25);
       this._onResize = debounce(this._onResize.bind(this), 25);
       el.addEventListener(EVENT_SCROLL, this._onScroll);
@@ -1073,10 +1111,4 @@
   }();
 
   _exports.Carousel = Carousel;
-  var plugins = {
-    Buttons: Buttons,
-    Mask: Mask,
-    Pagination: Pagination
-  };
-  _exports.plugins = plugins;
 });
