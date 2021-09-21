@@ -15,6 +15,7 @@ export type UpdateData = {
 
 export interface PluginProxy {
 	get el(): Element;
+	get mask(): Element | null;
 	get index(): Index;
 	set index(value: Index);
 	get items(): HTMLElement[];
@@ -50,10 +51,6 @@ export type Configuration = {
 
 	// Plugins:
 	plugins: Plugin[],
-
-	// Scrollbars:
-	hasScrollbars: boolean;
-	scrollbarsMaskClassName: string;
 
 	// Filter:
 	filterItem: FilterItemFn;

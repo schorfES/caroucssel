@@ -1,5 +1,6 @@
 import { Carousel } from './caroucssel';
 import { Params as ButtonParams, Buttons } from './plugins/buttons';
+import { Mask } from './plugins/mask';
 import { Pagination, Params as PaginationParams, TextParams as PaginationTextParams } from './plugins/pagination';
 import { FilterItemFn } from './types';
 import { ScrollbarDimensions } from './utils/scrollbar';
@@ -511,12 +512,14 @@ describe('Caroucssel', () => {
 				template: jest.fn<string, ButtonParams[]>(({ className, label, title }) =>
 					`<span class="${className}" title="${title}">${label}</span>`),
 				className: 'custom-button-class',
-				previousClassName: 'custom-previous-button-class',
-				previousLabel: 'Custom previous label',
-				previousTitle: 'Custom previous title',
+
 				nextClassName: 'custom-next-button-class',
 				nextLabel: 'Custom next label',
 				nextTitle: 'Custom next title',
+
+				previousClassName: 'custom-previous-button-class',
+				previousLabel: 'Custom previous label',
+				previousTitle: 'Custom previous title',
 			};
 			new Carousel(el, {
 				plugins: [new Buttons(options)],
@@ -525,16 +528,16 @@ describe('Caroucssel', () => {
 			expect(document.body.innerHTML).toMatchSnapshot();
 			expect(options.template).toHaveBeenCalledTimes(2);
 			expect(options.template).toHaveBeenNthCalledWith(1, {
-				className: 'custom-button-class custom-previous-button-class',
-				controls: 'custom-id',
-				label: 'Custom previous label',
-				title: 'Custom previous title',
-			});
-			expect(options.template).toHaveBeenNthCalledWith(2, {
 				className: 'custom-button-class custom-next-button-class',
 				controls: 'custom-id',
 				label: 'Custom next label',
 				title: 'Custom next title',
+			});
+			expect(options.template).toHaveBeenNthCalledWith(2, {
+				className: 'custom-button-class custom-previous-button-class',
+				controls: 'custom-id',
+				label: 'Custom previous label',
+				title: 'Custom previous title',
 			});
 		});
 
@@ -1085,7 +1088,9 @@ describe('Caroucssel', () => {
 			document.body.innerHTML = __fixture(3);
 			const el = __querySelector('.caroucssel');
 
-			new Carousel(el, { hasScrollbars: true });
+			new Carousel(el, {
+				plugins: [new Mask({ enabled: false })],
+			});
 			expect(el.getAttribute('style')).toBeNull();
 		});
 
@@ -1140,10 +1145,10 @@ describe('Caroucssel', () => {
 			const el = __querySelector('.caroucssel');
 			const carousel = new Carousel(el, {
 				plugins: [
+					new Mask({ enabled: false }),
 					new Buttons(),
 					new Pagination(),
 				],
-				hasScrollbars: true,
 			});
 
 			carousel.destroy();
