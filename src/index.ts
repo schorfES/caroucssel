@@ -1,7 +1,5 @@
-import { Buttons } from './plugins/buttons';
-import { Mask } from './plugins/mask';
-import { Pagination } from './plugins/pagination';
-
-
-export { Carousel } from './caroucssel';
-export const plugins = { Buttons, Mask, Pagination };
+export { Buttons } from './plugins/buttons';
+export { Mask } from './plugins/mask';
+export { Mouse } from './plugins/mouse';
+export { Pagination } from './plugins/pagination';
+export * from './caroucssel';
