@@ -30,7 +30,7 @@ yarn add caroucssel
 or in the browser
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/caroucssel@latest/dist/caroucssel.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/caroucssel@latest/dist/styles/caroucssel.min.css" />
 <script src="https://unpkg.com/caroucssel@latest"></script>
 ```
 
@@ -57,7 +57,7 @@ The prebuild CSS-file only contains selectors for basic usage. It's recommended 
 The SCSS gives the freedom to choose your own selectors, which should have a carousel feature. It also allows you to easily customize the behavior depending on media queries.
 
 ```scss
-@import '~caroucssel/dist/caroucssel';
+@import '~caroucssel/styles/caroucssel';
 
 .my-carousel {
     @include caroucssel();

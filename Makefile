@@ -27,24 +27,26 @@ build: build_clean build_styles build_scripts
 
 build_clean:
 	rm -rf dist/ && mkdir dist/
+	rm -rf styles/ && mkdir styles/
 
 
 build_styles:
 	NODE_ENV=production ./node_modules/.bin/sass \
 		./src/styles/caroucssel.css.scss \
-		./dist/caroucssel.css \
+		./dist/styles/caroucssel.css \
 		--style expanded \
 		--no-source-map \
 		--trace
 
 	NODE_ENV=production ./node_modules/.bin/sass \
 		./src/styles/caroucssel.css.scss \
-		./dist/caroucssel.min.css \
+		./dist/styles/caroucssel.min.css \
 		--style compressed \
 		--no-source-map \
 		--trace
 
-	cp ./src/styles/caroucssel.scss ./dist/caroucssel.scss
+	cp ./src/styles/caroucssel.scss ./dist/styles/caroucssel.scss
+	cp -r ./dist/styles/ ./styles
 
 
 build_scripts:
