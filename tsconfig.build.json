@@ -1,11 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "include": [
-    "./src/caroucssel.ts",
-    "./src/plugins/buttons/index.ts",
-    "./src/plugins/mask/index.ts",
-    "./src/plugins/mouse/index.ts",
-    "./src/plugins/pagination/index.ts"
+    "./src/index.ts"
   ],
   "compilerOptions": {
     "declarationMap": false,
