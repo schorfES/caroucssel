@@ -33,6 +33,11 @@ export interface Plugin {
 	update(data :UpdateData): void;
 }
 
+export enum ScrollBehaviour {
+	AUTO = 'auto',
+	SMOOTH = 'smooth',
+}
+
 export type ScrollHook = <T>(event: {
 	index: number[];
 	type: 'scroll';
