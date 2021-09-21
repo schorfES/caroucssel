@@ -11,12 +11,12 @@ exports[`Caroucssel buttons should add buttons 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div></div>
-		<button type=\\"button\\" class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
+			</div></div><button type=\\"button\\" class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
 			<span>Previous</span>
 		</button><button type=\\"button\\" class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"caroucssel-1\\">
 			<span>Next</span>
-		</button></div>
+		</button>
+		</div>
 	"
 `;
 
@@ -31,12 +31,12 @@ exports[`Caroucssel buttons should add buttons with custom options 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div></div>
-		<button type=\\"button\\" class=\\"custom-button-class custom-previous-button-class\\" aria-label=\\"Custom previous label\\" title=\\"Custom previous title\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
+			</div></div><button type=\\"button\\" class=\\"custom-button-class custom-previous-button-class\\" aria-label=\\"Custom previous label\\" title=\\"Custom previous title\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
 			<span>Custom previous label</span>
 		</button><button type=\\"button\\" class=\\"custom-button-class custom-next-button-class\\" aria-label=\\"Custom next label\\" title=\\"Custom next title\\" aria-controls=\\"caroucssel-1\\">
 			<span>Custom next label</span>
-		</button></div>
+		</button>
+		</div>
 	"
 `;
 
@@ -51,8 +51,8 @@ exports[`Caroucssel buttons should add buttons with custom template 1`] = `
 				
 					<div class=\\"item item-2\\">Item 2</div>
 				
-			</div></div>
-		<span class=\\"custom-button-class custom-previous-button-class\\" title=\\"Custom previous title\\">Custom previous label</span><span class=\\"custom-button-class custom-next-button-class\\" title=\\"Custom next title\\">Custom next label</span></div>
+			</div></div><span class=\\"custom-button-class custom-previous-button-class\\" title=\\"Custom previous title\\">Custom previous label</span><span class=\\"custom-button-class custom-next-button-class\\" title=\\"Custom next title\\">Custom next label</span>
+		</div>
 	"
 `;
 
@@ -61,12 +61,12 @@ exports[`Caroucssel buttons should add disabled buttons without items 1`] = `
 		<div class=\\"container\\">
 			<div class=\\"caroucssel-mask\\" style=\\"overflow: hidden; height: 100%;\\"><div class=\\"caroucssel\\" id=\\"caroucssel-1\\" style=\\"height: calc(100% + 0px); margin-bottom: 0px;\\">
 				
-			</div></div>
-		<button type=\\"button\\" class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
+			</div></div><button type=\\"button\\" class=\\"button is-previous\\" aria-label=\\"Previous\\" title=\\"Go to previous\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
 			<span>Previous</span>
 		</button><button type=\\"button\\" class=\\"button is-next\\" aria-label=\\"Next\\" title=\\"Go to next\\" aria-controls=\\"caroucssel-1\\" disabled=\\"\\">
 			<span>Next</span>
-		</button></div>
+		</button>
+		</div>
 	"
 `;
 

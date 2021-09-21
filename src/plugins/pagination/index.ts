@@ -93,7 +93,8 @@ export class Pagination implements Plugin {
 	private _add(): void {
 		const proxy = fromCache<PluginProxy>(this, CACHE_KEY_PROXY) as PluginProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
-		const { el, pages } = proxy;
+		const { el, mask, pages } = proxy;
+		const target = mask ?? el;
 
 		if (pages.length < 2) {
 			return;
@@ -114,8 +115,7 @@ export class Pagination implements Plugin {
 				return button;
 			});
 
-		// @TODO: Check where to add: Mask or Element?
-		el.parentNode?.appendChild(pagination);
+		target.parentNode?.appendChild(pagination);
 		writeCache(this, CACHE_KEY_PAGINATION, pagination);
 		writeCache(this, CACHE_KEY_BUTTONS, buttons);
 
