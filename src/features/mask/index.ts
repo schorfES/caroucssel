@@ -1,6 +1,7 @@
 import { IFeature, IProxy, UpdateData, UpdateReason } from '../../types';
 import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/cache';
-import { Scrollbar } from '../../utils/scrollbar';
+
+import { Scrollbar } from './scrollbar';
 
 
 export type Configuration = {
