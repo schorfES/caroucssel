@@ -1,5 +1,6 @@
-export { Buttons } from './plugins/buttons';
-export { Mask } from './plugins/mask';
-export { Mouse } from './plugins/mouse';
-export { Pagination } from './plugins/pagination';
-export * from './caroucssel';
+export { Buttons } from './features/buttons';
+export { Mask } from './features/mask';
+export { Mouse } from './features/mouse';
+export { Pagination } from './features/pagination';
+export { Carousel } from './carousel';
+export declare const version = "0.12.0-2";

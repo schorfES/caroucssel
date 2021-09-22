@@ -29,7 +29,7 @@ const CACHE_KEY_PROXY = 'proxy';
 const CACHE_KEY_CONFIGURATION = 'config';
 const CACHE_KEY_BUTTONS = 'buttons';
 /**
- * The plugin to enable button controls.
+ * The feature to enable button controls.
  */
 export class Buttons {
     constructor(options = {}) {
@@ -64,6 +64,8 @@ export class Buttons {
                 label: nextLabel,
                 title: nextTitle,
                 className: [className, nextClassName].join(' '),
+                // The onClick listener was already bound in the constructor.
+                //
                 // eslint-disable-next-line @typescript-eslint/unbound-method
                 handler: this._onNext,
             },
@@ -72,6 +74,8 @@ export class Buttons {
                 label: previousLabel,
                 title: previousTitle,
                 className: [className, previousClassName].join(' '),
+                // The onClick listener was already bound in the constructor.
+                //
                 // eslint-disable-next-line @typescript-eslint/unbound-method
                 handler: this._onPrevious,
             },
@@ -100,13 +104,14 @@ export class Buttons {
     }
     _remove() {
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
-        if (!buttons) {
-            return;
-        }
         buttons.forEach((button) => {
             var _a;
+            // The onClick listener was already bound in the constructor.
+            //
             // eslint-disable-next-line @typescript-eslint/unbound-method
             button === null || button === void 0 ? void 0 : button.removeEventListener('click', this._onPrevious);
+            // The onClick listener was already bound in the constructor.
+            //
             // eslint-disable-next-line @typescript-eslint/unbound-method
             button === null || button === void 0 ? void 0 : button.removeEventListener('click', this._onNext);
             (_a = button === null || button === void 0 ? void 0 : button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);

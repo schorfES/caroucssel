@@ -1,4 +1,4 @@
-import { Plugin, PluginProxy } from '../../types';
+import { IFeature, IProxy } from '../../types';
 export declare type Params = {
     controls: string;
     className: string;
@@ -17,12 +17,12 @@ export declare type Configuration = {
     previousTitle: string;
 };
 /**
- * The plugin to enable button controls.
+ * The feature to enable button controls.
  */
-export declare class Buttons implements Plugin {
+export declare class Buttons implements IFeature {
     constructor(options?: Partial<Configuration>);
     get name(): string;
-    init(proxy: PluginProxy): void;
+    init(proxy: IProxy): void;
     destroy(): void;
     update(): void;
     private _render;

@@ -1,10 +1,11 @@
-import { clearCache, fromCache } from './cache';
+import { clearCache, fromCache } from '../../utils/cache';
 /**
  * Helper class for scrollbar features.
  */
 export class Scrollbar {
     /**
      * Creates an instance.
+     * @internal
      */
     constructor() {
         window.addEventListener('resize', () => {

@@ -1,4 +1,4 @@
-import { Plugin, PluginProxy, UpdateData } from '../../types';
+import { IFeature, IProxy, UpdateData } from '../../types';
 export declare type Params = {
     controls: string;
     className: string;
@@ -20,12 +20,12 @@ export declare type Configuration = {
     title: TextTemplate;
 };
 /**
- * The plugin to enable pagination controls.
+ * The feature to enable pagination controls.
  */
-export declare class Pagination implements Plugin {
+export declare class Pagination implements IFeature {
     constructor(options?: Partial<Configuration>);
     get name(): string;
-    init(proxy: PluginProxy): void;
+    init(proxy: IProxy): void;
     destroy(): void;
     update(data: UpdateData): void;
     private _add;

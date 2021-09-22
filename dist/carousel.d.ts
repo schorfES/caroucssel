@@ -1,11 +1,10 @@
-import { Index, Options, Pages, ScrollBehavior } from './types';
-export * from './types';
+import { ICarousel, Index, Options, Pages, ScrollBehavior } from './types';
 /**
  * The carousel javascript instance.
  */
-export declare class Carousel {
+export declare class Carousel implements ICarousel {
     /**
-     * This can be used for testing purposes to reset the instance count which is
+     * This will be used for testing purposes to reset the instance count which is
      * used to create unique id's.
      * @internal
      */
