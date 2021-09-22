@@ -1,13 +1,14 @@
 import { fixture, querySelector } from '../../__setup__/helpers';
 import { Carousel } from '../../carousel';
-import { ScrollbarDimensions } from '../../utils/scrollbar';
+
+import { ScrollbarDimensions } from './scrollbar';
 
 import { Mask } from './index';
 
 
 let mockScrollbarDimensions: ScrollbarDimensions | null = null;
 
-jest.mock('../../utils/scrollbar', () => {
+jest.mock('../../features/mask/scrollbar', () => {
 	return {
 		Scrollbar: class {
 			get dimensions() {

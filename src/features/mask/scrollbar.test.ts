@@ -1,12 +1,6 @@
+import { triggerResize } from '../../__setup__/helpers';
+
 import { Scrollbar } from './scrollbar';
-
-
-function __triggerResize() {
-	const event = document.createEvent('UIEvents');
-	event.initUIEvent('resize', true, false, window, 0);
-	window.dispatchEvent(event);
-	jest.runAllTimers();
-}
 
 
 describe('Scrollbar util', () => {
@@ -101,7 +95,7 @@ describe('Scrollbar util', () => {
 
 			it('should flush cache results on resize', () => {
 				const dimensions = instance?.dimensions;
-				__triggerResize();
+				triggerResize();
 				expect(dimensions).not.toBe(instance?.dimensions);
 			});
 		});

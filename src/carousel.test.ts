@@ -2,15 +2,15 @@ import { fixture, querySelector, triggerResize, triggerScroll } from './__setup_
 import { Carousel } from './carousel';
 import { Buttons } from './features/buttons';
 import { Mask } from './features/mask';
+import { ScrollbarDimensions } from './features/mask/scrollbar';
 import { Pagination } from './features/pagination';
 import { Proxy } from './proxy';
 import { FilterItemFn, IFeature, UpdateReason } from './types';
-import { ScrollbarDimensions } from './utils/scrollbar';
 
 
 let mockScrollbarDimensions: ScrollbarDimensions | null = null;
 
-jest.mock('./utils/scrollbar', () => {
+jest.mock('./features/mask/scrollbar', () => {
 	return {
 		Scrollbar: class {
 			get dimensions() {
