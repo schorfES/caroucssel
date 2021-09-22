@@ -1,5 +1,12 @@
-build_clean:
-.PHONY:  validate tests build build_clean build_styles build_scripts web_clean web web_docs web_pages ghpages release prerelease watch
+.PHONY: watch validate tests build build_clean build_styles build_scripts web web_clean web_docs web_pages release prerelease
+
+
+watch:
+	node_modules/.bin/parcel \
+		serve \
+		./web/index.html \
+		./web/demo/index.html \
+		--out-dir public
 
 
 validate:
@@ -87,16 +94,14 @@ web_pages:
 		--public-url /caroucssel/
 
 
-ghpages: web
-	gh-pages -d ./public/
-
-
-release: validate tests build ghpages
+release: validate tests web
 	node_modules/.bin/np \
 		--no-yarn \
 		--no-tests \
 		--any-branch \
 		--tag
+
+	gh-pages -d ./public/
 
 
 prerelease: validate tests
@@ -105,11 +110,3 @@ prerelease: validate tests
 		--no-tests \
 		--any-branch \
 		--tag
-
-
-watch:
-	node_modules/.bin/parcel \
-		serve \
-		./web/index.html \
-		./web/demo/index.html \
-		--out-dir public
