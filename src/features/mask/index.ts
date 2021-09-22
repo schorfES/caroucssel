@@ -5,6 +5,8 @@ import { Scrollbar } from '../../utils/scrollbar';
 
 export type Configuration = {
 	enabled: boolean;
+	className: string;
+	tagName: string;
 };
 
 /*
@@ -15,15 +17,9 @@ let __scrollbar: Scrollbar;
 
 const DEFAULTS: Configuration = {
 	enabled: true,
-
-	// @TODO: customize class name
-	// className: 'caroucssel-mask',
-
-	// @TODO: customize tag name
-	// tagName: 'div',
+	className: 'caroucssel-mask',
+	tagName: 'div',
 };
-
-const CLASSNAME = 'caroucssel-mask';
 
 const CACHE_KEY_PROXY = 'proxy';
 const CACHE_KEY_CONFIGURATION = 'config';
@@ -76,7 +72,7 @@ export class Mask implements IFeature {
 	}
 
 	private _render(): void {
-		const { enabled } = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
+		const { enabled, className, tagName } = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 		if (!enabled) {
 			return;
 		}
@@ -92,10 +88,10 @@ export class Mask implements IFeature {
 			height = 0;
 		}
 
-		// Use from cache factory to render mask element only once:
+		// Use fromCache factory to render mask element only once:
 		fromCache<Element>(this, CACHE_KEY_MASK, () => {
-			const mask = document.createElement('div');
-			mask.className = CLASSNAME;
+			const mask = document.createElement(tagName);
+			mask.className = className;
 			mask.style.overflow = 'hidden';
 			mask.style.height = '100%';
 			element.parentNode?.insertBefore(mask, element);
