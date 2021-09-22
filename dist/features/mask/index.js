@@ -1,6 +1,6 @@
 import { UpdateReason } from '../../types';
 import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/cache';
-import { Scrollbar } from '../../utils/scrollbar';
+import { Scrollbar } from './scrollbar';
 /*
  * Singleton of scrollbar util. Is shared across all instances of carousel to
  * reduce redundant calculations.
@@ -8,19 +8,16 @@ import { Scrollbar } from '../../utils/scrollbar';
 let __scrollbar;
 const DEFAULTS = {
     enabled: true,
-    // @TODO: customize class name
-    // className: 'caroucssel-mask',
-    // @TODO: customize tag name
-    // tagName: 'div',
+    className: 'caroucssel-mask',
+    tagName: 'div',
 };
-const CLASSNAME = 'caroucssel-mask';
 const CACHE_KEY_PROXY = 'proxy';
 const CACHE_KEY_CONFIGURATION = 'config';
 const CACHE_KEY_MASK = 'mask';
 const CACHE_KEY_HEIGHT = 'scrollbar';
 /**
- * The plugin to enable/disabled mask and scrollbar features. This plugin will
- * be added by default to each carousel. Use this plugin to customize the default behaviour.
+ * The feature to enable/disabled mask and scrollbar features. This feature will
+ * be added by default to each carousel. Use this feature to customize the default behaviour.
  */
 export class Mask {
     constructor(options = {}) {
@@ -56,7 +53,7 @@ export class Mask {
         }
     }
     _render() {
-        const { enabled } = fromCache(this, CACHE_KEY_CONFIGURATION);
+        const { enabled, className, tagName } = fromCache(this, CACHE_KEY_CONFIGURATION);
         if (!enabled) {
             return;
         }
@@ -69,11 +66,11 @@ export class Mask {
             // case, the scrollbar height is 0:
             height = 0;
         }
-        // Use from cache factory to render mask element only once:
+        // Use fromCache factory to render mask element only once:
         fromCache(this, CACHE_KEY_MASK, () => {
             var _a;
-            const mask = document.createElement('div');
-            mask.className = CLASSNAME;
+            const mask = document.createElement(tagName);
+            mask.className = className;
             mask.style.overflow = 'hidden';
             mask.style.height = '100%';
             (_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, element);

@@ -25,7 +25,7 @@ const CACHE_KEY_CONFIGURATION = 'config';
 const CACHE_KEY_PAGINATION = 'pagination';
 const CACHE_KEY_BUTTONS = 'buttons';
 /**
- * The plugin to enable pagination controls.
+ * The feature to enable pagination controls.
  */
 export class Pagination {
     constructor(options = {}) {
@@ -71,6 +71,8 @@ export class Pagination {
         // @TODO: Add template for buttons:
         const buttons = Array.from(pagination.querySelectorAll('button'))
             .map((button) => {
+            // The onClick listener was already bound in the constructor.
+            //
             // eslint-disable-next-line @typescript-eslint/unbound-method
             button.addEventListener('click', this._onClick, true);
             return button;
@@ -84,7 +86,7 @@ export class Pagination {
         const proxy = fromCache(this, CACHE_KEY_PROXY);
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
         const { pageIndex } = proxy;
-        buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button, at) => button.disabled = (at === pageIndex));
+        buttons.forEach((button, at) => button.disabled = (at === pageIndex));
     }
     _remove() {
         var _a;
@@ -92,6 +94,8 @@ export class Pagination {
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
         buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button) => {
             var _a;
+            // The onClick listener was already bound in the constructor.
+            //
             // eslint-disable-next-line @typescript-eslint/unbound-method
             button.removeEventListener('click', this._onClick);
             (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
@@ -101,11 +105,10 @@ export class Pagination {
         clearCache(this, CACHE_KEY_PAGINATION);
     }
     _onClick(event) {
-        var _a;
         const proxy = fromCache(this, CACHE_KEY_PROXY);
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
         const target = event.currentTarget;
-        const index = (_a = buttons === null || buttons === void 0 ? void 0 : buttons.indexOf(target)) !== null && _a !== void 0 ? _a : 0;
+        const index = buttons.indexOf(target);
         proxy.index = proxy.pages[index];
     }
 }

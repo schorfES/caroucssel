@@ -1,6 +1,6 @@
 import { writeCache } from '../../utils/cache';
 /**
- * Plugin to enable mouse controls
+ * Feature to enable mouse controls
  * @hidden
  */
 export class Mouse {

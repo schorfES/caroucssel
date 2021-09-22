@@ -138,9 +138,6 @@ class Buttons {
     }
     _remove() {
         const buttons = fromCache(this, CACHE_KEY_BUTTONS$1);
-        if (!buttons) {
-            return;
-        }
         buttons.forEach((button) => {
             var _a;
             button === null || button === void 0 ? void 0 : button.removeEventListener('click', this._onPrevious);
@@ -162,18 +159,18 @@ class Buttons {
     }
 }
 
-exports.UpdateReason = void 0;
+var UpdateReason;
 (function (UpdateReason) {
     UpdateReason["SCROLL"] = "scroll";
     UpdateReason["RESIZE"] = "resize";
     UpdateReason["FORCED"] = "forced";
-    UpdateReason["PLUGIN"] = "plugin";
-})(exports.UpdateReason || (exports.UpdateReason = {}));
-exports.ScrollBehavior = void 0;
+    UpdateReason["FEATURE"] = "feature";
+})(UpdateReason || (UpdateReason = {}));
+var ScrollBehavior;
 (function (ScrollBehavior) {
     ScrollBehavior["AUTO"] = "auto";
     ScrollBehavior["SMOOTH"] = "smooth";
-})(exports.ScrollBehavior || (exports.ScrollBehavior = {}));
+})(ScrollBehavior || (ScrollBehavior = {}));
 
 class Scrollbar {
     constructor() {
@@ -212,8 +209,9 @@ class Scrollbar {
 let __scrollbar;
 const DEFAULTS$2 = {
     enabled: true,
+    className: 'caroucssel-mask',
+    tagName: 'div',
 };
-const CLASSNAME = 'caroucssel-mask';
 const CACHE_KEY_PROXY$2 = 'proxy';
 const CACHE_KEY_CONFIGURATION$2 = 'config';
 const CACHE_KEY_MASK$1 = 'mask';
@@ -240,8 +238,8 @@ class Mask {
     }
     update(data) {
         switch (data.reason) {
-            case exports.UpdateReason.RESIZE:
-            case exports.UpdateReason.FORCED:
+            case UpdateReason.RESIZE:
+            case UpdateReason.FORCED:
                 clearCache(this, CACHE_KEY_HEIGHT);
                 this._render();
                 break;
@@ -251,7 +249,7 @@ class Mask {
         }
     }
     _render() {
-        const { enabled } = fromCache(this, CACHE_KEY_CONFIGURATION$2);
+        const { enabled, className, tagName } = fromCache(this, CACHE_KEY_CONFIGURATION$2);
         if (!enabled) {
             return;
         }
@@ -263,8 +261,8 @@ class Mask {
         }
         fromCache(this, CACHE_KEY_MASK$1, () => {
             var _a;
-            const mask = document.createElement('div');
-            mask.className = CLASSNAME;
+            const mask = document.createElement(tagName);
+            mask.className = className;
             mask.style.overflow = 'hidden';
             mask.style.height = '100%';
             (_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, element);
@@ -345,7 +343,7 @@ class Pagination {
     }
     update(data) {
         switch (data.reason) {
-            case exports.UpdateReason.SCROLL:
+            case UpdateReason.SCROLL:
                 this._update();
                 break;
             default:
@@ -382,7 +380,7 @@ class Pagination {
         const proxy = fromCache(this, CACHE_KEY_PROXY$1);
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
         const { pageIndex } = proxy;
-        buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button, at) => button.disabled = (at === pageIndex));
+        buttons.forEach((button, at) => button.disabled = (at === pageIndex));
     }
     _remove() {
         var _a;
@@ -398,12 +396,59 @@ class Pagination {
         clearCache(this, CACHE_KEY_PAGINATION);
     }
     _onClick(event) {
-        var _a;
         const proxy = fromCache(this, CACHE_KEY_PROXY$1);
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
         const target = event.currentTarget;
-        const index = (_a = buttons === null || buttons === void 0 ? void 0 : buttons.indexOf(target)) !== null && _a !== void 0 ? _a : 0;
+        const index = buttons.indexOf(target);
         proxy.index = proxy.pages[index];
+    }
+}
+
+const CACHE_KEY_INSTANCE = 'instance';
+const CACHE_KEY_FEATURES$1 = 'features';
+function __getInstance(ref) {
+    return fromCache(ref, CACHE_KEY_INSTANCE);
+}
+function __getFeatures(ref) {
+    return fromCache(ref, CACHE_KEY_FEATURES$1);
+}
+class Proxy {
+    constructor(instance, features) {
+        writeCache(this, CACHE_KEY_INSTANCE, instance);
+        writeCache(this, CACHE_KEY_FEATURES$1, features);
+    }
+    get id() {
+        return __getInstance(this).id;
+    }
+    get el() {
+        return __getInstance(this).el;
+    }
+    get mask() {
+        return __getInstance(this).mask;
+    }
+    get index() {
+        return __getInstance(this).index;
+    }
+    set index(value) {
+        __getInstance(this).index = value;
+    }
+    get items() {
+        return __getInstance(this).items;
+    }
+    get pages() {
+        return __getInstance(this).pages;
+    }
+    get pageIndex() {
+        return __getInstance(this).pageIndex;
+    }
+    update(sender) {
+        __getInstance(this).update();
+        __getFeatures(this).forEach((feature) => {
+            if (feature === sender) {
+                return;
+            }
+            feature.update({ reason: UpdateReason.FEATURE });
+        });
     }
 }
 
@@ -420,6 +465,8 @@ function debounce(func, delay) {
 
 const ID_NAME = (count) => `caroucssel-${count}`;
 const ID_MATCH = /^caroucssel-[0-9]*$/;
+const EVENT_SCROLL = 'scroll';
+const EVENT_RESIZE = 'resize';
 const CACHE_KEY_ELEMENT = 'element';
 const CACHE_KEY_ID = 'id';
 const CACHE_KEY_CONFIGURATION = 'config';
@@ -429,58 +476,18 @@ const CACHE_KEY_PAGES = 'pages';
 const CACHE_KEY_PAGE_INDEX = 'page-index';
 const CACHE_KEY_MASK = 'mask';
 const CACHE_KEY_PROXY = 'proxy';
-const CACHE_KEY_PLUGINS = 'plugins';
-const CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
-const CACHE_KEY_PROXY_PLUGIN = 'proxy:plugins';
+const CACHE_KEY_FEATURES = 'feautres';
 const VISIBILITY_OFFSET = 0.25;
 const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
-const EVENT_SCROLL = 'scroll';
-const EVENT_RESIZE = 'resize';
 const DEFAULTS = {
-    plugins: [],
+    features: [],
     filterItem: () => true,
     onScroll: () => undefined,
 };
 let __instanceCount = 0;
-class Proxy {
-    constructor(instance, plugins) {
-        writeCache(this, CACHE_KEY_PROXY_INSTANCE, instance);
-        writeCache(this, CACHE_KEY_PROXY_PLUGIN, plugins);
-    }
-    get el() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.el;
-    }
-    get mask() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.mask;
-    }
-    get index() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.index;
-    }
-    set index(value) {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        instance.index = value;
-    }
-    get items() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.items;
-    }
-    get pages() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.pages;
-    }
-    get pageIndex() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.pageIndex;
-    }
-    update(plugin) {
-    }
-}
 class Carousel {
     constructor(el, options = {}) {
-        this.behavior = exports.ScrollBehavior.AUTO;
+        this.behavior = ScrollBehavior.AUTO;
         if (!el || !(el instanceof Element)) {
             throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
         }
@@ -490,18 +497,20 @@ class Carousel {
         writeCache(this, CACHE_KEY_ID, el.id);
         const configuration = Object.assign(Object.assign({}, DEFAULTS), options);
         writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
-        const plugins = [...configuration.plugins];
-        const index = configuration.plugins.findIndex((plugin) => plugin instanceof Mask);
-        let mask = new Mask();
+        let mask = null;
+        let features = [...configuration.features];
+        const index = configuration.features.findIndex((feature) => feature instanceof Mask);
         if (index > -1) {
-            [mask] = plugins.splice(index, 1);
+            [mask] = features.splice(index, 1);
         }
-        plugins.unshift(mask);
+        mask !== null && mask !== void 0 ? mask : (mask = new Mask());
+        features = features.filter((feature) => !(feature instanceof Mask));
+        features = [mask, ...features];
         writeCache(this, CACHE_KEY_MASK, mask);
-        const proxy = new Proxy(this, plugins);
+        const proxy = new Proxy(this, features);
         writeCache(this, CACHE_KEY_PROXY, proxy);
-        writeCache(this, CACHE_KEY_PLUGINS, plugins);
-        plugins.forEach((plugin) => plugin.init(proxy));
+        writeCache(this, CACHE_KEY_FEATURES, features);
+        features.forEach((feature) => feature.init(proxy));
         switch (true) {
             case Array.isArray(options.index):
                 this.index = options.index;
@@ -510,7 +519,7 @@ class Carousel {
                 this.index = [options.index];
                 break;
         }
-        this.behavior = exports.ScrollBehavior.SMOOTH;
+        this.behavior = ScrollBehavior.SMOOTH;
         this._onScroll = debounce(this._onScroll.bind(this), 25);
         this._onResize = debounce(this._onResize.bind(this), 25);
         el.addEventListener(EVENT_SCROLL, this._onScroll);
@@ -558,9 +567,6 @@ class Carousel {
         const { behavior, el, items } = this;
         const { length } = items;
         if (!Array.isArray(values) || !values.length) {
-            return;
-        }
-        if (length === 0) {
             return;
         }
         let value = values[0] || 0;
@@ -654,8 +660,8 @@ class Carousel {
     destroy() {
         const { el } = this;
         ID_MATCH.test(el.id) && el.removeAttribute('id');
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.destroy());
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.destroy());
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
         window.removeEventListener(EVENT_RESIZE, this._onResize);
         clearFullCache(this);
@@ -665,29 +671,32 @@ class Carousel {
         clearCache(this, CACHE_KEY_ITEMS);
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: exports.UpdateReason.FORCED }));
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ reason: UpdateReason.FORCED }));
     }
     _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: exports.UpdateReason.SCROLL }));
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ reason: UpdateReason.SCROLL }));
         const { index } = this;
         const configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
-        configuration === null || configuration === void 0 ? void 0 : configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
+        configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
     }
     _onResize() {
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: exports.UpdateReason.RESIZE }));
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ reason: UpdateReason.RESIZE }));
     }
 }
+
+const version = '0.12.0-2';
 
 exports.Buttons = Buttons;
 exports.Carousel = Carousel;
 exports.Mask = Mask;
 exports.Mouse = Mouse;
 exports.Pagination = Pagination;
+exports.version = version;

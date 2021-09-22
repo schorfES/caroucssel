@@ -3,7 +3,7 @@ export var UpdateReason;
     UpdateReason["SCROLL"] = "scroll";
     UpdateReason["RESIZE"] = "resize";
     UpdateReason["FORCED"] = "forced";
-    UpdateReason["PLUGIN"] = "plugin";
+    UpdateReason["FEATURE"] = "feature";
 })(UpdateReason || (UpdateReason = {}));
 export var ScrollBehavior;
 (function (ScrollBehavior) {

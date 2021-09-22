@@ -1,12 +1,12 @@
-import { Mask } from './plugins/mask';
+import { Mask } from './features/mask';
+import { Proxy } from './proxy';
 import { ScrollBehavior, UpdateReason } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
-// Export all types
-// (is required to expose all types in dist/caroucssel.d.ts)
-export * from './types';
 const ID_NAME = (count) => `caroucssel-${count}`;
 const ID_MATCH = /^caroucssel-[0-9]*$/;
+const EVENT_SCROLL = 'scroll';
+const EVENT_RESIZE = 'resize';
 const CACHE_KEY_ELEMENT = 'element';
 const CACHE_KEY_ID = 'id';
 const CACHE_KEY_CONFIGURATION = 'config';
@@ -16,66 +16,18 @@ const CACHE_KEY_PAGES = 'pages';
 const CACHE_KEY_PAGE_INDEX = 'page-index';
 const CACHE_KEY_MASK = 'mask';
 const CACHE_KEY_PROXY = 'proxy';
-const CACHE_KEY_PLUGINS = 'plugins';
-const CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
-const CACHE_KEY_PROXY_PLUGIN = 'proxy:plugins';
+const CACHE_KEY_FEATURES = 'feautres';
 const VISIBILITY_OFFSET = 0.25;
 const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
-const EVENT_SCROLL = 'scroll';
-const EVENT_RESIZE = 'resize';
 const DEFAULTS = {
-    // Plugins:
-    plugins: [],
-    // filter
+    features: [],
     filterItem: () => true,
-    // Hooks:
     onScroll: () => undefined,
 };
 /*
  * Internal counter for created instances. Will be used to create unique IDs.
  */
 let __instanceCount = 0;
-/**
- * A proxy instance between carousel and each plugin.
- */
-class Proxy {
-    constructor(instance, plugins) {
-        writeCache(this, CACHE_KEY_PROXY_INSTANCE, instance);
-        writeCache(this, CACHE_KEY_PROXY_PLUGIN, plugins);
-    }
-    get el() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.el;
-    }
-    get mask() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.mask;
-    }
-    get index() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.index;
-    }
-    set index(value) {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        instance.index = value;
-    }
-    get items() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.items;
-    }
-    get pages() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.pages;
-    }
-    get pageIndex() {
-        const instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.pageIndex;
-    }
-    update(plugin) {
-        // @TODO: Trigger update in instance and all other plugins except the source
-        // plugin that triggered the event.
-    }
-}
 /**
  * The carousel javascript instance.
  */
@@ -105,22 +57,26 @@ export class Carousel {
         // Extend options and defaults into configuration:
         const configuration = Object.assign(Object.assign({}, DEFAULTS), options);
         writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
-        // Detect if there is a "Mask" plugin passed as option. Then use this one,
-        // otherwise add a mandatory instance by default:
-        const plugins = [...configuration.plugins];
-        const index = configuration.plugins.findIndex((plugin) => plugin instanceof Mask);
-        let mask = new Mask();
+        // Detect if there is a "Mask" feature passed as option. Then use this one,
+        // otherwise add a mandatory instance by default. Also ensure that only one
+        // feature of type "Mask" is in the features list.
+        let mask = null;
+        let features = [...configuration.features];
+        const index = configuration.features.findIndex((feature) => feature instanceof Mask);
         if (index > -1) {
-            [mask] = plugins.splice(index, 1);
+            // Extract first found instance of "Mask":
+            [mask] = features.splice(index, 1);
         }
-        plugins.unshift(mask);
+        mask !== null && mask !== void 0 ? mask : (mask = new Mask());
+        features = features.filter((feature) => !(feature instanceof Mask));
+        features = [mask, ...features];
         writeCache(this, CACHE_KEY_MASK, mask);
-        // Plugins:
-        const proxy = new Proxy(this, plugins);
+        // Features: Initialize all features with a single proxy instance inbetween.
+        const proxy = new Proxy(this, features);
         writeCache(this, CACHE_KEY_PROXY, proxy);
-        writeCache(this, CACHE_KEY_PLUGINS, plugins);
-        plugins.forEach((plugin) => plugin.init(proxy));
-        // Set initial index and set smooth scrolling:
+        writeCache(this, CACHE_KEY_FEATURES, features);
+        features.forEach((feature) => feature.init(proxy));
+        // Set initial index and finally set smooth scrolling to enabled:
         switch (true) {
             // When index is a list:
             case Array.isArray(options.index):
@@ -147,11 +103,13 @@ export class Carousel {
         /* eslint-enable @typescript-eslint/unbound-method */
     }
     /**
-     * This can be used for testing purposes to reset the instance count which is
+     * This will be used for testing purposes to reset the instance count which is
      * used to create unique id's.
      * @internal
      */
     static resetInstanceCount() {
+        /* This should not be part of the coverage report: test util */
+        /* istanbul ignore next */
         if (process.env.NODE_ENV === 'test') {
             __instanceCount = 0;
         }
@@ -228,9 +186,6 @@ export class Carousel {
         const { behavior, el, items } = this;
         const { length } = items;
         if (!Array.isArray(values) || !values.length) {
-            return;
-        }
-        if (length === 0) {
             return;
         }
         let value = values[0] || 0;
@@ -389,9 +344,9 @@ export class Carousel {
         const { el } = this;
         // Remove created id if it was created by carousel:
         ID_MATCH.test(el.id) && el.removeAttribute('id');
-        // Destroy attached plugins:
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.destroy());
+        // Destroy attached features:
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.destroy());
         // Remove events:
         //
         // We need to work the the function reference. Using .bind() would create a
@@ -415,23 +370,23 @@ export class Carousel {
         clearCache(this, CACHE_KEY_ITEMS);
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.FORCED }));
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ reason: UpdateReason.FORCED }));
     }
     _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.SCROLL }));
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ reason: UpdateReason.SCROLL }));
         const { index } = this;
         const configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
-        configuration === null || configuration === void 0 ? void 0 : configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
+        configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
     }
     _onResize() {
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        const plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach((plugin) => plugin.update({ reason: UpdateReason.RESIZE }));
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ reason: UpdateReason.RESIZE }));
     }
 }

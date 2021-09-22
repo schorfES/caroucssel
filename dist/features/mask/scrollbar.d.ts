@@ -7,6 +7,7 @@ export declare type ScrollbarDimensions = {
 export declare class Scrollbar {
     /**
      * Creates an instance.
+     * @internal
      */
     constructor();
     /**

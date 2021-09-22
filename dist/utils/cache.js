@@ -46,4 +46,6 @@ export function clearFullCache(ref) {
 /**
  * This exposes the cache instance for test environments. Otherwise it will be null.
  */
+/* This should not be part of the coverage report: test util */
+/* istanbul ignore next */
 export const cacheInstance = (process.env.NODE_ENV === 'test') ? __CACHE : null;

@@ -16,7 +16,7 @@
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.UpdateReason = _exports.ScrollBehavior = _exports.Pagination = _exports.Mouse = _exports.Mask = _exports.Carousel = _exports.Buttons = void 0;
+  _exports.version = _exports.Pagination = _exports.Mouse = _exports.Mask = _exports.Carousel = _exports.Buttons = void 0;
 
   function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -241,11 +241,6 @@
         var _this = this;
 
         var buttons = fromCache(this, CACHE_KEY_BUTTONS$1);
-
-        if (!buttons) {
-          return;
-        }
-
         buttons.forEach(function (button) {
           var _a;
 
@@ -279,22 +274,20 @@
 
   _exports.Buttons = Buttons;
   var UpdateReason;
-  _exports.UpdateReason = UpdateReason;
 
   (function (UpdateReason) {
     UpdateReason["SCROLL"] = "scroll";
     UpdateReason["RESIZE"] = "resize";
     UpdateReason["FORCED"] = "forced";
-    UpdateReason["PLUGIN"] = "plugin";
-  })(UpdateReason || (_exports.UpdateReason = UpdateReason = {}));
+    UpdateReason["FEATURE"] = "feature";
+  })(UpdateReason || (UpdateReason = {}));
 
   var ScrollBehavior;
-  _exports.ScrollBehavior = ScrollBehavior;
 
   (function (ScrollBehavior) {
     ScrollBehavior["AUTO"] = "auto";
     ScrollBehavior["SMOOTH"] = "smooth";
-  })(ScrollBehavior || (_exports.ScrollBehavior = ScrollBehavior = {}));
+  })(ScrollBehavior || (ScrollBehavior = {}));
 
   var Scrollbar = /*#__PURE__*/function () {
     function Scrollbar() {
@@ -343,9 +336,10 @@
   var __scrollbar;
 
   var DEFAULTS$2 = {
-    enabled: true
+    enabled: true,
+    className: 'caroucssel-mask',
+    tagName: 'div'
   };
-  var CLASSNAME = 'caroucssel-mask';
   var CACHE_KEY_PROXY$2 = 'proxy';
   var CACHE_KEY_CONFIGURATION$2 = 'config';
   var CACHE_KEY_MASK$1 = 'mask';
@@ -409,7 +403,9 @@
       key: "_render",
       value: function _render() {
         var _fromCache3 = fromCache(this, CACHE_KEY_CONFIGURATION$2),
-            enabled = _fromCache3.enabled;
+            enabled = _fromCache3.enabled,
+            className = _fromCache3.className,
+            tagName = _fromCache3.tagName;
 
         if (!enabled) {
           return;
@@ -426,8 +422,8 @@
         fromCache(this, CACHE_KEY_MASK$1, function () {
           var _a;
 
-          var mask = document.createElement('div');
-          mask.className = CLASSNAME;
+          var mask = document.createElement(tagName);
+          mask.className = className;
           mask.style.overflow = 'hidden';
           mask.style.height = '100%';
           (_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, element);
@@ -624,7 +620,7 @@
         var proxy = fromCache(this, CACHE_KEY_PROXY$1);
         var buttons = fromCache(this, CACHE_KEY_BUTTONS);
         var pageIndex = proxy.pageIndex;
-        buttons === null || buttons === void 0 ? void 0 : buttons.forEach(function (button, at) {
+        buttons.forEach(function (button, at) {
           return button.disabled = at === pageIndex;
         });
       }
@@ -650,12 +646,10 @@
     }, {
       key: "_onClick",
       value: function _onClick(event) {
-        var _a;
-
         var proxy = fromCache(this, CACHE_KEY_PROXY$1);
         var buttons = fromCache(this, CACHE_KEY_BUTTONS);
         var target = event.currentTarget;
-        var index = (_a = buttons === null || buttons === void 0 ? void 0 : buttons.indexOf(target)) !== null && _a !== void 0 ? _a : 0;
+        var index = buttons.indexOf(target);
         proxy.index = proxy.pages[index];
       }
     }]);
@@ -664,6 +658,82 @@
   }();
 
   _exports.Pagination = Pagination;
+  var CACHE_KEY_INSTANCE = 'instance';
+  var CACHE_KEY_FEATURES$1 = 'features';
+
+  function __getInstance(ref) {
+    return fromCache(ref, CACHE_KEY_INSTANCE);
+  }
+
+  function __getFeatures(ref) {
+    return fromCache(ref, CACHE_KEY_FEATURES$1);
+  }
+
+  var Proxy = /*#__PURE__*/function () {
+    function Proxy(instance, features) {
+      _classCallCheck(this, Proxy);
+
+      writeCache(this, CACHE_KEY_INSTANCE, instance);
+      writeCache(this, CACHE_KEY_FEATURES$1, features);
+    }
+
+    _createClass(Proxy, [{
+      key: "id",
+      get: function get() {
+        return __getInstance(this).id;
+      }
+    }, {
+      key: "el",
+      get: function get() {
+        return __getInstance(this).el;
+      }
+    }, {
+      key: "mask",
+      get: function get() {
+        return __getInstance(this).mask;
+      }
+    }, {
+      key: "index",
+      get: function get() {
+        return __getInstance(this).index;
+      },
+      set: function set(value) {
+        __getInstance(this).index = value;
+      }
+    }, {
+      key: "items",
+      get: function get() {
+        return __getInstance(this).items;
+      }
+    }, {
+      key: "pages",
+      get: function get() {
+        return __getInstance(this).pages;
+      }
+    }, {
+      key: "pageIndex",
+      get: function get() {
+        return __getInstance(this).pageIndex;
+      }
+    }, {
+      key: "update",
+      value: function update(sender) {
+        __getInstance(this).update();
+
+        __getFeatures(this).forEach(function (feature) {
+          if (feature === sender) {
+            return;
+          }
+
+          feature.update({
+            reason: UpdateReason.FEATURE
+          });
+        });
+      }
+    }]);
+
+    return Proxy;
+  }();
 
   function debounce(func, delay) {
     var timeout = null;
@@ -690,6 +760,8 @@
   };
 
   var ID_MATCH = /^caroucssel-[0-9]*$/;
+  var EVENT_SCROLL = 'scroll';
+  var EVENT_RESIZE = 'resize';
   var CACHE_KEY_ELEMENT = 'element';
   var CACHE_KEY_ID = 'id';
   var CACHE_KEY_CONFIGURATION = 'config';
@@ -699,15 +771,11 @@
   var CACHE_KEY_PAGE_INDEX = 'page-index';
   var CACHE_KEY_MASK = 'mask';
   var CACHE_KEY_PROXY = 'proxy';
-  var CACHE_KEY_PLUGINS = 'plugins';
-  var CACHE_KEY_PROXY_INSTANCE = 'proxy:instance';
-  var CACHE_KEY_PROXY_PLUGIN = 'proxy:plugins';
+  var CACHE_KEY_FEATURES = 'feautres';
   var VISIBILITY_OFFSET = 0.25;
   var INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
-  var EVENT_SCROLL = 'scroll';
-  var EVENT_RESIZE = 'resize';
   var DEFAULTS = {
-    plugins: [],
+    features: [],
     filterItem: function filterItem() {
       return true;
     },
@@ -716,62 +784,6 @@
     }
   };
   var __instanceCount = 0;
-
-  var Proxy = /*#__PURE__*/function () {
-    function Proxy(instance, plugins) {
-      _classCallCheck(this, Proxy);
-
-      writeCache(this, CACHE_KEY_PROXY_INSTANCE, instance);
-      writeCache(this, CACHE_KEY_PROXY_PLUGIN, plugins);
-    }
-
-    _createClass(Proxy, [{
-      key: "el",
-      get: function get() {
-        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.el;
-      }
-    }, {
-      key: "mask",
-      get: function get() {
-        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.mask;
-      }
-    }, {
-      key: "index",
-      get: function get() {
-        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.index;
-      },
-      set: function set(value) {
-        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        instance.index = value;
-      }
-    }, {
-      key: "items",
-      get: function get() {
-        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.items;
-      }
-    }, {
-      key: "pages",
-      get: function get() {
-        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.pages;
-      }
-    }, {
-      key: "pageIndex",
-      get: function get() {
-        var instance = fromCache(this, CACHE_KEY_PROXY_INSTANCE);
-        return instance.pageIndex;
-      }
-    }, {
-      key: "update",
-      value: function update(plugin) {}
-    }]);
-
-    return Proxy;
-  }();
 
   var Carousel = /*#__PURE__*/function () {
     function Carousel(el) {
@@ -791,29 +803,33 @@
       writeCache(this, CACHE_KEY_ID, el.id);
       var configuration = Object.assign(Object.assign({}, DEFAULTS), options);
       writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
+      var mask = null;
 
-      var plugins = _toConsumableArray(configuration.plugins);
+      var features = _toConsumableArray(configuration.features);
 
-      var index = configuration.plugins.findIndex(function (plugin) {
-        return plugin instanceof Mask;
+      var index = configuration.features.findIndex(function (feature) {
+        return feature instanceof Mask;
       });
-      var mask = new Mask();
 
       if (index > -1) {
-        var _plugins$splice = plugins.splice(index, 1);
+        var _features$splice = features.splice(index, 1);
 
-        var _plugins$splice2 = _slicedToArray(_plugins$splice, 1);
+        var _features$splice2 = _slicedToArray(_features$splice, 1);
 
-        mask = _plugins$splice2[0];
+        mask = _features$splice2[0];
       }
 
-      plugins.unshift(mask);
+      mask !== null && mask !== void 0 ? mask : mask = new Mask();
+      features = features.filter(function (feature) {
+        return !(feature instanceof Mask);
+      });
+      features = [mask].concat(_toConsumableArray(features));
       writeCache(this, CACHE_KEY_MASK, mask);
-      var proxy = new Proxy(this, plugins);
+      var proxy = new Proxy(this, features);
       writeCache(this, CACHE_KEY_PROXY, proxy);
-      writeCache(this, CACHE_KEY_PLUGINS, plugins);
-      plugins.forEach(function (plugin) {
-        return plugin.init(proxy);
+      writeCache(this, CACHE_KEY_FEATURES, features);
+      features.forEach(function (feature) {
+        return feature.init(proxy);
       });
 
       switch (true) {
@@ -891,10 +907,6 @@
         var length = items.length;
 
         if (!Array.isArray(values) || !values.length) {
-          return;
-        }
-
-        if (length === 0) {
           return;
         }
 
@@ -1047,9 +1059,9 @@
       value: function destroy() {
         var el = this.el;
         ID_MATCH.test(el.id) && el.removeAttribute('id');
-        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
-          return plugin.destroy();
+        var features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach(function (feature) {
+          return feature.destroy();
         });
         el.removeEventListener(EVENT_SCROLL, this._onScroll);
         window.removeEventListener(EVENT_RESIZE, this._onResize);
@@ -1062,9 +1074,9 @@
         clearCache(this, CACHE_KEY_ITEMS);
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
-          return plugin.update({
+        var features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach(function (feature) {
+          return feature.update({
             reason: UpdateReason.FORCED
           });
         });
@@ -1074,15 +1086,15 @@
       value: function _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
-          return plugin.update({
+        var features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach(function (feature) {
+          return feature.update({
             reason: UpdateReason.SCROLL
           });
         });
         var index = this.index;
         var configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
-        configuration === null || configuration === void 0 ? void 0 : configuration.onScroll({
+        configuration.onScroll({
           index: index,
           type: EVENT_SCROLL,
           target: this,
@@ -1095,9 +1107,9 @@
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        var plugins = fromCache(this, CACHE_KEY_PLUGINS);
-        plugins === null || plugins === void 0 ? void 0 : plugins.forEach(function (plugin) {
-          return plugin.update({
+        var features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach(function (feature) {
+          return feature.update({
             reason: UpdateReason.RESIZE
           });
         });
@@ -1111,4 +1123,6 @@
   }();
 
   _exports.Carousel = Carousel;
+  var version = '0.12.0-2';
+  _exports.version = version;
 });
