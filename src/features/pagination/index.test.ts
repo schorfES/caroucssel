@@ -123,7 +123,7 @@ describe('Pagination feature', () => {
 					${pages.map((page, index) => `
 						<div class="item" aria-label="${title({ index, page, pages })}">
 							${label({ index, page, pages })}
-						</div>`
+						</div>`,
 					).join('')}
 				</div>`,
 		);

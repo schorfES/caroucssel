@@ -80,7 +80,7 @@ export default [
 		},
 		[
 			babel(PLUGIN_SETTINGS_BABEL),
-		]
+		],
 	),
 	createBundle(
 		{
