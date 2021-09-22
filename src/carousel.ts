@@ -49,7 +49,7 @@ export class Carousel implements ICarousel {
 	 * @internal
 	 */
 	public static resetInstanceCount(): void {
-		/* This should not be part of the coverage report: */
+		/* This should not be part of the coverage report: test util */
 		/* istanbul ignore next */
 		if (process.env.NODE_ENV === 'test') {
 			__instanceCount = 0;
