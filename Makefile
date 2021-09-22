@@ -64,6 +64,8 @@ build_scripts:
 		--config rollup.config.ts \
 		--configPlugin typescript
 
+	node ./scripts/build_post.js
+
 
 web: web_clean web_pages web_docs
 

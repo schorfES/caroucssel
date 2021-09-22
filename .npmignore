@@ -4,6 +4,7 @@
 .parcel-cache/
 coverage/
 public/
+scripts/
 src/
 web/
 .babelrc
