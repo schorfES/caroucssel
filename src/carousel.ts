@@ -44,11 +44,13 @@ let __instanceCount = 0;
 export class Carousel implements ICarousel {
 
 	/**
-	 * This can be used for testing purposes to reset the instance count which is
+	 * This will be used for testing purposes to reset the instance count which is
 	 * used to create unique id's.
 	 * @internal
 	 */
 	public static resetInstanceCount(): void {
+		/* This should not be part of the coverage report: */
+		/* istanbul ignore next */
 		if (process.env.NODE_ENV === 'test') {
 			__instanceCount = 0;
 		}
@@ -85,23 +87,27 @@ export class Carousel implements ICarousel {
 		writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
 
 		// Detect if there is a "Mask" feature passed as option. Then use this one,
-		// otherwise add a mandatory instance by default:
-		const features = [...configuration.features];
-		const index = configuration.features.findIndex((feature) => feature instanceof Mask);
-		let mask: IFeature = new Mask();
+		// otherwise add a mandatory instance by default. Also ensure that only one
+		// feature of type "Mask" is in the features list.
+		let mask: IFeature | null = null;
+		let features = [...configuration.features];
+		const index = configuration.features.findIndex((feature): boolean => feature instanceof Mask);
 		if (index > -1) {
+			// Extract first found instance of "Mask":
 			[mask] = features.splice(index, 1);
 		}
-		features.unshift(mask);
+		mask ??= new Mask();
+		features = features.filter((feature): boolean => !(feature instanceof Mask));
+		features = [mask, ...features];
 		writeCache(this, CACHE_KEY_MASK, mask);
 
-		// Features:
+		// Features: Initialize all features with a single proxy instance inbetween.
 		const proxy = new Proxy(this, features);
 		writeCache(this, CACHE_KEY_PROXY, proxy);
 		writeCache(this, CACHE_KEY_FEATURES, features);
 		features.forEach((feature) => feature.init(proxy));
 
-		// Set initial index and set smooth scrolling:
+		// Set initial index and finally set smooth scrolling to enabled:
 		switch (true) {
 			// When index is a list:
 			case Array.isArray(options.index):
@@ -210,10 +216,6 @@ export class Carousel implements ICarousel {
 		const { length } = items;
 
 		if (!Array.isArray(values) || !values.length) {
-			return;
-		}
-
-		if (length === 0) {
 			return;
 		}
 
@@ -410,8 +412,8 @@ export class Carousel implements ICarousel {
 		ID_MATCH.test(el.id) && el.removeAttribute('id');
 
 		// Destroy attached features:
-		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES);
-		features?.forEach((feature) => feature.destroy());
+		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
+		features.forEach((feature) => feature.destroy());
 
 		// Remove events:
 		//
@@ -439,20 +441,20 @@ export class Carousel implements ICarousel {
 		clearCache(this, CACHE_KEY_PAGES);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES);
-		features?.forEach((feature) => feature.update({ reason: UpdateReason.FORCED }));
+		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
+		features.forEach((feature) => feature.update({ reason: UpdateReason.FORCED }));
 	}
 
 	protected _onScroll(event: Event): void {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES);
-		features?.forEach((feature) => feature.update({ reason: UpdateReason.SCROLL }));
+		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
+		features.forEach((feature) => feature.update({ reason: UpdateReason.SCROLL }));
 
 		const { index } = this;
-		const configuration = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION);
-		configuration?.onScroll<Carousel>({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
+		const configuration = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
+		configuration.onScroll<Carousel>({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
 	}
 
 	protected _onResize(): void {
@@ -460,8 +462,8 @@ export class Carousel implements ICarousel {
 		clearCache(this, CACHE_KEY_INDEX);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
-		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES);
-		features?.forEach((feature) => feature.update({ reason: UpdateReason.RESIZE }));
+		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
+		features.forEach((feature) => feature.update({ reason: UpdateReason.RESIZE }));
 	}
 
 }
