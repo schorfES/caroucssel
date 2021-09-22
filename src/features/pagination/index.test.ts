@@ -1,27 +1,13 @@
 import { fixture, querySelector, triggerClick, triggerResize, triggerScroll } from '../../__setup__/helpers';
 import { Carousel } from '../../carousel';
-import { ScrollbarDimensions } from '../../utils/scrollbar';
 
 import { Pagination, Params, TextParams } from './index';
 
-
-let mockScrollbarDimensions: ScrollbarDimensions | null = null;
-
-jest.mock('../../utils/scrollbar', () => {
-	return {
-		Scrollbar: class {
-			get dimensions() {
-				return mockScrollbarDimensions;
-			}
-		},
-	};
-});
 
 describe('Pagination feature', () => {
 
 	beforeEach(() => {
 		jest.useFakeTimers();
-		mockScrollbarDimensions = { height: 0 };
 	});
 
 
