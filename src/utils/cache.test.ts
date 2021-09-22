@@ -9,7 +9,7 @@ describe('Cache util', () => {
 			const ref = {};
 			expect(fromCache(ref, 'key')).toBeUndefined();
 			expect(fromCache(ref, 'key', () => 42)).toBe(42);
-			expect(fromCache(ref, 'key',)).toBe(42);
+			expect(fromCache(ref, 'key')).toBe(42);
 		});
 
 		it('should create cache entry with factory', () => {

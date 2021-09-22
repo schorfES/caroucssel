@@ -42,7 +42,7 @@ describe('Scrollbar util', () => {
 						});
 
 						return element;
-					}
+					},
 				);
 
 				expect(instance?.dimensions).toEqual({ height: 25 });
@@ -82,7 +82,7 @@ describe('Scrollbar util', () => {
 						});
 
 						return element;
-					}
+					},
 				);
 
 				expect(instance?.dimensions).toEqual({ height: 50 });
