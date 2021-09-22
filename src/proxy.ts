@@ -6,6 +6,14 @@ const CACHE_KEY_INSTANCE = 'instance';
 const CACHE_KEY_FEATURES = 'features';
 
 
+function __getInstance(ref: Proxy): ICarousel {
+	return fromCache<ICarousel>(ref, CACHE_KEY_INSTANCE) as ICarousel;
+}
+
+function __getFeatures(ref: Proxy): IFeature[] {
+	return fromCache<IFeature[]>(ref, CACHE_KEY_FEATURES) as IFeature[];
+}
+
 /**
  * A proxy instance between carousel and each feature.
  * @internal
@@ -17,49 +25,44 @@ export class Proxy implements IProxy {
 		writeCache(this, CACHE_KEY_FEATURES, features);
 	}
 
+	public get id(): string {
+		return __getInstance(this).id;
+	}
+
 	public get el(): Element {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		return instance.el;
+		return __getInstance(this).el;
 	}
 
 	public get mask(): Element | null {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		return instance.mask;
+		return __getInstance(this).mask;
 	}
 
 	public get index(): Index {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		return instance.index;
+		return __getInstance(this).index;
 	}
 
 	public set index(value: Index) {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		instance.index = value;
+		__getInstance(this).index = value;
 	}
 
 	public get items(): HTMLElement[] {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		return instance.items;
+		return __getInstance(this).items;
 	}
 
 	public get pages(): Pages {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		return instance.pages;
+		return __getInstance(this).pages;
 	}
 
 	public get pageIndex(): number {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		return instance.pageIndex;
+		return __getInstance(this).pageIndex;
 	}
 
 	public update(sender: IFeature): void {
-		const instance = fromCache<ICarousel>(this, CACHE_KEY_INSTANCE) as ICarousel;
-		instance.update();
+		__getInstance(this).update();
 
 		// Trigger update in all other features except the source feature that
 		// triggered the event:
-		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
-		features.forEach((feature): void => {
+		__getFeatures(this).forEach((feature): void => {
 			if (feature === sender) {
 				return;
 			}
