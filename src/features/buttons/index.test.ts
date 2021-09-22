@@ -31,6 +31,11 @@ describe('Buttons feature', () => {
 		Carousel.resetInstanceCount();
 	});
 
+	it('should return a name', () => {
+		const feature = new Buttons();
+		expect(feature.name).toBe('buildin:buttons');
+	});
+
 	it('should add buttons', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
@@ -95,6 +100,14 @@ describe('Buttons feature', () => {
 			label: 'Custom previous label',
 			title: 'Custom previous title',
 		});
+	});
+
+	it('should add buttons when carousel element is not attached to dom', () => {
+		document.body.innerHTML = fixture(3);
+		const el = querySelector('.caroucssel');
+		el.remove();
+
+		expect(() => new Carousel(el, { features: [new Buttons()] })).not.toThrow();
 	});
 
 	it('should handle buttons with custom template that returns empty string', () => {
@@ -253,6 +266,47 @@ describe('Buttons feature', () => {
 
 		triggerClick(buttons[0]); // navigate backwards (doesn't work, disabled)
 		expect(callback).toHaveBeenCalledTimes(4);
+	});
+
+	it('should destroy', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Buttons()],
+		});
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
+	});
+
+	it('should destroy when buttons are not attached to dom', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Buttons()],
+		});
+
+		const buttons = document.querySelectorAll('.button');
+		buttons.forEach((button) => button.remove());
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
+	});
+
+	it('should destroy when buttons are not rendered', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Buttons({
+				template: () => '',
+			})],
+		});
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
 	});
 
 });
