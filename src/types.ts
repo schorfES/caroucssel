@@ -3,6 +3,7 @@ export type Index = [number, ...number[]];
 export type Pages = [Index, ...Index[]];
 
 interface ICore {
+	get id(): string;
 	get el(): Element;
 	get mask(): Element | null;
 	get index(): Index;
