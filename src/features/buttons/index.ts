@@ -25,6 +25,8 @@ export type Configuration = {
 	previousTitle: string;
 };
 
+type Button = HTMLButtonElement | null;
+
 const DEFAULTS: Configuration = {
 	template: ({ className, controls, label, title }: Params) => `
 		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
@@ -94,6 +96,8 @@ export class Buttons implements IFeature {
 				label: nextLabel,
 				title: nextTitle,
 				className: [className, nextClassName].join(' '),
+				// The onClick listener was already bound in the constructor.
+				//
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				handler: this._onNext,
 			},
@@ -102,12 +106,14 @@ export class Buttons implements IFeature {
 				label: previousLabel,
 				title: previousTitle,
 				className: [className, previousClassName].join(' '),
+				// The onClick listener was already bound in the constructor.
+				//
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				handler: this._onPrevious,
 			},
 		];
 
-		const [next, previous] = fromCache<(HTMLButtonElement | null)[]>(
+		const [next, previous] = fromCache<Button[]>(
 			this, 'buttons', () => settings.map(({ handler, ...params }) => {
 				const button = render<HTMLButtonElement, Params>(template, params);
 				if (!button) {
@@ -134,14 +140,15 @@ export class Buttons implements IFeature {
 	}
 
 	private _remove(): void {
-		const buttons = fromCache<(HTMLButtonElement | null)[]>(this, CACHE_KEY_BUTTONS);
-		if (!buttons) {
-			return;
-		}
+		const buttons = fromCache<Button[]>(this, CACHE_KEY_BUTTONS) as Button[];
 
 		buttons.forEach((button): void => {
+			// The onClick listener was already bound in the constructor.
+			//
 			// eslint-disable-next-line @typescript-eslint/unbound-method
 			button?.removeEventListener('click', this._onPrevious);
+			// The onClick listener was already bound in the constructor.
+			//
 			// eslint-disable-next-line @typescript-eslint/unbound-method
 			button?.removeEventListener('click', this._onNext);
 			button?.parentNode?.removeChild(button);
