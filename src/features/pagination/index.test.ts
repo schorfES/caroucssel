@@ -31,6 +31,11 @@ describe('Pagination feature', () => {
 		Carousel.resetInstanceCount();
 	});
 
+	it('should return a name', () => {
+		const feature = new Pagination();
+		expect(feature.name).toBe('buildin:pagination');
+	});
+
 	it('should add pagination', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
@@ -150,6 +155,14 @@ describe('Pagination feature', () => {
 
 		expect(document.body.innerHTML).toMatchSnapshot();
 		expect(template).toHaveBeenCalledTimes(1);
+	});
+
+	it('should add pagination when carousel element is not attached to dom', () => {
+		document.body.innerHTML = fixture(3);
+		const el = querySelector('.caroucssel');
+		el.remove();
+
+		expect(() => new Carousel(el, { features: [new Pagination()] })).not.toThrow();
 	});
 
 	it('should handle pagination with custom template that returns empty string', () => {
@@ -334,8 +347,64 @@ describe('Pagination feature', () => {
 		expect(callback).toHaveBeenNthCalledWith(3, { left: 200, behavior: 'smooth' });
 		expect([...pagination].map(({ disabled }) => disabled)).toEqual([false, false, true]);
 
-		triggerClick(pagination[2]); // doesn't work, disabled
+		triggerClick(pagination[2]); // doesn't work, button ad position "2" is disabled
 		expect(callback).toHaveBeenCalledTimes(3);
+	});
+
+	it('should destroy', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Pagination()],
+		});
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
+	});
+
+	it('should destroy when pagination is not attached to dom', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Pagination()],
+		});
+
+		const pagination = querySelector('.pagination');
+		pagination.remove();
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
+	});
+
+	it('should destroy when pagination buttons are not attached to dom', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Pagination()],
+		});
+
+		const buttons = document.querySelectorAll('.pagination button');
+		buttons.forEach((button) => button.remove());
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
+	});
+
+	it('should destroy when pagination is not rendered', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Pagination({
+				template: () => '',
+			})],
+		});
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
 	});
 
 });

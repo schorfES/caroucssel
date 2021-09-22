@@ -110,6 +110,8 @@ export class Pagination implements IFeature {
 		// @TODO: Add template for buttons:
 		const buttons = Array.from(pagination.querySelectorAll<HTMLButtonElement>('button'))
 			.map((button) => {
+				// The onClick listener was already bound in the constructor.
+				//
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				button.addEventListener('click', this._onClick, true);
 				return button;
@@ -124,10 +126,10 @@ export class Pagination implements IFeature {
 
 	private _update(): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
-		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
+		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS) as HTMLButtonElement[];
 
 		const { pageIndex } = proxy;
-		buttons?.forEach((button, at) => button.disabled = (at === pageIndex));
+		buttons.forEach((button, at) => button.disabled = (at === pageIndex));
 	}
 
 	private _remove(): void {
@@ -135,6 +137,8 @@ export class Pagination implements IFeature {
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 
 		buttons?.forEach((button) => {
+			// The onClick listener was already bound in the constructor.
+			//
 			// eslint-disable-next-line @typescript-eslint/unbound-method
 			button.removeEventListener('click', this._onClick);
 			button.parentNode?.removeChild(button);
@@ -147,9 +151,9 @@ export class Pagination implements IFeature {
 
 	private _onClick(event: MouseEvent): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
-		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
+		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS) as HTMLButtonElement[];
 		const target = event.currentTarget as HTMLButtonElement;
-		const index = buttons?.indexOf(target) ?? 0;
+		const index = buttons.indexOf(target);
 		proxy.index = proxy.pages[index];
 	}
 
