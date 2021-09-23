@@ -1,12 +1,24 @@
 import { clearCache, fromCache } from '../../utils/cache';
 
-
+/**
+ * Dataset of scrollbar dimensions
+ * @internal.
+ */
 export type ScrollbarDimensions = {
+
+	/**
+	 * Vertical size of a scrollbar.
+	 */
 	height: number,
 };
 
+
+const CACHE_KEY_DIMENSIONS = 'dims';
+
+
 /**
  * Helper class for scrollbar features.
+ * @internal
  */
 export class Scrollbar {
 
@@ -16,7 +28,7 @@ export class Scrollbar {
 	 */
 	constructor() {
 		window.addEventListener('resize', () => {
-			clearCache(this, 'dimensions');
+			clearCache(this, CACHE_KEY_DIMENSIONS);
 		});
 	}
 
@@ -29,7 +41,7 @@ export class Scrollbar {
 	 * @return the dimensions of the scrollar
 	 */
 	get dimensions(): ScrollbarDimensions {
-		return fromCache<ScrollbarDimensions>(this, 'dimensions', () => {
+		return fromCache<ScrollbarDimensions>(this, CACHE_KEY_DIMENSIONS, () => {
 			const inner = document.createElement('div');
 			const outer = document.createElement('div');
 
