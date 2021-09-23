@@ -28,19 +28,20 @@ export interface IFeature {
 
 	init(proxy: IProxy): void;
 	destroy(): void;
-	update(data :UpdateData): void;
+
+	update(data :UpdateEvent): void;
 }
 
-export enum UpdateReason {
+export type UpdateEvent = {
+	type: UpdateType;
+};
+export enum UpdateType {
 	SCROLL = 'scroll',
 	RESIZE = 'resize',
 	FORCED = 'forced',
 	FEATURE = 'feature',
 }
 
-export type UpdateData = {
-	reason: UpdateReason;
-};
 
 export enum ScrollBehavior {
 	AUTO = 'auto',

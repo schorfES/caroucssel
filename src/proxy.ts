@@ -1,4 +1,4 @@
-import { ICarousel, IFeature, Index, IProxy, Pages, UpdateReason } from "./types";
+import { ICarousel, IFeature, Index, IProxy, Pages, UpdateType } from "./types";
 import { fromCache, writeCache } from './utils/cache';
 
 
@@ -67,7 +67,7 @@ export class Proxy implements IProxy {
 				return;
 			}
 
-			feature.update({ reason: UpdateReason.FEATURE });
+			feature.update({ type: UpdateType.FEATURE });
 		});
 	}
 
