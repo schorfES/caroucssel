@@ -1,4 +1,4 @@
-import { IFeature, IProxy, UpdateData, UpdateReason } from '../../types';
+import { IFeature, IProxy, UpdateEvent, UpdateType } from '../../types';
 import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/cache';
 
 import { Scrollbar } from './scrollbar';
@@ -59,10 +59,10 @@ export class Mask implements IFeature {
 		clearFullCache(this);
 	}
 
-	public update(data: UpdateData): void {
-		switch (data.reason) {
-			case UpdateReason.RESIZE:
-			case UpdateReason.FORCED:
+	public update(event: UpdateEvent): void {
+		switch (event.type) {
+			case UpdateType.RESIZE:
+			case UpdateType.FORCED:
 				clearCache(this, CACHE_KEY_HEIGHT);
 				this._render();
 				break;
