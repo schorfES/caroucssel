@@ -171,4 +171,16 @@ describe('Mask feature', () => {
 		expect(document.body.innerHTML).toBe(structure);
 	});
 
+	it('should destroy when not enabled', () => {
+		const structure = fixture(3);
+		document.body.innerHTML = structure;
+		const el = querySelector('.caroucssel');
+		const carousel = new Carousel(el, {
+			features: [new Mask({ enabled: false })],
+		});
+		carousel.destroy();
+
+		expect(document.body.innerHTML).toBe(structure);
+	});
+
 });
