@@ -33,6 +33,12 @@ const DEFAULTS: Configuration = {
 
 
 /**
+ * Export the mask because it's used by default inside the carousel.
+ */
+export { Mask };
+
+
+/**
  * The available options for the carousel.
  */
 export type Options = {
