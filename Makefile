@@ -77,6 +77,7 @@ web_clean:
 web_docs:
 	node_modules/.bin/typedoc \
 		./src/carousel.ts \
+		./src/proxy.ts \
 		./src/types.ts \
 		./src/features/**/*.ts \
 		--out public/docs/ \

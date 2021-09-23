@@ -1,6 +1,6 @@
 import { Mask } from './features/mask';
 import { Proxy } from './proxy';
-import { Configuration, ICarousel, IFeature, Index, Options, Pages, ScrollBehavior, UpdateType } from './types';
+import { FilterItemFn, ICarousel, IFeature, Index, Pages, ScrollBehavior, ScrollHook, UpdateType } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 
@@ -31,15 +31,33 @@ const DEFAULTS: Configuration = {
 	onScroll: () => undefined,
 };
 
+
+/**
+ * The available options for the carousel.
+ */
+export type Options = {
+	index?: Index | number;
+	features?: IFeature[],
+	filterItem?: FilterItemFn;
+	onScroll?: ScrollHook;
+};
+
+
+/**
+ * The required configuration of the carousel.
+ * @internal
+ */
+export type Configuration = Omit<Required<Options>, 'index'>;
+
+
 /*
  * Internal counter for created instances. Will be used to create unique IDs.
  */
 let __instanceCount = 0;
 
 
-
 /**
- * The carousel javascript instance.
+ * The carousel instance.
  */
 export class Carousel implements ICarousel {
 
@@ -432,7 +450,8 @@ export class Carousel implements ICarousel {
 
 	/**
 	 * Enforces an update of all enabled components of the carousel. This is, for
-	 * example, useful when changing the number of items inside the carousel.
+	 * example, useful when changing the number of items inside the carousel. This
+	 * also forwards an update call to all attached features.
 	 * @public
 	 */
 	public update(): void {
