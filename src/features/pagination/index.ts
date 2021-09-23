@@ -194,7 +194,7 @@ export class Pagination implements IFeature {
 		// @TODO: Add template for buttons:
 		const buttons = Array.from(pagination.querySelectorAll<HTMLButtonElement>('button'))
 			.map((button) => {
-				// The onClick listener was already bound in the constructor.
+				// The onClick listener is already bound in the constructor.
 				//
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				button.addEventListener('click', this._onClick, true);
@@ -229,7 +229,7 @@ export class Pagination implements IFeature {
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 
 		buttons?.forEach((button) => {
-			// The onClick listener was already bound in the constructor.
+			// The onClick listener is already bound in the constructor.
 			//
 			// eslint-disable-next-line @typescript-eslint/unbound-method
 			button.removeEventListener('click', this._onClick);
