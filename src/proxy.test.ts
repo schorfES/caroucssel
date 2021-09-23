@@ -81,10 +81,10 @@ describe('proxy', () => {
 
 		/* eslint-disable @typescript-eslint/unbound-method */
 		expect(feat1.update).toHaveBeenCalledTimes(1);
-		expect(feat1.update).toHaveBeenCalledWith({ reason: 'feature' });
+		expect(feat1.update).toHaveBeenCalledWith({ type: 'feature' });
 		expect(feat2.update).not.toHaveBeenCalled();
 		expect(feat3.update).toHaveBeenCalledTimes(1);
-		expect(feat3.update).toHaveBeenCalledWith({ reason: 'feature' });
+		expect(feat3.update).toHaveBeenCalledWith({ type: 'feature' });
 		/* eslint-enable @typescript-eslint/unbound-method */
 	});
 

@@ -1,4 +1,4 @@
-import { IFeature, IProxy, UpdateData, UpdateReason } from '../../types';
+import { IFeature, IProxy, UpdateEvent, UpdateType } from '../../types';
 import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/cache';
 import { render } from '../../utils/render';
 
@@ -81,6 +81,11 @@ export class Pagination implements IFeature {
 	public update(data: UpdateData): void {
 		switch (data.reason) {
 			case UpdateReason.SCROLL:
+	public update(data: UpdateEvent): void {
+		switch (data.type) {
+	public update(event: UpdateEvent): void {
+		switch (event.type) {
+			case UpdateType.SCROLL:
 				this._update();
 				break;
 			default:

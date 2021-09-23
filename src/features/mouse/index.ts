@@ -1,4 +1,4 @@
-import { IFeature, IProxy, UpdateData } from '../../types';
+import { IFeature, IProxy, UpdateEvent } from '../../types';
 import { writeCache } from '../../utils/cache';
 
 /**
@@ -19,8 +19,8 @@ export class Mouse implements IFeature {
 		console.log('Destroy mouse');
 	}
 
-	public update(data: UpdateData): void {
-		console.log('Update mouse:', data.reason);
+	public update(event: UpdateEvent): void {
+		console.log('Update mouse:', event.type);
 	}
 
 }
