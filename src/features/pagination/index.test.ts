@@ -1,7 +1,7 @@
 import { fixture, querySelector, triggerClick, triggerResize, triggerScroll } from '../../__setup__/helpers';
 import { Carousel } from '../../carousel';
 
-import { Pagination, Params, TextParams } from './index';
+import { Context, Pagination, TextContext } from './index';
 
 
 describe('Pagination feature', () => {
@@ -36,7 +36,7 @@ describe('Pagination feature', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
 
-		const label: jest.Mock<string, [TextParams]> = jest.fn(
+		const label: jest.Mock<string, [TextContext]> = jest.fn(
 			({ index }) => {
 				switch (index) {
 					case 0: return 'first';
@@ -47,7 +47,7 @@ describe('Pagination feature', () => {
 			},
 		);
 
-		const title: jest.Mock<string, [TextParams]> = jest.fn(
+		const title: jest.Mock<string, [TextContext]> = jest.fn(
 			({ index }) => {
 				let name: string;
 
@@ -93,7 +93,7 @@ describe('Pagination feature', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
 
-		const label: jest.Mock<string, [TextParams]> = jest.fn(
+		const label: jest.Mock<string, [TextContext]> = jest.fn(
 			({ index }) => {
 				switch (index) {
 					case 0: return 'first';
@@ -104,7 +104,7 @@ describe('Pagination feature', () => {
 			},
 		);
 
-		const title: jest.Mock<string, [TextParams]> = jest.fn(
+		const title: jest.Mock<string, [TextContext]> = jest.fn(
 			({ index }) => {
 				let name;
 				switch (index) {
@@ -117,7 +117,7 @@ describe('Pagination feature', () => {
 			},
 		);
 
-		const template: jest.Mock<string, [Params]> = jest.fn(
+		const template: jest.Mock<string, [Context]> = jest.fn(
 			({ className, controls, pages, label, title }) =>
 				`<div class="${className}" aria-controls="${controls}">
 					${pages.map((page, index) => `

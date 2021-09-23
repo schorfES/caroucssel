@@ -3,7 +3,26 @@ import { clearCache, clearFullCache, fromCache, writeCache } from '../../utils/c
 import { render } from '../../utils/render';
 
 
-export type Params = {
+const FEATURE_NAME = 'buildin:pagination';
+
+const CACHE_KEY_PROXY = 'prxy';
+const CACHE_KEY_CONFIGURATION = 'conf';
+const CACHE_KEY_PAGINATION = 'pags';
+const CACHE_KEY_BUTTONS = 'btns';
+
+
+/**
+ * The template function to render a HTML markup of a pagination.
+ * @param context the template context containing the required data to render
+ * @return the HTML markup
+ */
+export type Template = (params: Context) => string;
+
+
+/**
+ * The template rendering context.
+ */
+export type Context = {
 	controls: string;
 	className: string;
 	label: TextTemplate;
@@ -11,25 +30,62 @@ export type Params = {
 	pages: number[][];
 };
 
-export type TextParams = {
+
+/**
+ * A text template function to render a text node. This will be used for button
+ * labels and text-attributes inside the pagination
+ */
+export type TextTemplate = (params: TextContext) => string;
+
+
+/**
+ * The text template rendering context.
+ */
+export type TextContext = {
 	index: number;
 	page: number[];
 	pages: number[][];
 };
 
-export type Template = (params: Params) => string;
 
-export type TextTemplate = (params: TextParams) => string;
+/**
+ * The options for the pagination feature.
+ */
+export type Options = {
 
-export type Configuration = {
-	template: Template;
-	className: string;
-	label: TextTemplate;
-	title: TextTemplate;
+	/**
+	 * Render function for the pagination elemements.
+	 */
+	template?: Template;
+
+	/**
+	 * The class name the pagination element.
+	 * @defaultValue `'pagination'`
+	 */
+	className?: string;
+
+	/**
+	 * Render function for each button label inside the pagination.
+	 */
+	label?: TextTemplate;
+
+	/**
+	 * Render function for each button title attribute inside the pagination.
+	 */
+	title?: TextTemplate;
+
 };
 
+
+/**
+ * The required configuration for pagination feature.
+ * @internal
+ */
+type Configuration = Required<Options>;
+
+
 const DEFAULTS: Configuration = {
-	template: ({ className, controls, pages, label, title }: Params) => `
+	template: ({ className, controls, pages, label, title }: Context) => `
 		<ul class="${className}">
 			${pages.map((page, index) => {
 				const data = { index, page, pages };
@@ -49,40 +105,58 @@ const DEFAULTS: Configuration = {
 	title: ({ index }) => `Go to ${index + 1}. page`,
 };
 
-const CACHE_KEY_PROXY = 'proxy';
-const CACHE_KEY_CONFIGURATION = 'config';
-const CACHE_KEY_PAGINATION = 'pagination';
-const CACHE_KEY_BUTTONS = 'buttons';
 
 /**
  * The feature to enable pagination controls.
  */
 export class Pagination implements IFeature {
 
-	constructor(options: Partial<Configuration> = {}) {
+	/**
+	 * Creates an instance of this feature.
+	 * @param options are the options to configure this instance
+	 */
+	constructor(options: Options = {}) {
 		writeCache(this, CACHE_KEY_CONFIGURATION, { ...DEFAULTS, ...options });
 		this._onClick = this._onClick.bind(this);
 	}
 
-	get name(): string {
-		return 'buildin:pagination';
+	/**
+	 * Returns the name of this feature.
+	 */
+	public get name(): typeof FEATURE_NAME {
+		return FEATURE_NAME;
 	}
 
+	/**
+	 * Initializes this feature. This function will be called by the carousel
+	 * instance and should not be called manually.
+	 * @internal
+	 * @param proxy the proxy instance between carousel and feature
+	 */
 	public init(proxy: IProxy): void {
 		writeCache(this, CACHE_KEY_PROXY, proxy);
 		this._add();
 	}
 
+	/**
+	 * Destroys this feature. This function will be called by the carousel instance
+	 * and should not be called manually.
+	 * @internal
+	 */
 	public destroy(): void {
 		this._remove();
 		clearFullCache(this);
 	}
 
-	public update(data: UpdateData): void {
-		switch (data.reason) {
-			case UpdateReason.SCROLL:
-	public update(data: UpdateEvent): void {
-		switch (data.type) {
+	/**
+	 * This triggers the feature to update its inner state. This function will be
+	 * called by the carousel instance and should not be called manually. The
+	 * carousel passes a event object that includes the update reason. This can be
+	 * used to selectively/partially update sections of the feature.
+	 * @internal
+	 * @param event event that triggered the update
+	 * @param event.type is the update reason (why this was triggered)
+	 */
 	public update(event: UpdateEvent): void {
 		switch (event.type) {
 			case UpdateType.SCROLL:
@@ -95,6 +169,11 @@ export class Pagination implements IFeature {
 		}
 	}
 
+	/**
+	 * Renders and adds the pagination element. Attaches event handlers to all
+	 * button elements.
+	 * @internal
+	 */
 	private _add(): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
@@ -129,6 +208,10 @@ export class Pagination implements IFeature {
 		this._update();
 	}
 
+	/**
+	 * Updates the states of all buttons inside the pagination.
+	 * @internal
+	 */
 	private _update(): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS) as HTMLButtonElement[];
@@ -137,6 +220,10 @@ export class Pagination implements IFeature {
 		buttons.forEach((button, at) => button.disabled = (at === pageIndex));
 	}
 
+	/**
+	 * Removes the whole pagination element and removes all attached event handlers.
+	 * @internal
+	 */
 	private _remove(): void {
 		const pagination = fromCache<HTMLElement>(this, CACHE_KEY_PAGINATION);
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
@@ -154,6 +241,13 @@ export class Pagination implements IFeature {
 		clearCache(this, CACHE_KEY_PAGINATION);
 	}
 
+	/**
+	 * Event handler when a button is clicked. Detects the current index of the
+	 * clicked button inside the pagination and updates the index accordingly of
+	 * the carousel.
+	 * @internal
+	 * @param event the mouse event
+	 */
 	private _onClick(event: MouseEvent): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS) as HTMLButtonElement[];
