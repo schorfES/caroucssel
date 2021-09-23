@@ -1,7 +1,7 @@
 import { fixture, querySelector, triggerClick, triggerResize, triggerScroll } from '../../__setup__/helpers';
 import { Carousel } from '../../carousel';
 
-import { Buttons, Params } from './index';
+import { Buttons, Context } from './index';
 
 
 describe('Buttons feature', () => {
@@ -56,7 +56,7 @@ describe('Buttons feature', () => {
 		document.body.innerHTML = fixture(3, { id: 'custom-id' });
 		const el = querySelector('.caroucssel');
 		const options = {
-			template: jest.fn<string, Params[]>(({ className, label, title }) =>
+			template: jest.fn<string, Context[]>(({ className, label, title }) =>
 				`<span class="${className}" title="${title}">${label}</span>`),
 			className: 'custom-button-class',
 
@@ -132,7 +132,7 @@ describe('Buttons feature', () => {
 
 		// Test when js custom implementation returns undefined
 		// @ts-ignore
-		const template: jest.Mock<string, [Params]> = jest.fn(() => undefined);
+		const template: jest.Mock<string, [Context]> = jest.fn(() => undefined);
 
 		new Carousel(el, {
 			features: [new Buttons({ template })],
