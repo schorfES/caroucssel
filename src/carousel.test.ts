@@ -5,7 +5,7 @@ import { Mask } from './features/mask';
 import { ScrollbarDimensions } from './features/mask/scrollbar';
 import { Pagination } from './features/pagination';
 import { Proxy } from './proxy';
-import { FilterItemFn, IFeature, UpdateReason } from './types';
+import { FilterItemFn, IFeature, UpdateType } from './types';
 
 
 let mockScrollbarDimensions: ScrollbarDimensions | null = null;
@@ -651,7 +651,7 @@ describe('Carousel', () => {
 
 			expect(spies[0]).toHaveBeenCalledTimes(1);
 			expect(spies[0]).toHaveBeenLastCalledWith(
-				expect.objectContaining({ reason: UpdateReason.SCROLL }),
+				expect.objectContaining({ type: UpdateType.SCROLL }),
 			);
 		});
 
@@ -668,7 +668,7 @@ describe('Carousel', () => {
 
 			expect(spies[0]).toHaveBeenCalledTimes(1);
 			expect(spies[0]).toHaveBeenLastCalledWith(
-				expect.objectContaining({ reason: UpdateReason.RESIZE }),
+				expect.objectContaining({ type: UpdateType.RESIZE }),
 			);
 		});
 
@@ -684,7 +684,7 @@ describe('Carousel', () => {
 
 			expect(spies[0]).toHaveBeenCalledTimes(1);
 			expect(spies[0]).toHaveBeenLastCalledWith(
-				expect.objectContaining({ reason: UpdateReason.FORCED }),
+				expect.objectContaining({ type: UpdateType.FORCED }),
 			);
 		});
 

@@ -1,6 +1,6 @@
 import { Mask } from './features/mask';
 import { Proxy } from './proxy';
-import { Configuration, ICarousel, IFeature, Index, Options, Pages, ScrollBehavior, UpdateReason } from './types';
+import { Configuration, ICarousel, IFeature, Index, Options, Pages, ScrollBehavior, UpdateType } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 
@@ -442,7 +442,7 @@ export class Carousel implements ICarousel {
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
 		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
-		features.forEach((feature) => feature.update({ reason: UpdateReason.FORCED }));
+		features.forEach((feature) => feature.update({ type: UpdateType.FORCED }));
 	}
 
 	protected _onScroll(event: Event): void {
@@ -450,7 +450,7 @@ export class Carousel implements ICarousel {
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
 		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
-		features.forEach((feature) => feature.update({ reason: UpdateReason.SCROLL }));
+		features.forEach((feature) => feature.update({ type: UpdateType.SCROLL }));
 
 		const { index } = this;
 		const configuration = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
@@ -463,7 +463,7 @@ export class Carousel implements ICarousel {
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
 		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
-		features.forEach((feature) => feature.update({ reason: UpdateReason.RESIZE }));
+		features.forEach((feature) => feature.update({ type: UpdateType.RESIZE }));
 	}
 
 }
