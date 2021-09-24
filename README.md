@@ -26,6 +26,7 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
   - [Buttons](#buttons)
   - [Pagination](#pagination)
   - [Mask (Scrollbars)](#mask-scrollbars)
+  - [Mouse _(experimental)_](#mouse-_experimental_)
 - [Options](#options)
   - [Index](#index)
   - [Filters](#filters)
@@ -278,6 +279,31 @@ const carousel = new Carousel(el, {
 });
 ```
 
+### Mouse _(experimental)_
+
+**Attention, this is an _experimental feature_ and will be officially released in the future. Behavior, options, and interfaces might change.**
+
+This will add mouse controls to the carousel by enabling drag and drop scrolling using the mouse.
+
+```javascript
+import {Carousel} from 'caroucssel';
+import {Mouse} from 'caroucssel/features/mouse';
+
+const el = document.querySelector('.carousel');
+const carousel = new Carousel(el, {
+  features: [
+    new Mouse(),
+  ],
+});
+```
+
+The bahvior can be customized by additional options. The following options are available:
+
+* `indicator` – a boolean to enable a mouse cursor to visualize that the user can drag the items.
+* `onStart` – a function that is called when the user stats to drag.
+* `onDrag` – a function that is called when the user is dragging.
+* `onEnd` – a function that is called when the user stops to drag.
+
 ## Options
 
 [typedocs](https://schorfes.github.io/caroucssel/docs/modules/carousel.html#Options)
@@ -381,7 +407,7 @@ export class CustomFeature {
 
   init(proxy) {
     // This function will be called when the carousel initializes all features.
-    // A proxy instance of the carousel will be passed as parameter. Store this 
+    // A proxy instance of the carousel will be passed as parameter. Store this
     // proxy to access it later on for your feature implementation....
     this.proxy = proxy;
 
@@ -391,7 +417,7 @@ export class CustomFeature {
 
   update(event) {
     // This function will be called when the carousel fires an internal update.
-    // The passed event object contains a reason (event.reason) to describe 
+    // The passed event object contains a reason (event.reason) to describe
     // why this was triggered:
     //
     // * 'scroll' (the carousel scrolled)

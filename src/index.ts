@@ -1,5 +1,6 @@
 export { Buttons } from './features/buttons';
-export { Mouse } from './features/mouse';
+// As long the mouse feature is experimental, this will not be exposed...
+// export { Mouse } from './features/mouse';
 export { Pagination } from './features/pagination';
 export { Carousel, Mask } from './carousel';
 
