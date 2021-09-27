@@ -1,4 +1,4 @@
-.PHONY: watch validate tests build build_clean build_styles build_scripts web web_clean web_docs web_pages release prerelease
+.PHONY: watch validate tests build build_clean build_styles build_scripts build_readme web web_clean web_docs web_pages release prerelease
 
 
 watch:
@@ -29,7 +29,7 @@ tests:
 		--verbose
 
 
-build: build_clean build_styles build_scripts
+build: build_clean build_styles build_scripts build_readme
 
 
 build_clean:
@@ -65,6 +65,11 @@ build_scripts:
 		--configPlugin typescript
 
 	node ./scripts/build_post.js
+
+
+build_readme:
+	./node_modules/.bin/doctoc README.md \
+		--title '## Docs'
 
 
 web: web_clean web_pages web_docs
