@@ -1,6 +1,6 @@
 import { Mask } from './features/mask';
 import { Proxy } from './proxy';
-import { ScrollBehavior, UpdateReason } from './types';
+import { ScrollBehavior, UpdateType } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
 const ID_NAME = (count) => `caroucssel-${count}`;
@@ -19,17 +19,21 @@ const CACHE_KEY_PROXY = 'proxy';
 const CACHE_KEY_FEATURES = 'feautres';
 const VISIBILITY_OFFSET = 0.25;
 const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
+/**
+ * Export the mask because it's used by default inside the carousel.
+ */
+export { Mask };
+/*
+ * Internal counter for created instances. Will be used to create unique IDs.
+ */
+let __instanceCount = 0;
 const DEFAULTS = {
     features: [],
     filterItem: () => true,
     onScroll: () => undefined,
 };
-/*
- * Internal counter for created instances. Will be used to create unique IDs.
- */
-let __instanceCount = 0;
 /**
- * The carousel javascript instance.
+ * The carousel instance.
  */
 export class Carousel {
     /**
@@ -362,7 +366,8 @@ export class Carousel {
     }
     /**
      * Enforces an update of all enabled components of the carousel. This is, for
-     * example, useful when changing the number of items inside the carousel.
+     * example, useful when changing the number of items inside the carousel. This
+     * also forwards an update call to all attached features.
      * @public
      */
     update() {
@@ -371,13 +376,13 @@ export class Carousel {
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const features = fromCache(this, CACHE_KEY_FEATURES);
-        features.forEach((feature) => feature.update({ reason: UpdateReason.FORCED }));
+        features.forEach((feature) => feature.update({ type: UpdateType.FORCED }));
     }
     _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const features = fromCache(this, CACHE_KEY_FEATURES);
-        features.forEach((feature) => feature.update({ reason: UpdateReason.SCROLL }));
+        features.forEach((feature) => feature.update({ type: UpdateType.SCROLL }));
         const { index } = this;
         const configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
         configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
@@ -387,6 +392,6 @@ export class Carousel {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const features = fromCache(this, CACHE_KEY_FEATURES);
-        features.forEach((feature) => feature.update({ reason: UpdateReason.RESIZE }));
+        features.forEach((feature) => feature.update({ type: UpdateType.RESIZE }));
     }
 }

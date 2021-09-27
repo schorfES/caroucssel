@@ -1,6 +1,25 @@
-import { ICarousel, Index, Options, Pages, ScrollBehavior } from './types';
+import { Mask } from './features/mask';
+import { FilterItemFn, ICarousel, IFeature, Index, Pages, ScrollBehavior, ScrollHook } from './types';
 /**
- * The carousel javascript instance.
+ * Export the mask because it's used by default inside the carousel.
+ */
+export { Mask };
+/**
+ * The available options for the carousel.
+ */
+export declare type Options = {
+    index?: Index | number;
+    features?: IFeature[];
+    filterItem?: FilterItemFn;
+    onScroll?: ScrollHook;
+};
+/**
+ * The required configuration of the carousel.
+ * @internal
+ */
+export declare type Configuration = Omit<Required<Options>, 'index'>;
+/**
+ * The carousel instance.
  */
 export declare class Carousel implements ICarousel {
     /**
@@ -84,7 +103,8 @@ export declare class Carousel implements ICarousel {
     destroy(): void;
     /**
      * Enforces an update of all enabled components of the carousel. This is, for
-     * example, useful when changing the number of items inside the carousel.
+     * example, useful when changing the number of items inside the carousel. This
+     * also forwards an update call to all attached features.
      * @public
      */
     update(): void;
