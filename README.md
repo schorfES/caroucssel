@@ -17,38 +17,37 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Docs
 
-- [CarouCSSel](#caroucssel)
-  - [Docs](#docs)
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [CSS](#css)
-    - [SCSS](#scss)
-    - [JS](#js)
-  - [Features](#features)
-    - [Buttons](#buttons)
-    - [Pagination](#pagination)
-    - [Mask (Scrollbars)](#mask-scrollbars)
-  - [Options](#options)
-    - [Index](#index)
-    - [Filters](#filters)
-    - [Event hooks](#event-hooks)
-  - [API](#api)
-    - [SCSS](#scss-1)
-      - [`@include caroucssel()`](#include-caroucssel)
-      - [`@include caroucssel-snap()`](#include-caroucssel-snap)
-    - [JS](#js-1)
-      - [`.behavior`](#behavior)
-      - [`.index`](#index-1)
-      - [`.items` (read only)](#items-read-only)
-      - [`.pages` (read only)](#pages-read-only)
-      - [`.pageIndex` (read only)](#pageindex-read-only)
-      - [`.id` (read only)](#id-read-only)
-      - [`.el` (read only)](#el-read-only)
-      - [`.mask` (read only)](#mask-read-only)
-      - [`.update()`](#update)
-      - [`.destroy()`](#destroy)
-  - [Polyfills](#polyfills)
-  - [License](#license)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [CSS](#css)
+  - [SCSS](#scss)
+  - [JS](#js)
+- [Features](#features)
+  - [Buttons](#buttons)
+  - [Pagination](#pagination)
+  - [Mask (Scrollbars)](#mask-scrollbars)
+- [Options](#options)
+  - [Index](#index)
+  - [Filters](#filters)
+  - [Event hooks](#event-hooks)
+- [API](#api)
+  - [SCSS](#scss-1)
+    - [`@include caroucssel()`](#include-caroucssel)
+    - [`@include caroucssel-snap()`](#include-caroucssel-snap)
+  - [JS](#js-1)
+    - [`.behavior`](#behavior)
+    - [`.index`](#index)
+    - [`.items` (read only)](#items-read-only)
+    - [`.pages` (read only)](#pages-read-only)
+    - [`.pageIndex` (read only)](#pageindex-read-only)
+    - [`.id` (read only)](#id-read-only)
+    - [`.el` (read only)](#el-read-only)
+    - [`.mask` (read only)](#mask-read-only)
+    - [`.update()`](#update)
+    - [`.destroy()`](#destroy)
+- [Build a custom feature](#build-a-custom-feature)
+- [Polyfills](#polyfills)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -366,6 +365,77 @@ Enforces an update of all enabled features of the carousel. This is, for example
 #### `.destroy()`
 
 This completely deconstructs the carousel and applied features and returns the dom to its initial state.
+
+## Build a custom feature
+
+A feature is a plugin that implements some required functions and properties to match a specified API. If you're writing a feature in typescript, you can implement the interface [`IFeature`](https://schorfes.github.io/caroucssel/docs/interfaces/types.IFeature.html). If you're using plain javascript, follow the [typedocs](https://schorfes.github.io/caroucssel/docs/interfaces/types.IFeature.html) as guideline.
+
+```javascript
+export class CustomFeature {
+
+  get name() {
+    // Return your unique feature name here. Prevent to use a too generic name here.
+    // You could use a combination of your github and repo name for example.
+    return 'github-username:custom-feature';
+  }
+
+  init(proxy) {
+    // This function will be called when the carousel initializes all features.
+    // A proxy instance of the carousel will be passed as parameter. Store this 
+    // proxy to access it later on for your feature implementation....
+    this.proxy = proxy;
+
+    // Initialize your feature...
+    this.doSomething();
+  }
+
+  update(event) {
+    // This function will be called when the carousel fires an internal update.
+    // The passed event object contains a reason (event.reason) to describe 
+    // why this was triggered:
+    //
+    // * 'scroll' (the carousel scrolled)
+    // * 'resize' (the carousel resized)
+    // * 'forced' (the carousel.update() function was called from external code)
+    // * 'feature' (the proxy.update() function was called from an other feature)
+    console.log(event.reason);
+
+    // React on the update: take care of the event.reason value, maybe a partial
+    // update is already enough...
+    this.doSomething();
+  }
+
+  destroy() {
+    // This function will be called when the carousel is destroyed. Ensure
+    // to fully detach all instances and event listeners. Also, roll back all
+    // changes to the DOM to restore the initial state...
+    this.proxy = null;
+  }
+
+  doSomething() {
+    // This is just an example function. Implement the feature the way you want...
+    // If you need to trigger an update to the caroucel and attached other
+    // features, call the update() function of the proxy and pass you feature
+    // instance...
+    this.proxy.update(this);
+  }
+
+}
+```
+
+then use it...
+
+```javascript
+import {Carousel} from 'caroucssel';
+import {CustomFeature} from './features';
+
+const el = document.querySelector('.carousel');
+const carousel = new Carousel(el, {
+  features: [
+    new CustomFeature(),
+  ],
+});
+```
 
 ## Polyfills
 
