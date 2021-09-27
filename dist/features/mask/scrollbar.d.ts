@@ -1,8 +1,16 @@
+/**
+ * Dataset of scrollbar dimensions
+ * @internal.
+ */
 export declare type ScrollbarDimensions = {
+    /**
+     * Vertical size of a scrollbar.
+     */
     height: number;
 };
 /**
  * Helper class for scrollbar features.
+ * @internal
  */
 export declare class Scrollbar {
     /**

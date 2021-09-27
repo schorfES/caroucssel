@@ -16,7 +16,7 @@
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.version = _exports.Pagination = _exports.Mouse = _exports.Mask = _exports.Carousel = _exports.Buttons = void 0;
+  _exports.version = _exports.Pagination = _exports.Mask = _exports.Carousel = _exports.Buttons = void 0;
 
   function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -114,6 +114,11 @@
     return ref;
   }
 
+  var FEATURE_NAME$2 = 'buildin:buttons';
+  var CACHE_KEY_PROXY$3 = 'prxy';
+  var CACHE_KEY_CONFIGURATION$3 = 'conf';
+  var CACHE_KEY_BUTTONS$1 = 'btns';
+  var EVENT_CLICK = 'click';
   var DEFAULTS$3 = {
     template: function template(_ref) {
       var className = _ref.className,
@@ -130,9 +135,6 @@
     previousLabel: 'Previous',
     previousTitle: 'Go to previous'
   };
-  var CACHE_KEY_PROXY$3 = 'proxy';
-  var CACHE_KEY_CONFIGURATION$3 = 'config';
-  var CACHE_KEY_BUTTONS$1 = 'buttons';
 
   var Buttons = /*#__PURE__*/function () {
     function Buttons() {
@@ -141,14 +143,14 @@
       _classCallCheck(this, Buttons);
 
       writeCache(this, CACHE_KEY_CONFIGURATION$3, Object.assign(Object.assign({}, DEFAULTS$3), options));
-      this._onPrevious = this._onPrevious.bind(this);
+      this._onPrev = this._onPrev.bind(this);
       this._onNext = this._onNext.bind(this);
     }
 
     _createClass(Buttons, [{
       key: "name",
       get: function get() {
-        return 'buildin:buttons';
+        return FEATURE_NAME$2;
       }
     }, {
       key: "init",
@@ -172,36 +174,38 @@
     }, {
       key: "_render",
       value: function _render() {
+        var _this = this;
+
         var proxy = fromCache(this, CACHE_KEY_PROXY$3);
         var config = fromCache(this, CACHE_KEY_CONFIGURATION$3);
         var el = proxy.el,
             mask = proxy.mask,
             pages = proxy.pages,
             pageIndex = proxy.pageIndex;
-        var target = mask !== null && mask !== void 0 ? mask : el;
-        var template = config.template,
-            className = config.className,
-            previousClassName = config.previousClassName,
-            previousLabel = config.previousLabel,
-            previousTitle = config.previousTitle,
-            nextClassName = config.nextClassName,
-            nextLabel = config.nextLabel,
-            nextTitle = config.nextTitle;
-        var settings = [{
-          controls: el.id,
-          label: nextLabel,
-          title: nextTitle,
-          className: [className, nextClassName].join(' '),
-          handler: this._onNext
-        }, {
-          controls: el.id,
-          label: previousLabel,
-          title: previousTitle,
-          className: [className, previousClassName].join(' '),
-          handler: this._onPrevious
-        }];
 
-        var _fromCache = fromCache(this, 'buttons', function () {
+        var _fromCache = fromCache(this, CACHE_KEY_BUTTONS$1, function () {
+          var target = mask !== null && mask !== void 0 ? mask : el;
+          var template = config.template,
+              className = config.className,
+              previousClassName = config.previousClassName,
+              previousLabel = config.previousLabel,
+              previousTitle = config.previousTitle,
+              nextClassName = config.nextClassName,
+              nextLabel = config.nextLabel,
+              nextTitle = config.nextTitle;
+          var settings = [{
+            controls: el.id,
+            label: nextLabel,
+            title: nextTitle,
+            className: [className, nextClassName].join(' '),
+            handler: _this._onNext
+          }, {
+            controls: el.id,
+            label: previousLabel,
+            title: previousTitle,
+            className: [className, previousClassName].join(' '),
+            handler: _this._onPrev
+          }];
           return settings.map(function (_a) {
             var _b;
 
@@ -214,7 +218,7 @@
               return null;
             }
 
-            button.addEventListener('click', handler);
+            button.addEventListener(EVENT_CLICK, handler);
             (_b = target.parentNode) === null || _b === void 0 ? void 0 : _b.insertBefore(button, target.nextSibling);
             return button;
           });
@@ -238,20 +242,20 @@
     }, {
       key: "_remove",
       value: function _remove() {
-        var _this = this;
+        var _this2 = this;
 
         var buttons = fromCache(this, CACHE_KEY_BUTTONS$1);
         buttons.forEach(function (button) {
           var _a;
 
-          button === null || button === void 0 ? void 0 : button.removeEventListener('click', _this._onPrevious);
-          button === null || button === void 0 ? void 0 : button.removeEventListener('click', _this._onNext);
+          button === null || button === void 0 ? void 0 : button.removeEventListener(EVENT_CLICK, _this2._onPrev);
+          button === null || button === void 0 ? void 0 : button.removeEventListener(EVENT_CLICK, _this2._onNext);
           (_a = button === null || button === void 0 ? void 0 : button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
         });
       }
     }, {
-      key: "_onPrevious",
-      value: function _onPrevious() {
+      key: "_onPrev",
+      value: function _onPrev() {
         var proxy = fromCache(this, CACHE_KEY_PROXY$3);
         var pages = proxy.pages,
             pageIndex = proxy.pageIndex;
@@ -273,14 +277,14 @@
   }();
 
   _exports.Buttons = Buttons;
-  var UpdateReason;
+  var UpdateType;
 
-  (function (UpdateReason) {
-    UpdateReason["SCROLL"] = "scroll";
-    UpdateReason["RESIZE"] = "resize";
-    UpdateReason["FORCED"] = "forced";
-    UpdateReason["FEATURE"] = "feature";
-  })(UpdateReason || (UpdateReason = {}));
+  (function (UpdateType) {
+    UpdateType["SCROLL"] = "scroll";
+    UpdateType["RESIZE"] = "resize";
+    UpdateType["FORCED"] = "forced";
+    UpdateType["FEATURE"] = "feature";
+  })(UpdateType || (UpdateType = {}));
 
   var ScrollBehavior;
 
@@ -289,209 +293,12 @@
     ScrollBehavior["SMOOTH"] = "smooth";
   })(ScrollBehavior || (ScrollBehavior = {}));
 
-  var Scrollbar = /*#__PURE__*/function () {
-    function Scrollbar() {
-      var _this2 = this;
-
-      _classCallCheck(this, Scrollbar);
-
-      window.addEventListener('resize', function () {
-        clearCache(_this2, 'dimensions');
-      });
-    }
-
-    _createClass(Scrollbar, [{
-      key: "dimensions",
-      get: function get() {
-        return fromCache(this, 'dimensions', function () {
-          var inner = document.createElement('div');
-          var outer = document.createElement('div');
-          document.body.appendChild(outer);
-          outer.style.position = 'absolute';
-          outer.style.top = '0px';
-          outer.style.left = '0px';
-          outer.style.visibility = 'hidden';
-          outer.appendChild(inner);
-          inner.style.width = '200px';
-          inner.style.height = '100%';
-          outer.style.width = '150px';
-          outer.style.height = '200px';
-          outer.style.overflow = 'hidden';
-          var h1 = inner.offsetHeight;
-          outer.style.overflow = 'scroll';
-          var h2 = inner.offsetHeight;
-          h2 = h1 === h2 ? outer.clientHeight : h2;
-          var height = h1 - h2;
-          document.body.removeChild(outer);
-          return {
-            height: height
-          };
-        });
-      }
-    }]);
-
-    return Scrollbar;
-  }();
-
-  var __scrollbar;
-
+  var FEATURE_NAME$1 = 'buildin:pagination';
+  var CACHE_KEY_PROXY$2 = 'prxy';
+  var CACHE_KEY_CONFIGURATION$2 = 'conf';
+  var CACHE_KEY_PAGINATION = 'pags';
+  var CACHE_KEY_BUTTONS = 'btns';
   var DEFAULTS$2 = {
-    enabled: true,
-    className: 'caroucssel-mask',
-    tagName: 'div'
-  };
-  var CACHE_KEY_PROXY$2 = 'proxy';
-  var CACHE_KEY_CONFIGURATION$2 = 'config';
-  var CACHE_KEY_MASK$1 = 'mask';
-  var CACHE_KEY_HEIGHT = 'scrollbar';
-
-  var Mask = /*#__PURE__*/function () {
-    function Mask() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      _classCallCheck(this, Mask);
-
-      writeCache(this, CACHE_KEY_CONFIGURATION$2, Object.assign(Object.assign({}, DEFAULTS$2), options));
-    }
-
-    _createClass(Mask, [{
-      key: "name",
-      get: function get() {
-        return 'buildin:mask';
-      }
-    }, {
-      key: "el",
-      get: function get() {
-        var _a;
-
-        return (_a = fromCache(this, CACHE_KEY_MASK$1)) !== null && _a !== void 0 ? _a : null;
-      }
-    }, {
-      key: "init",
-      value: function init(proxy) {
-        writeCache(this, CACHE_KEY_PROXY$2, proxy);
-        __scrollbar = __scrollbar || new Scrollbar();
-
-        this._render();
-      }
-    }, {
-      key: "destroy",
-      value: function destroy() {
-        this._remove();
-
-        clearFullCache(this);
-      }
-    }, {
-      key: "update",
-      value: function update(data) {
-        switch (data.reason) {
-          case UpdateReason.RESIZE:
-          case UpdateReason.FORCED:
-            clearCache(this, CACHE_KEY_HEIGHT);
-
-            this._render();
-
-            break;
-
-          default:
-            this._render();
-
-            break;
-        }
-      }
-    }, {
-      key: "_render",
-      value: function _render() {
-        var _fromCache3 = fromCache(this, CACHE_KEY_CONFIGURATION$2),
-            enabled = _fromCache3.enabled,
-            className = _fromCache3.className,
-            tagName = _fromCache3.tagName;
-
-        if (!enabled) {
-          return;
-        }
-
-        var proxy = fromCache(this, CACHE_KEY_PROXY$2);
-        var element = proxy.el;
-        var height = __scrollbar.dimensions.height;
-
-        if (element.scrollWidth <= element.clientWidth) {
-          height = 0;
-        }
-
-        fromCache(this, CACHE_KEY_MASK$1, function () {
-          var _a;
-
-          var mask = document.createElement(tagName);
-          mask.className = className;
-          mask.style.overflow = 'hidden';
-          mask.style.height = '100%';
-          (_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, element);
-          mask.appendChild(element);
-          return mask;
-        });
-        var cachedHeight = fromCache(this, CACHE_KEY_HEIGHT);
-
-        if (height === cachedHeight) {
-          return;
-        }
-
-        writeCache(this, CACHE_KEY_HEIGHT, height);
-        element.style.height = "calc(100% + ".concat(height, "px)");
-        element.style.marginBottom = "".concat(height * -1, "px");
-      }
-    }, {
-      key: "_remove",
-      value: function _remove() {
-        var _a, _b;
-
-        var _fromCache4 = fromCache(this, CACHE_KEY_PROXY$2),
-            el = _fromCache4.el;
-
-        var mask = fromCache(this, CACHE_KEY_MASK$1);
-        (_a = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, mask);
-        (_b = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(mask);
-        el.removeAttribute('style');
-      }
-    }]);
-
-    return Mask;
-  }();
-
-  _exports.Mask = Mask;
-
-  var Mouse = /*#__PURE__*/function () {
-    function Mouse() {
-      _classCallCheck(this, Mouse);
-    }
-
-    _createClass(Mouse, [{
-      key: "name",
-      get: function get() {
-        return 'buildin:mouse';
-      }
-    }, {
-      key: "init",
-      value: function init(proxy) {
-        writeCache(this, 'proxy', proxy);
-      }
-    }, {
-      key: "destroy",
-      value: function destroy() {
-        console.log('Destroy mouse');
-      }
-    }, {
-      key: "update",
-      value: function update(data) {
-        console.log('Update mouse:', data.reason);
-      }
-    }]);
-
-    return Mouse;
-  }();
-
-  _exports.Mouse = Mouse;
-  var DEFAULTS$1 = {
     template: function template(_ref2) {
       var className = _ref2.className,
           controls = _ref2.controls,
@@ -519,10 +326,6 @@
       return "Go to ".concat(index + 1, ". page");
     }
   };
-  var CACHE_KEY_PROXY$1 = 'proxy';
-  var CACHE_KEY_CONFIGURATION$1 = 'config';
-  var CACHE_KEY_PAGINATION = 'pagination';
-  var CACHE_KEY_BUTTONS = 'buttons';
 
   var Pagination = /*#__PURE__*/function () {
     function Pagination() {
@@ -530,19 +333,19 @@
 
       _classCallCheck(this, Pagination);
 
-      writeCache(this, CACHE_KEY_CONFIGURATION$1, Object.assign(Object.assign({}, DEFAULTS$1), options));
+      writeCache(this, CACHE_KEY_CONFIGURATION$2, Object.assign(Object.assign({}, DEFAULTS$2), options));
       this._onClick = this._onClick.bind(this);
     }
 
     _createClass(Pagination, [{
       key: "name",
       get: function get() {
-        return 'buildin:pagination';
+        return FEATURE_NAME$1;
       }
     }, {
       key: "init",
       value: function init(proxy) {
-        writeCache(this, CACHE_KEY_PROXY$1, proxy);
+        writeCache(this, CACHE_KEY_PROXY$2, proxy);
 
         this._add();
       }
@@ -555,9 +358,9 @@
       }
     }, {
       key: "update",
-      value: function update(data) {
-        switch (data.reason) {
-          case UpdateReason.SCROLL:
+      value: function update(event) {
+        switch (event.type) {
+          case UpdateType.SCROLL:
             this._update();
 
             break;
@@ -577,8 +380,8 @@
 
         var _a;
 
-        var proxy = fromCache(this, CACHE_KEY_PROXY$1);
-        var config = fromCache(this, CACHE_KEY_CONFIGURATION$1);
+        var proxy = fromCache(this, CACHE_KEY_PROXY$2);
+        var config = fromCache(this, CACHE_KEY_CONFIGURATION$2);
         var el = proxy.el,
             mask = proxy.mask,
             pages = proxy.pages;
@@ -617,7 +420,7 @@
     }, {
       key: "_update",
       value: function _update() {
-        var proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        var proxy = fromCache(this, CACHE_KEY_PROXY$2);
         var buttons = fromCache(this, CACHE_KEY_BUTTONS);
         var pageIndex = proxy.pageIndex;
         buttons.forEach(function (button, at) {
@@ -646,7 +449,7 @@
     }, {
       key: "_onClick",
       value: function _onClick(event) {
-        var proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        var proxy = fromCache(this, CACHE_KEY_PROXY$2);
         var buttons = fromCache(this, CACHE_KEY_BUTTONS);
         var target = event.currentTarget;
         var index = buttons.indexOf(target);
@@ -658,8 +461,182 @@
   }();
 
   _exports.Pagination = Pagination;
-  var CACHE_KEY_INSTANCE = 'instance';
-  var CACHE_KEY_FEATURES$1 = 'features';
+  var CACHE_KEY_DIMENSIONS = 'dims';
+
+  var Scrollbar = /*#__PURE__*/function () {
+    function Scrollbar() {
+      var _this5 = this;
+
+      _classCallCheck(this, Scrollbar);
+
+      window.addEventListener('resize', function () {
+        clearCache(_this5, CACHE_KEY_DIMENSIONS);
+      });
+    }
+
+    _createClass(Scrollbar, [{
+      key: "dimensions",
+      get: function get() {
+        return fromCache(this, CACHE_KEY_DIMENSIONS, function () {
+          var inner = document.createElement('div');
+          var outer = document.createElement('div');
+          document.body.appendChild(outer);
+          outer.style.position = 'absolute';
+          outer.style.top = '0px';
+          outer.style.left = '0px';
+          outer.style.visibility = 'hidden';
+          outer.appendChild(inner);
+          inner.style.width = '200px';
+          inner.style.height = '100%';
+          outer.style.width = '150px';
+          outer.style.height = '200px';
+          outer.style.overflow = 'hidden';
+          var h1 = inner.offsetHeight;
+          outer.style.overflow = 'scroll';
+          var h2 = inner.offsetHeight;
+          h2 = h1 === h2 ? outer.clientHeight : h2;
+          var height = h1 - h2;
+          document.body.removeChild(outer);
+          return {
+            height: height
+          };
+        });
+      }
+    }]);
+
+    return Scrollbar;
+  }();
+
+  var FEATURE_NAME = 'buildin:mask';
+  var CACHE_KEY_PROXY$1 = 'prxy';
+  var CACHE_KEY_CONFIGURATION$1 = 'conf';
+  var CACHE_KEY_MASK$1 = 'mask';
+  var CACHE_KEY_HEIGHT = 'hght';
+
+  var __scrollbar;
+
+  var DEFAULTS$1 = {
+    enabled: true,
+    className: 'caroucssel-mask',
+    tagName: 'div'
+  };
+
+  var Mask = /*#__PURE__*/function () {
+    function Mask() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      _classCallCheck(this, Mask);
+
+      writeCache(this, CACHE_KEY_CONFIGURATION$1, Object.assign(Object.assign({}, DEFAULTS$1), options));
+    }
+
+    _createClass(Mask, [{
+      key: "name",
+      get: function get() {
+        return FEATURE_NAME;
+      }
+    }, {
+      key: "el",
+      get: function get() {
+        var _a;
+
+        return (_a = fromCache(this, CACHE_KEY_MASK$1)) !== null && _a !== void 0 ? _a : null;
+      }
+    }, {
+      key: "init",
+      value: function init(proxy) {
+        writeCache(this, CACHE_KEY_PROXY$1, proxy);
+        __scrollbar = __scrollbar !== null && __scrollbar !== void 0 ? __scrollbar : new Scrollbar();
+
+        this._render();
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this._remove();
+
+        clearFullCache(this);
+      }
+    }, {
+      key: "update",
+      value: function update(event) {
+        switch (event.type) {
+          case UpdateType.RESIZE:
+          case UpdateType.FORCED:
+            clearCache(this, CACHE_KEY_HEIGHT);
+
+            this._render();
+
+            break;
+
+          default:
+            this._render();
+
+            break;
+        }
+      }
+    }, {
+      key: "_render",
+      value: function _render() {
+        var _fromCache3 = fromCache(this, CACHE_KEY_CONFIGURATION$1),
+            enabled = _fromCache3.enabled,
+            className = _fromCache3.className,
+            tagName = _fromCache3.tagName;
+
+        if (!enabled) {
+          return;
+        }
+
+        var proxy = fromCache(this, CACHE_KEY_PROXY$1);
+        var element = proxy.el;
+        var height = __scrollbar.dimensions.height;
+
+        if (element.scrollWidth <= element.clientWidth) {
+          height = 0;
+        }
+
+        fromCache(this, CACHE_KEY_MASK$1, function () {
+          var _a;
+
+          var mask = document.createElement(tagName);
+          mask.className = className;
+          mask.style.overflow = 'hidden';
+          mask.style.height = '100%';
+          (_a = element.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, element);
+          mask.appendChild(element);
+          return mask;
+        });
+        var cachedHeight = fromCache(this, CACHE_KEY_HEIGHT);
+
+        if (height === cachedHeight) {
+          return;
+        }
+
+        writeCache(this, CACHE_KEY_HEIGHT, height);
+        element.style.height = "calc(100% + ".concat(height, "px)");
+        element.style.marginBottom = "".concat(height * -1, "px");
+      }
+    }, {
+      key: "_remove",
+      value: function _remove() {
+        var _a, _b;
+
+        var _fromCache4 = fromCache(this, CACHE_KEY_PROXY$1),
+            el = _fromCache4.el;
+
+        var mask = fromCache(this, CACHE_KEY_MASK$1);
+        (_a = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, mask);
+        (_b = mask === null || mask === void 0 ? void 0 : mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(mask);
+        el.removeAttribute('style');
+      }
+    }]);
+
+    return Mask;
+  }();
+
+  _exports.Mask = Mask;
+  var CACHE_KEY_INSTANCE = 'inst';
+  var CACHE_KEY_FEATURES$1 = 'feat';
 
   function __getInstance(ref) {
     return fromCache(ref, CACHE_KEY_INSTANCE);
@@ -726,7 +703,7 @@
           }
 
           feature.update({
-            reason: UpdateReason.FEATURE
+            type: UpdateType.FEATURE
           });
         });
       }
@@ -774,6 +751,7 @@
   var CACHE_KEY_FEATURES = 'feautres';
   var VISIBILITY_OFFSET = 0.25;
   var INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
+  var __instanceCount = 0;
   var DEFAULTS = {
     features: [],
     filterItem: function filterItem() {
@@ -783,7 +761,6 @@
       return undefined;
     }
   };
-  var __instanceCount = 0;
 
   var Carousel = /*#__PURE__*/function () {
     function Carousel(el) {
@@ -870,11 +847,11 @@
     }, {
       key: "index",
       get: function get() {
-        var _this5 = this;
+        var _this6 = this;
 
         return fromCache(this, CACHE_KEY_INDEX, function () {
-          var el = _this5.el,
-              items = _this5.items;
+          var el = _this6.el,
+              items = _this6.items;
           var length = items.length;
           var clientWidth = el.clientWidth;
           var outerLeft = el.getBoundingClientRect().left;
@@ -936,13 +913,13 @@
     }, {
       key: "items",
       get: function get() {
-        var _this6 = this;
+        var _this7 = this;
 
         return fromCache(this, CACHE_KEY_ITEMS, function () {
-          var _fromCache5 = fromCache(_this6, CACHE_KEY_CONFIGURATION),
+          var _fromCache5 = fromCache(_this7, CACHE_KEY_CONFIGURATION),
               filterItem = _fromCache5.filterItem;
 
-          var el = _this6.el;
+          var el = _this7.el;
           var children = Array.from(el.children);
           return children.filter(function (item) {
             return !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden;
@@ -952,11 +929,11 @@
     }, {
       key: "pages",
       get: function get() {
-        var _this7 = this;
+        var _this8 = this;
 
         return fromCache(this, CACHE_KEY_PAGES, function () {
-          var el = _this7.el,
-              items = _this7.items;
+          var el = _this8.el,
+              items = _this8.items;
           var viewport = el.clientWidth;
 
           if (viewport === 0) {
@@ -1012,13 +989,13 @@
     }, {
       key: "pageIndex",
       get: function get() {
-        var _this8 = this;
+        var _this9 = this;
 
         return fromCache(this, CACHE_KEY_PAGE_INDEX, function () {
-          var el = _this8.el,
-              items = _this8.items,
-              index = _this8.index,
-              pages = _this8.pages;
+          var el = _this9.el,
+              items = _this9.items,
+              index = _this9.index,
+              pages = _this9.pages;
           var outerLeft = el.getBoundingClientRect().left;
           var clientWidth = el.clientWidth;
           var visibles = index.reduce(function (acc, at) {
@@ -1077,7 +1054,7 @@
         var features = fromCache(this, CACHE_KEY_FEATURES);
         features.forEach(function (feature) {
           return feature.update({
-            reason: UpdateReason.FORCED
+            type: UpdateType.FORCED
           });
         });
       }
@@ -1089,7 +1066,7 @@
         var features = fromCache(this, CACHE_KEY_FEATURES);
         features.forEach(function (feature) {
           return feature.update({
-            reason: UpdateReason.SCROLL
+            type: UpdateType.SCROLL
           });
         });
         var index = this.index;
@@ -1110,7 +1087,7 @@
         var features = fromCache(this, CACHE_KEY_FEATURES);
         features.forEach(function (feature) {
           return feature.update({
-            reason: UpdateReason.RESIZE
+            type: UpdateType.RESIZE
           });
         });
       }
@@ -1123,6 +1100,6 @@
   }();
 
   _exports.Carousel = Carousel;
-  var version = '0.12.0-2';
+  var version = '0.12.0-3';
   _exports.version = version;
 });
