@@ -18,37 +18,37 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
 ## Docs
 
 - [CarouCSSel](#caroucssel)
-	- [Docs](#docs)
-	- [Installation](#installation)
-	- [Usage](#usage)
-		- [CSS](#css)
-		- [SCSS](#scss)
-		- [JS](#js)
-	- [Features](#features)
-		- [Buttons](#buttons)
-		- [Pagination](#pagination)
-		- [Mask (Scrollbars)](#mask-scrollbars)
-	- [Options](#options)
-		- [Index](#index)
-		- [Filters](#filters)
-		- [Event hooks](#event-hooks)
-	- [API](#api)
-		- [SCSS](#scss-1)
-			- [`@include caroucssel()`](#include-caroucssel)
-			- [`@include caroucssel-snap()`](#include-caroucssel-snap)
-		- [JS](#js-1)
-			- [`.behavior`](#behavior)
-			- [`.index`](#index-1)
-			- [`.items` (read only)](#items-read-only)
-			- [`.pages` (read only)](#pages-read-only)
-			- [`.pageIndex` (read only)](#pageindex-read-only)
-			- [`.id` (read only)](#id-read-only)
-			- [`.el` (read only)](#el-read-only)
-			- [`.mask` (read only)](#mask-read-only)
-			- [`.update()`](#update)
-			- [`.destroy()`](#destroy)
-	- [Polyfills](#polyfills)
-	- [License](#license)
+  - [Docs](#docs)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [CSS](#css)
+    - [SCSS](#scss)
+    - [JS](#js)
+  - [Features](#features)
+    - [Buttons](#buttons)
+    - [Pagination](#pagination)
+    - [Mask (Scrollbars)](#mask-scrollbars)
+  - [Options](#options)
+    - [Index](#index)
+    - [Filters](#filters)
+    - [Event hooks](#event-hooks)
+  - [API](#api)
+    - [SCSS](#scss-1)
+      - [`@include caroucssel()`](#include-caroucssel)
+      - [`@include caroucssel-snap()`](#include-caroucssel-snap)
+    - [JS](#js-1)
+      - [`.behavior`](#behavior)
+      - [`.index`](#index-1)
+      - [`.items` (read only)](#items-read-only)
+      - [`.pages` (read only)](#pages-read-only)
+      - [`.pageIndex` (read only)](#pageindex-read-only)
+      - [`.id` (read only)](#id-read-only)
+      - [`.el` (read only)](#el-read-only)
+      - [`.mask` (read only)](#mask-read-only)
+      - [`.update()`](#update)
+      - [`.destroy()`](#destroy)
+  - [Polyfills](#polyfills)
+  - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -85,9 +85,9 @@ The prebuild CSS-file only contains selectors for basic usage. It's recommended 
 <link rel="stylesheet" href="caroucssel.min.css">
 
 <div class="caroucssel use-snap">
-    <div class="item">Item 1</div>
-    <div class="item">Item 2</div>
-    <div class="item">Item 3</div>
+  <div class="item">Item 1</div>
+  <div class="item">Item 2</div>
+  <div class="item">Item 3</div>
 </div>
 ```
 
@@ -99,12 +99,12 @@ The SCSS gives the freedom to choose your own selectors, which should have a car
 @import '~caroucssel/styles/caroucssel';
 
 .my-carousel {
-    @include caroucssel();
-    @include caroucssel-snap($at: 100%);
+  @include caroucssel();
+  @include caroucssel-snap($at: 100%);
 
-    @media screen and (min-width: 700px) {
-        @include caroucssel-snap($at: 50%);
-    }
+  @media screen and (min-width: 700px) {
+    @include caroucssel-snap($at: 50%);
+  }
 }
 ```
 
@@ -137,9 +137,9 @@ import {Buttons} from 'caroucssel/features/buttons';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	features: [
-		new Buttons(),
-	],
+  features: [
+    new Buttons(),
+  ],
 });
 ```
 
@@ -153,10 +153,10 @@ Buttons are customizable by additional options. The following options are availa
 * `previousLabel` – a string of the label for this button – Default value is: `'Previous'`
 * `previousTitle` – a string of the title for this button – Default value is: `'Go to previous'`
 * `template` – is a function which returns a HTML-string for each button. A context object is passed, containing information about:
-    * `className` – a string of class names for the current button
-    * `controls` – a string reference to the HTML id of the carousel element. this is relevant for an `aria-controls="..."` attribute.
-    * `label` – a string of the button label defined by `nextLabel` and `previousLabel`
-    * `title` – a string of the button title defined by `nextTitle` and `previousTitle`
+  * `className` – a string of class names for the current button
+  * `controls` – a string reference to the HTML id of the carousel element. this is relevant for an `aria-controls="..."` attribute.
+  * `label` – a string of the button label defined by `nextLabel` and `previousLabel`
+  * `title` – a string of the button title defined by `nextTitle` and `previousTitle`
 
 A full set of button options could look like this:
 
@@ -166,21 +166,21 @@ import {Buttons} from 'caroucssel/features/buttons';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	features: [
-		new Buttons({
-			className: 'my-button',
-			nextClassName: 'my-next-button',
-			nextTitle: 'Click this button to go one step forward',
-			nextLabel: '>'
-			previousClassName: 'my-previous-button',
-			previousTitle: 'Click this button to go one step back',
-			previousLabel: '<'
-			template: ({className, label, title}) =>
-				`<button class="${className}" title="${title}">
-					${label}
-				</button>`,
-		}),
-	],
+  features: [
+    new Buttons({
+      className: 'my-button',
+      nextClassName: 'my-next-button',
+      nextTitle: 'Click this button to go one step forward',
+      nextLabel: '>'
+      previousClassName: 'my-previous-button',
+      previousTitle: 'Click this button to go one step back',
+      previousLabel: '<'
+      template: ({className, label, title}) =>
+        `<button class="${className}" title="${title}">
+          ${label}
+        </button>`,
+    }),
+  ],
 });
 ```
 
@@ -196,9 +196,9 @@ import {Pagination} from 'caroucssel/features/pagination';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	features: [
-		new Pagination(),
-	],
+  features: [
+    new Pagination(),
+  ],
 });
 ```
 
@@ -206,19 +206,19 @@ The pagination can be customized by additional options. The following options ar
 
 * `className` – a string which represents the class name for the `<ul>` element of the pagination – Default value is: `'pagination'`
 * `label` – a function which returns a string for the label of each button inside the pagination. A data object is passed as param into the invoked function, containing information about:
-    * `index` – a number of the current item index
-    * `pages` – all existing pages, a list of grouped indexes
-    * `page` – the current page
+  * `index` – a number of the current item index
+  * `pages` – all existing pages, a list of grouped indexes
+  * `page` – the current page
 * `title` – a function which returns a string for the title of each button inside the pagination. A data object is passed as param into the invoked function, containing information about:
-    * `index` – a number of the current item index
-    * `pages` – all existing pages, a list of grouped indexes
-    * `page` – the current page
+  * `index` – a number of the current item index
+  * `pages` – all existing pages, a list of grouped indexes
+  * `page` – the current page
 * `template`– is a function which returns an HTML-string of the complete pagination. The default implementation invokes the `label` and `title` functions to create the string. A data object is passed as param into the invoked function, containing information about:
-    * `className` – a string with the value of the `className` option.
-    * `controls` – a string reference to the HTML id of the carousel element. this is relevant for an `aria-controls="..."` attribute.
-    * `pages` – all existing pages, a list of grouped indexes
-    * `label` – the function reference for `label` to create a button label
-    * `title` – the function reference for `title` to create a button title
+  * `className` – a string with the value of the `className` option.
+  * `controls` – a string reference to the HTML id of the carousel element. this is relevant for an `aria-controls="..."` attribute.
+  * `pages` – all existing pages, a list of grouped indexes
+  * `label` – the function reference for `label` to create a button label
+  * `title` – the function reference for `title` to create a button title
 
 A full set of pagination options could look like this:
 
@@ -228,19 +228,19 @@ import {Pagination} from 'caroucssel/features/pagination';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	features: [
-		new Pagination({
-			className: 'my-pagination',
-			label: ({index}) => `${index + 1}.`,
-			title: ({index}) => `Jump to ${index + 1}. item`,
-			template: ({className, pages, label, title}) =>
-				`<div class="${className}">
-					${pages.map((page, index) =>
-						`<button title="${title({index})}">${label({index})}</button>`
-					).join('')}
-				</div>`
-		}),
-	],
+  features: [
+    new Pagination({
+      className: 'my-pagination',
+      label: ({index}) => `${index + 1}.`,
+      title: ({index}) => `Jump to ${index + 1}. item`,
+      template: ({className, pages, label, title}) =>
+        `<div class="${className}">
+          ${pages.map((page, index) =>
+            `<button title="${title({index})}">${label({index})}</button>`
+          ).join('')}
+        </div>`
+    }),
+  ],
 });
 ```
 
@@ -255,11 +255,11 @@ import {Carousel, Mask} from 'caroucssel';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	features: [
-		new Mask({
-			enabled: false,
-		}),
-	],
+  features: [
+    new Mask({
+      enabled: false,
+    }),
+  ],
 });
 ```
 
@@ -270,12 +270,12 @@ import {Carousel, Mask} from 'caroucssel';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	features: [
-		new Mask({
-			className: `my-mask`,
-			tagName: `section`,
-		}),
-	],
+  features: [
+    new Mask({
+      className: `my-mask`,
+      tagName: `section`,
+    }),
+  ],
 });
 ```
 
@@ -289,7 +289,7 @@ Set the initial scroll index. The option format as an array follows API format f
 
 ```javascript
 const carousel = new Carousel(el, {
-    index: [42]
+  index: [42],
 });
 ```
 
@@ -301,7 +301,7 @@ The carousel will ignore "invisible" html elements as scroll items by default. T
 
 ```javascript
 const carousel = new Carousel(el, {
-    filterItem: (item, index) => (index % 3) === 0
+  filterItem: (item, index) => (index % 3 === 0),
 });
 ```
 
