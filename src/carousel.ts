@@ -25,12 +25,6 @@ const CACHE_KEY_FEATURES = 'feautres';
 const VISIBILITY_OFFSET = 0.25;
 const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
 
-const DEFAULTS: Configuration = {
-	features: [],
-	filterItem: () => true,
-	onScroll: () => undefined,
-};
-
 
 /**
  * Export the mask because it's used by default inside the carousel.
@@ -60,6 +54,13 @@ export type Configuration = Omit<Required<Options>, 'index'>;
  * Internal counter for created instances. Will be used to create unique IDs.
  */
 let __instanceCount = 0;
+
+
+const DEFAULTS: Configuration = {
+	features: [],
+	filterItem: () => true,
+	onScroll: () => undefined,
+};
 
 
 /**
