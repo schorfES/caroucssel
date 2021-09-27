@@ -441,8 +441,8 @@ export class CustomFeature {
   doSomething() {
     // This is just an example function. Implement the feature the way you want...
     // If you need to trigger an update to the caroucel and attached other
-    // features, call the update() function of the proxy and pass you feature
-    // instance...
+    // features, call the update() function of the proxy and pass your
+    // feature - Only to this if it's needed to update any of the instances!
     this.proxy.update(this);
   }
 
