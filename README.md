@@ -17,34 +17,38 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Docs
 
-- [Installation](#installation)
-- [Usage](#usage)
-  - [CSS](#css)
-  - [SCSS](#scss)
-  - [JS](#js)
-- [Features](#features)
-  - [Buttons](#buttons)
-  - [Pagination](#pagination)
-  - [Mask (Scrollbars)](#mask-scrollbars)
-- [Options](#options)
-  - [Index](#index)
-  - [Filters](#filters)
-  - [Event hooks](#event-hooks)
-- [API](#api)
-  - [SCSS](#scss-1)
-    - [`@include caroucssel()`](#include-caroucssel)
-    - [`@include caroucssel-snap()`](#include-caroucssel-snap)
-  - [JS](#js-1)
-    - [`.index`](#index)
-    - [`.items` (read only)](#items-read-only)
-    - [`.pages` (read only)](#pages-read-only)
-    - [`.pageIndex` (read only)](#pageindex-read-only)
-    - [`.id` (read only)](#id-read-only)
-    - [`.el` (read only)](#el-read-only)
-    - [`.update()`](#update)
-    - [`.destroy()`](#destroy)
-- [Polyfills](#polyfills)
-- [License](#license)
+- [CarouCSSel](#caroucssel)
+	- [Docs](#docs)
+	- [Installation](#installation)
+	- [Usage](#usage)
+		- [CSS](#css)
+		- [SCSS](#scss)
+		- [JS](#js)
+	- [Features](#features)
+		- [Buttons](#buttons)
+		- [Pagination](#pagination)
+		- [Mask (Scrollbars)](#mask-scrollbars)
+	- [Options](#options)
+		- [Index](#index)
+		- [Filters](#filters)
+		- [Event hooks](#event-hooks)
+	- [API](#api)
+		- [SCSS](#scss-1)
+			- [`@include caroucssel()`](#include-caroucssel)
+			- [`@include caroucssel-snap()`](#include-caroucssel-snap)
+		- [JS](#js-1)
+			- [`.behavior`](#behavior)
+			- [`.index`](#index-1)
+			- [`.items` (read only)](#items-read-only)
+			- [`.pages` (read only)](#pages-read-only)
+			- [`.pageIndex` (read only)](#pageindex-read-only)
+			- [`.id` (read only)](#id-read-only)
+			- [`.el` (read only)](#el-read-only)
+			- [`.mask` (read only)](#mask-read-only)
+			- [`.update()`](#update)
+			- [`.destroy()`](#destroy)
+	- [Polyfills](#polyfills)
+	- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -115,11 +119,15 @@ const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, { /* options here */ });
 ```
 
+[typedocs](https://schorfes.github.io/caroucssel/docs/classes/carousel.Carousel.html)
+
 ## Features
 
 CarouCSSel provides a plugin mechanism called "features". Each behavior can be added with a custom feature implementation that is passed as a `features` list into an instance of the carousel. CarouCSSel comes with a set of predefined features like _Buttons_ and _Pagination_. All features are tree-shakeable to keep your bundle as small as possible.
 
 ### Buttons
+
+[typedocs](https://schorfes.github.io/caroucssel/docs/modules/features_buttons.html)
 
 _Buttons_ allow the user to scroll step by step, forwards and backward between items inside the carousel. Buttons are rendered as `<button>` into the DOM as a direct sibling of the carousel element. By default, the buttons are rendered with required WIA-ARIA attributes. To enable buttons, pass an instance of the feature to the `features` list:
 
@@ -177,6 +185,8 @@ const carousel = new Carousel(el, {
 ```
 
 ### Pagination
+
+[typedocs](https://schorfes.github.io/caroucssel/docs/modules/features_pagination.html)
 
 The _Pagination_ (or dots) is a list of buttons that allow navigating directly to a specific item/index inside the carousel. By default, the pagination is rendered with required WIA-ARIA attributes. To enable the pagination, pass an instance of the feature to the `features` list:
 
@@ -236,6 +246,8 @@ const carousel = new Carousel(el, {
 
 ### Mask (Scrollbars)
 
+[typedocs](https://schorfes.github.io/caroucssel/docs/modules/features_mask.html)
+
 There is a _Mask_ feature that is used by the Carousel instance by default. In most cases, there is no need to import and apply this feature directly. It's used to calculate and hide the scrollbars. If you would like to opt out of this feature, you need to set the `enabled` option to `false`.
 
 ```javascript
@@ -268,6 +280,8 @@ const carousel = new Carousel(el, {
 ```
 
 ## Options
+
+[typedocs](https://schorfes.github.io/caroucssel/docs/modules/carousel.html#Options)
 
 ### Index
 
@@ -311,6 +325,12 @@ Enables CSS-snapping inside the carousel. The following parameters are available
 
 ### JS
 
+[typedocs](https://schorfes.github.io/caroucssel/docs/classes/carousel.Carousel.html)
+
+#### `.behavior`
+
+The current scroll-behavior of the carousel. It refers to the css property [scroll-behavior](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) using the values `auto` and `smooth`. The default value is `smooth`.
+
 #### `.index`
 
 Returns and/or sets the current index of the carousel. The returned index is a list (array) of indexes that are currently visible (depending on each item width). To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
@@ -334,6 +354,10 @@ Returns the id-attribute value of the carousel.
 #### `.el` (read only)
 
 Returns the dom element reference of the carousel which was passed into the constructor.
+
+#### `.mask` (read only)
+
+Returns the dom element reference of the mask element that wraps the carousel element. If the mask is not enabled, the return value is `null`.
 
 #### `.update()`
 
