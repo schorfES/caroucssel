@@ -13,6 +13,41 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
 * Try the [examples](https://schorfes.github.io/caroucssel/demo/)
 * Read the [docs](https://schorfes.github.io/caroucssel/docs/)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Docs
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [CSS](#css)
+  - [SCSS](#scss)
+  - [JS](#js)
+- [Features](#features)
+  - [Buttons](#buttons)
+  - [Pagination](#pagination)
+  - [Mask (Scrollbars)](#mask-scrollbars)
+- [Options](#options)
+  - [Index](#index)
+  - [Filters](#filters)
+  - [Event hooks](#event-hooks)
+- [API](#api)
+  - [SCSS](#scss-1)
+    - [`@include caroucssel()`](#include-caroucssel)
+    - [`@include caroucssel-snap()`](#include-caroucssel-snap)
+  - [JS](#js-1)
+    - [`.index`](#index)
+    - [`.items` (read only)](#items-read-only)
+    - [`.pages` (read only)](#pages-read-only)
+    - [`.pageIndex` (read only)](#pageindex-read-only)
+    - [`.id` (read only)](#id-read-only)
+    - [`.el` (read only)](#el-read-only)
+    - [`.update()`](#update)
+    - [`.destroy()`](#destroy)
+- [Polyfills](#polyfills)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Installation
 
 CarouCSSel is available on [NPM](https://www.npmjs.com/package/caroucssel):
@@ -80,13 +115,11 @@ const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, { /* options here */ });
 ```
 
-#### Options
-
-##### Features
+## Features
 
 CarouCSSel provides a plugin mechanism called "features". Each behavior can be added with a custom feature implementation that is passed as a `features` list into an instance of the carousel. CarouCSSel comes with a set of predefined features like _Buttons_ and _Pagination_. All features are tree-shakeable to keep your bundle as small as possible.
 
-###### Buttons
+### Buttons
 
 _Buttons_ allow the user to scroll step by step, forwards and backward between items inside the carousel. Buttons are rendered as `<button>` into the DOM as a direct sibling of the carousel element. By default, the buttons are rendered with required WIA-ARIA attributes. To enable buttons, pass an instance of the feature to the `features` list:
 
@@ -143,7 +176,7 @@ const carousel = new Carousel(el, {
 });
 ```
 
-###### Pagination
+### Pagination
 
 The _Pagination_ (or dots) is a list of buttons that allow navigating directly to a specific item/index inside the carousel. By default, the pagination is rendered with required WIA-ARIA attributes. To enable the pagination, pass an instance of the feature to the `features` list:
 
@@ -201,7 +234,7 @@ const carousel = new Carousel(el, {
 });
 ```
 
-###### Mask (Scrollbars)
+### Mask (Scrollbars)
 
 There is a _Mask_ feature that is used by the Carousel instance by default. In most cases, there is no need to import and apply this feature directly. It's used to calculate and hide the scrollbars. If you would like to opt out of this feature, you need to set the `enabled` option to `false`.
 
@@ -234,7 +267,9 @@ const carousel = new Carousel(el, {
 });
 ```
 
-##### Index
+## Options
+
+### Index
 
 Set the initial scroll index. The option format as an array follows API format for possibly multiple visible items ([read more](#index-1)). To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
 
@@ -244,7 +279,7 @@ const carousel = new Carousel(el, {
 });
 ```
 
-##### Filters
+### Filters
 
 The carousel will ignore "invisible" html elements as scroll items by default. These elements are: `<link>`, `<meta>`, `<noscript>`, `<script>`, `<style>` and `<title>`. Other elements with a `hidden` attribute are ignored as well: `<div hidden>Hidden item</div>`.
 
@@ -256,7 +291,7 @@ const carousel = new Carousel(el, {
 });
 ```
 
-##### Event hooks
+### Event hooks
 
 * `onScroll` a function which is invoked when the user scrolls through the carousel. An object containing the current `index` (a list of visible indexes), an event `type`, a reference to the carousel instance (`target`) and the original scroll event (`originalEvent`) is passed to the function.
 
