@@ -22,7 +22,7 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
 - [Usage](#usage)
   - [CSS](#css)
   - [SCSS](#scss)
-  - [JS](#js)
+  - [JavaScript / TypeScript](#javascript--typescript)
 - [Features](#features)
   - [Buttons](#buttons)
   - [Pagination](#pagination)
@@ -32,21 +32,21 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
   - [Index](#index)
   - [Filters](#filters)
   - [Event hooks](#event-hooks)
-- [API](#api)
-  - [SCSS](#scss-1)
-    - [`@include caroucssel()`](#include-caroucssel)
-    - [`@include caroucssel-snap()`](#include-caroucssel-snap)
-  - [JS](#js-1)
-    - [`.behavior`](#behavior)
-    - [`.index`](#index)
-    - [`.items` (read only)](#items-read-only)
-    - [`.pages` (read only)](#pages-read-only)
-    - [`.pageIndex` (read only)](#pageindex-read-only)
-    - [`.id` (read only)](#id-read-only)
-    - [`.el` (read only)](#el-read-only)
-    - [`.mask` (read only)](#mask-read-only)
-    - [`.update()`](#update)
-    - [`.destroy()`](#destroy)
+- [Properties](#properties)
+  - [`.behavior`](#behavior)
+  - [`.index`](#index)
+  - [`.items` (read only)](#items-read-only)
+  - [`.pages` (read only)](#pages-read-only)
+  - [`.pageIndex` (read only)](#pageindex-read-only)
+  - [`.id` (read only)](#id-read-only)
+  - [`.el` (read only)](#el-read-only)
+  - [`.mask` (read only)](#mask-read-only)
+- [Methods](#methods)
+  - [`.update()`](#update)
+  - [`.destroy()`](#destroy)
+- [SCSS Mixins](#scss-mixins)
+  - [`@include caroucssel()`](#include-caroucssel)
+  - [`@include caroucssel-snap()`](#include-caroucssel-snap)
 - [Build a custom feature](#build-a-custom-feature)
 - [Polyfills](#polyfills)
 - [License](#license)
@@ -109,7 +109,7 @@ The SCSS gives the freedom to choose your own selectors, which should have a car
 }
 ```
 
-### JS
+### JavaScript / TypeScript
 
 Some browsers show a horizontal scrollbar depending on operating system or settings of the operating system. The JavaScripts detects that appearance and attaches some styles to hide them (See Mask feature). On top of that, any other features like buttons or pagination can added as an option. A basic instance of CarouCSSel is created as followed:
 
@@ -335,63 +335,65 @@ const carousel = new Carousel(el, {
 
 * `onScroll` a function which is invoked when the user scrolls through the carousel. An object containing the current `index` (a list of visible indexes), an event `type`, a reference to the carousel instance (`target`) and the original scroll event (`originalEvent`) is passed to the function.
 
-## API
+## Properties
 
-### SCSS
+[typedocs](https://schorfes.github.io/caroucssel/docs/classes/carousel.Carousel.html)
 
-#### `@include caroucssel()`
+### `.behavior`
+
+The current scroll-behavior of the carousel. It refers to the css property [scroll-behavior](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) using the values `auto` and `smooth`. The default value is `smooth`.
+
+### `.index`
+
+Returns and/or sets the current index of the carousel. The returned index is a list (array) of indexes that are currently visible (depending on each item width). To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
+
+### `.items` (read only)
+
+Returns an array of all child dom elements of the carousel.
+
+### `.pages` (read only)
+
+Returns an array of all pages. Each page is a group of indexes that matches a page.
+
+### `.pageIndex` (read only)
+
+Returns the index of the current page.
+
+### `.id` (read only)
+
+Returns the id-attribute value of the carousel.
+
+### `.el` (read only)
+
+Returns the dom element reference of the carousel which was passed into the constructor.
+
+### `.mask` (read only)
+
+Returns the dom element reference of the mask element that wraps the carousel element. If the mask is not enabled, the return value is `null`.
+
+## Methods
+
+[typedocs](https://schorfes.github.io/caroucssel/docs/classes/carousel.Carousel.html)
+
+### `.update()`
+
+Enforces an update of all enabled features of the carousel. This is, for example, useful when changing the number of items inside the carousel.
+
+### `.destroy()`
+
+This completely deconstructs the carousel and applied features and returns the dom to its initial state.
+
+## SCSS Mixins
+
+### `@include caroucssel()`
 
 Adds the minimal set of styles required to display the carousel.
 
-#### `@include caroucssel-snap()`
+### `@include caroucssel-snap()`
 
 Enables CSS-snapping inside the carousel. The following parameters are available:
 
 * `$at` – defines the snap point length. – Default value is: `100%`
-
-### JS
-
-[typedocs](https://schorfes.github.io/caroucssel/docs/classes/carousel.Carousel.html)
-
-#### `.behavior`
-
-The current scroll-behavior of the carousel. It refers to the css property [scroll-behavior](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) using the values `auto` and `smooth`. The default value is `smooth`.
-
-#### `.index`
-
-Returns and/or sets the current index of the carousel. The returned index is a list (array) of indexes that are currently visible (depending on each item width). To set an index you need to pass an array with at least one element. When passing more than one, the rest will be ignored.
-
-#### `.items` (read only)
-
-Returns an array of all child dom elements of the carousel.
-
-#### `.pages` (read only)
-
-Returns an array of all pages. Each page is a group of indexes that matches a page.
-
-#### `.pageIndex` (read only)
-
-Returns the index of the current page.
-
-#### `.id` (read only)
-
-Returns the id-attribute value of the carousel.
-
-#### `.el` (read only)
-
-Returns the dom element reference of the carousel which was passed into the constructor.
-
-#### `.mask` (read only)
-
-Returns the dom element reference of the mask element that wraps the carousel element. If the mask is not enabled, the return value is `null`.
-
-#### `.update()`
-
-Enforces an update of all enabled features of the carousel. This is, for example, useful when changing the number of items inside the carousel.
-
-#### `.destroy()`
-
-This completely deconstructs the carousel and applied features and returns the dom to its initial state.
 
 ## Build a custom feature
 
