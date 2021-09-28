@@ -684,7 +684,7 @@ class Carousel {
     }
 }
 
-const version = '0.12.0-4';
+const version = '0.12.0-5';
 
 exports.Buttons = Buttons;
 exports.Carousel = Carousel;

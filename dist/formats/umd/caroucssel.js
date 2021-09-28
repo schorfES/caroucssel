@@ -1100,6 +1100,6 @@
   }();
 
   _exports.Carousel = Carousel;
-  var version = '0.12.0-4';
+  var version = '0.12.0-5';
   _exports.version = version;
 });
