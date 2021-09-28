@@ -2,7 +2,7 @@ import { clearCache, fromCache } from '../../utils/cache';
 
 /**
  * Dataset of scrollbar dimensions
- * @internal.
+ * @internal
  */
 export type ScrollbarDimensions = {
 
