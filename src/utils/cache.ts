@@ -10,16 +10,27 @@ type Storage = {
 const __CACHE = new WeakMap<Reference, Storage>();
 
 /**
- * Returns the cache entry by as specific key of a given reference. If the cache
+ * Returns the cache entry by a specific key of a given reference. If the cache
+ * is not filled and the key doesn't exisit this will retrun undefined.
+ * @typeParam T is the type of the cached value
+ * @param ref the reference
+ * @param key the storage key
+ * @returns the cached value or undefined
+ */
+export function fromCache<T = unknown>(ref: Reference, key: string): T | undefined;
+
+/**
+ * Returns the cache entry by a specific key of a given reference. If the cache
  * is not filled and the key doesn't exisit, the factory function is called to
- * generate a value.
+ * generate a value. This value will be cached and returned.
+ * @typeParam T is the type of the cached value
  * @param ref the reference
  * @param key the storage key
  * @param factory the factory function
  * @returns the cached value
  */
-export function fromCache<T = unknown>(ref: Reference, key: string): T | undefined;
 export function fromCache<T = unknown>(ref: Reference, key: string, factory: () => T): T;
+
 export function fromCache<T = unknown>(ref: Reference, key: string, factory?: () => T): T | undefined {
 	const storage = __CACHE.get(ref) || {};
 	if (key in storage) {
@@ -38,6 +49,7 @@ export function fromCache<T = unknown>(ref: Reference, key: string, factory?: ()
 
 /**
  * Explicitly writes a value into the cache.
+ * @typeParam T is the type of the value to cache
  * @param ref the reference
  * @param key the storage key
  * @param value the value
@@ -73,6 +85,7 @@ export function clearFullCache(ref: Reference): void {
 
 /**
  * This exposes the cache instance for test environments. Otherwise it will be null.
+ * @internal
  */
 /* This should not be part of the coverage report: test util */
 /* istanbul ignore next */
