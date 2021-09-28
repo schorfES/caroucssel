@@ -284,6 +284,8 @@ const carousel = new Carousel(el, {
 
 **Attention, this is an _experimental feature_ and will be officially released in the future. Behavior, options, and interfaces might change.**
 
+[typedocs](https://schorfes.github.io/caroucssel/docs/modules/features_mouse.html)
+
 This will add mouse controls to the carousel by enabling drag and drop scrolling using the mouse.
 
 ```javascript
