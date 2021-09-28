@@ -27,7 +27,7 @@ A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**
   - [Buttons](#buttons)
   - [Pagination](#pagination)
   - [Mask (Scrollbars)](#mask-scrollbars)
-  - [Mouse _(experimental)_](#mouse-_experimental_)
+  - [Mouse (experimental)](#mouse-experimental)
 - [Options](#options)
   - [Index](#index)
   - [Filters](#filters)
@@ -280,7 +280,7 @@ const carousel = new Carousel(el, {
 });
 ```
 
-### Mouse _(experimental)_
+### Mouse (experimental)
 
 **Attention, this is an _experimental feature_ and will be officially released in the future. Behavior, options, and interfaces might change.**
 
