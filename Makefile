@@ -85,6 +85,7 @@ web_docs:
 		./src/proxy.ts \
 		./src/types.ts \
 		./src/features/**/*.ts \
+		./src/utils/*.ts \
 		--out public/docs/ \
 		--readme none \
 		--excludeProtected \
