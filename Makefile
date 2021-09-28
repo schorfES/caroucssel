@@ -84,7 +84,7 @@ web_docs:
 		./src/carousel.ts \
 		./src/proxy.ts \
 		./src/types.ts \
-		./src/features/**/*.ts \
+		./src/features/**/index.ts \
 		./src/utils/*.ts \
 		--out public/docs/ \
 		--readme none \
