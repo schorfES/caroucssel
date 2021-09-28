@@ -14,6 +14,7 @@ export function fromCache(ref, key, factory) {
 }
 /**
  * Explicitly writes a value into the cache.
+ * @typeParam T is the type of the value to cache
  * @param ref the reference
  * @param key the storage key
  * @param value the value
@@ -45,6 +46,7 @@ export function clearFullCache(ref) {
 }
 /**
  * This exposes the cache instance for test environments. Otherwise it will be null.
+ * @internal
  */
 /* This should not be part of the coverage report: test util */
 /* istanbul ignore next */

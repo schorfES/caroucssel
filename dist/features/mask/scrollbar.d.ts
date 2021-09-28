@@ -1,6 +1,6 @@
 /**
  * Dataset of scrollbar dimensions
- * @internal.
+ * @internal
  */
 export declare type ScrollbarDimensions = {
     /**

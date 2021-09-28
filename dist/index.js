@@ -5,4 +5,4 @@ export { Pagination } from './features/pagination';
 export { Carousel, Mask } from './carousel';
 // This will be replaced by the version from the package.json
 // See: scripts/build_post.js
-export const version = '0.12.0-3';
+export const version = '0.12.0-4';
