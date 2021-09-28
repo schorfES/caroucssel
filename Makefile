@@ -53,6 +53,7 @@ build_styles:
 		--trace
 
 	cp ./src/styles/caroucssel.scss ./dist/styles/caroucssel.scss
+	cp ./src/styles/index.scss ./dist/styles/index.scss
 
 
 build_scripts:

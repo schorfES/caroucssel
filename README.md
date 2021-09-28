@@ -97,7 +97,7 @@ The prebuild CSS-file only contains selectors for basic usage. It's recommended 
 The SCSS gives the freedom to choose your own selectors, which should have a carousel feature. It also allows you to easily customize the behavior depending on media queries.
 
 ```scss
-@import '~caroucssel/styles/caroucssel';
+@import '~caroucssel/styles';
 
 .my-carousel {
   @include caroucssel();
