@@ -1,4 +1,4 @@
-.PHONY: watch validate tests build build_clean build_styles build_scripts build_readme web web_clean web_docs web_pages release prerelease
+.PHONY: watch validate tests build build_clean build_styles build_scripts build_readme build_files web web_clean web_docs web_pages release prerelease
 
 
 watch:
@@ -29,7 +29,7 @@ tests:
 		--verbose
 
 
-build: build_clean build_styles build_scripts build_readme
+build: build_clean build_styles build_scripts build_readme build_files
 
 
 build_clean:
@@ -53,7 +53,6 @@ build_styles:
 		--trace
 
 	cp ./src/styles/caroucssel.scss ./dist/styles/caroucssel.scss
-	cp -r ./dist/styles/ ./styles
 
 
 build_scripts:
@@ -70,6 +69,12 @@ build_scripts:
 build_readme:
 	./node_modules/.bin/doctoc README.md \
 		--title '## Docs'
+
+
+build_files:
+	cp package.json dist/package.json
+	cp LICENSE dist/LICENSE
+	cp README.md dist/README.md
 
 
 web: web_clean web_pages web_docs
@@ -107,7 +112,8 @@ release: validate tests web
 	node_modules/.bin/np \
 		--no-yarn \
 		--no-tests \
-		--any-branch \
+		--branch master \
+		--contents ./dist \
 		--tag
 
 	gh-pages -d ./public/
@@ -118,4 +124,5 @@ prerelease: validate tests
 		--no-yarn \
 		--no-tests \
 		--any-branch \
+		--contents ./dist \
 		--tag
