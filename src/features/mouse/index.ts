@@ -6,6 +6,7 @@ const FEATURE_NAME = 'buildin:mouse';
 
 const CACHE_KEY_PROXY = 'prxy';
 const CACHE_KEY_CONFIGURATION = 'conf';
+const CACHE_KEY_PAGE_INDEX = 'pgidx';
 const CACHE_KEY_POSITION_X = 'posx';
 const CACHE_KEY_SCROLL_LEFT = 'scrl';
 const CACHE_KEY_TIMEOUT = 'time';
@@ -16,6 +17,10 @@ const CURSOR_GRABBING = 'grabbing';
 const EVENT_START = 'mousedown';
 const EVENT_DRAG = 'mousemove';
 const EVENT_END = 'mouseup';
+
+const THRESHOLD_MIN = 100;
+const THRESHOLD_MAX = 250;
+const THRESHOLD_FACTOR = 0.25; // Relative carousel element width
 
 
 /**
@@ -54,18 +59,25 @@ export type Options = {
 	/**
 	 * A hook function that is called when the user stats to drag.
 	 */
-	onStart?: (() => void);
+	onStart?: ((event: HookEvent) => void);
 
 	/**
 	 * A hook function that is called when the user is dragging.
 	 */
-	onDrag?: (() => void);
+	onDrag?: ((event: HookEvent) => void);
 
 	/**
 	 * A hook function that is called when the user stops to drag.
 	 */
-	onEnd?: (() => void);
+	onEnd?: ((event: HookEvent) => void);
 
+};
+
+/**
+ * The event object that is passed for each hook.
+ */
+export type HookEvent = {
+	originalEvent: Event,
 };
 
 /**
@@ -125,11 +137,7 @@ export class Mouse implements IFeature {
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 		const { el } = proxy;
 		const element = el as HTMLElement;
-
-		// Add grab indicator for cursor:
-		if (config.indicator) {
-			element.style.cursor = CURSOR_GRAB;
-		}
+		element.style.cursor = config.indicator ? CURSOR_GRAB : '';
 
 		// The handler is already bound in the constructor.
 		//
@@ -167,21 +175,18 @@ export class Mouse implements IFeature {
 		clearTimeout(timeout);
 
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
-		const { el } = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
-		fromCache(this, CACHE_KEY_SCROLL_LEFT, (): number => el.scrollLeft);
+		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
+		const element = proxy.el as HTMLElement;
+		fromCache(this, CACHE_KEY_SCROLL_LEFT, (): number => element.scrollLeft);
 		fromCache(this, CACHE_KEY_POSITION_X, (): number => __getPositionX(event));
+		fromCache(this, CACHE_KEY_PAGE_INDEX, (): number => proxy.pageIndex);
 
 		// Reset scroll behavior and scroll snapping to emulate regular scrolling.
 		// Prevent user selection while the user drags:
-		const element = el as HTMLElement;
 		element.style.userSelect = 'none';
 		element.style.scrollBehavior = 'auto';
 		element.style.scrollSnapType = 'none';
-
-		// Add grabbing indicator to cursor:
-		if (config.indicator) {
-			element.style.cursor = CURSOR_GRABBING;
-		}
+		element.style.cursor = config.indicator ? CURSOR_GRABBING : '';
 
 		// The handlers are already bound in the constructor.
 		//
@@ -191,7 +196,7 @@ export class Mouse implements IFeature {
 		/* eslint-enable @typescript-eslint/unbound-method */
 
 		// Call the hook:
-		config.onStart?.();
+		config.onStart?.({ originalEvent: event });
 	}
 
 	/**
@@ -210,7 +215,7 @@ export class Mouse implements IFeature {
 		el.scrollLeft = left + deltaX;
 
 		// Call the hook:
-		config.onDrag?.();
+		config.onDrag?.({ originalEvent: event });
 	}
 
 	/**
@@ -218,30 +223,45 @@ export class Mouse implements IFeature {
 	 * @internal
 	 * @param event the event that triggered the drag end
 	 */
-	private _onEnd(): void {
-		clearCache(this, CACHE_KEY_SCROLL_LEFT);
-		clearCache(this, CACHE_KEY_POSITION_X);
-
+	private _onEnd(event: Event): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
+		const left = fromCache(this, CACHE_KEY_SCROLL_LEFT) as number;
+		const pageIndex = fromCache(this, CACHE_KEY_PAGE_INDEX) as number;
+		clearCache(this, CACHE_KEY_SCROLL_LEFT);
+		clearCache(this, CACHE_KEY_POSITION_X);
+		clearCache(this, CACHE_KEY_PAGE_INDEX);
 
 		const element = proxy.el as HTMLElement;
+		const threshold = Math.min(Math.max(THRESHOLD_MIN, element.clientWidth * THRESHOLD_FACTOR), THRESHOLD_MAX);
+		const currentLeft = element.scrollLeft;
+		const distance = currentLeft - left;
+		const offset = Math.abs(distance);
+
 		element.style.removeProperty('user-select');
 		element.style.removeProperty('scroll-behavior');
+		element.style.cursor = config.indicator ? CURSOR_GRAB : '';
 
-		// Use grab for cursor:
-		if (config.indicator) {
-			element.style.cursor = CURSOR_GRAB;
+		// Apply the index. If the scroll offset is higher that the threshold,
+		// navigate to the next page depending on the drag direction.
+		let index = proxy.index;
+		if (offset > threshold) {
+			const direction = distance / offset;
+			const at = Math.max(pageIndex + direction, 0);
+			index = proxy.pages[at] ?? index;
 		}
 
-		const index = proxy.index;
+		// Apply the index until the styles are rendered to the element. This is
+		// required to have a smooth scroll-behaviour which is disabled during the
+		// mouse dragging.
 		window.requestAnimationFrame(() => {
 			proxy.index = index;
 		});
 
+		// Get around the scroll-snapping. Enable it until the position is already
+		// applied. This will take ~1000ms depending on distance and browser
+		// behaviour.
 		const timeout = window.setTimeout(() => {
-			// Get around the scroll snapping. Enable it after the position is already
-			// applied.
 			element.style.removeProperty('scroll-snap-type');
 		}, 1000);
 
@@ -255,7 +275,7 @@ export class Mouse implements IFeature {
 		/* eslint-enable @typescript-eslint/unbound-method */
 
 		// Call the hook:
-		config.onEnd?.();
+		config.onEnd?.({ originalEvent: event });
 	}
 
 }

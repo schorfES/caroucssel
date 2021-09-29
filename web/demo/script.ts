@@ -1,5 +1,6 @@
 import { Carousel } from '../../src/carousel';
 import { Buttons } from '../../src/features/buttons';
+import { Mouse } from '../../src/features/mouse';
 import { Pagination } from '../../src/features/pagination';
 
 const elements = Array.from(document.querySelectorAll<HTMLDivElement>('.caroucssel'));
@@ -28,6 +29,7 @@ elements.forEach((element) => {
 		features: [
 			new Buttons(),
 			new Pagination(),
+			new Mouse({ indicator: true }),
 		],
 		onScroll: function(event) {
 			// console.log('INDEX', event.index);
