@@ -5,7 +5,7 @@
   "module": "index.js",
   "main": "formats/cjs/caroucssel.js",
   "unpkg": "formats/umd/caroucssel.min.js",
-  "types": "caroucssel.d.ts",
+  "types": "index.d.ts",
   "sideEffects": false,
   "scripts": {
     "validate": "make validate",
