@@ -53,6 +53,7 @@ build_styles:
 
 	cp ./src/styles/caroucssel.scss ./dist/styles/caroucssel.scss
 	cp ./src/styles/index.scss ./dist/styles/index.scss
+	cp ./src/index.scss ./dist/index.scss
 
 
 build_scripts:
