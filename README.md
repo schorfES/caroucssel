@@ -399,7 +399,7 @@ Enables CSS-snapping inside the carousel. The following parameters are available
 
 ## Build a custom feature
 
-A feature is a plugin that implements some required functions and properties to match a specified API. If you're writing a feature in typescript, you can implement the interface [`IFeature`](https://schorfes.github.io/caroucssel/docs/interfaces/types.IFeature.html). If you're using plain javascript, follow the [typedocs](https://schorfes.github.io/caroucssel/docs/interfaces/types.IFeature.html) as guideline.
+A feature is a plugin that implements all required functions and properties to match a specified API. If you're writing a feature in typescript, you can implement the interface [`IFeature`](https://schorfes.github.io/caroucssel/docs/interfaces/types.IFeature.html). If you're using plain javascript, follow the [typedocs](https://schorfes.github.io/caroucssel/docs/interfaces/types.IFeature.html) as guideline.
 
 ```javascript
 export class CustomFeature {
@@ -422,14 +422,14 @@ export class CustomFeature {
 
   update(event) {
     // This function will be called when the carousel fires an internal update.
-    // The passed event object contains a reason (event.reason) to describe
+    // The passed event object contains a reason (event.type) to describe
     // why this was triggered:
     //
     // * 'scroll' (the carousel scrolled)
     // * 'resize' (the carousel resized)
     // * 'forced' (the carousel.update() function was called from external code)
     // * 'feature' (the carousel.update() function was called from an other feature)
-    console.log(event.reason);
+    console.log(event.type);
 
     // React on the update: take care of the event.reason value, maybe a partial
     // update is already enough...
