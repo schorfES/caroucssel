@@ -470,7 +470,7 @@ const carousel = new Carousel(el, {
 
 ## Polyfills
 
-CarouCSSel is using [scroll-`behavior: 'smooth'`](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) which is [supported](https://caniuse.com/css-scroll-behavior) in most modern browsers. For non-supporting browsers, there is a [polyfill by Dustan Kasten](https://github.com/iamdustan/smoothscroll).
+CarouCSSel is using [`scroll-behavior: 'smooth'`](https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior) which is [supported](https://caniuse.com/css-scroll-behavior) in most modern browsers. For non-supporting browsers, there is a [polyfill by Dustan Kasten](https://github.com/iamdustan/smoothscroll).
 
 ## License
 
