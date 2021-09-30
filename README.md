@@ -410,11 +410,11 @@ export class CustomFeature {
     return 'github-username:custom-feature';
   }
 
-  init(proxy) {
+  init(carousel) {
     // This function will be called when the carousel initializes all features.
-    // A proxy instance of the carousel will be passed as parameter. Store this
-    // proxy to access it later on for your feature implementation....
-    this.proxy = proxy;
+    // An (proxied) instance of the carousel will be passed as parameter. Store
+    // this reference to access it later on for your feature implementation....
+    this.carousel = carousel;
 
     // Initialize your feature...
     this.doSomething();
@@ -428,7 +428,7 @@ export class CustomFeature {
     // * 'scroll' (the carousel scrolled)
     // * 'resize' (the carousel resized)
     // * 'forced' (the carousel.update() function was called from external code)
-    // * 'feature' (the proxy.update() function was called from an other feature)
+    // * 'feature' (the carousel.update() function was called from an other feature)
     console.log(event.reason);
 
     // React on the update: take care of the event.reason value, maybe a partial
@@ -440,15 +440,15 @@ export class CustomFeature {
     // This function will be called when the carousel is destroyed. Ensure
     // to fully detach all instances and event listeners. Also, roll back all
     // changes to the DOM to restore the initial state...
-    this.proxy = null;
+    this.carousel = null;
   }
 
   doSomething() {
     // This is just an example function. Implement the feature the way you want...
     // If you need to trigger an update to the caroucel and attached other
-    // features, call the update() function of the proxy and pass your
-    // feature - Only to this if it's needed to update any of the instances!
-    this.proxy.update(this);
+    // features, call the update() function of the carousel and pass your
+    // feature - Only do this if it's needed to update any of the instances!
+    this.carousel.update(this);
   }
 
 }
