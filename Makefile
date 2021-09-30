@@ -34,7 +34,6 @@ build: build_clean build_styles build_scripts build_readme build_files
 
 build_clean:
 	rm -rf dist/ && mkdir dist/
-	rm -rf styles/ && mkdir styles/
 
 
 build_styles:
