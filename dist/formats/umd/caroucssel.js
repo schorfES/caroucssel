@@ -16,7 +16,7 @@
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.version = _exports.Pagination = _exports.Mask = _exports.Carousel = _exports.Buttons = void 0;
+  _exports.version = _exports.UpdateType = _exports.ScrollBehavior = _exports.Pagination = _exports.Mask = _exports.Carousel = _exports.Buttons = void 0;
 
   function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -278,20 +278,22 @@
 
   _exports.Buttons = Buttons;
   var UpdateType;
+  _exports.UpdateType = UpdateType;
 
   (function (UpdateType) {
     UpdateType["SCROLL"] = "scroll";
     UpdateType["RESIZE"] = "resize";
     UpdateType["FORCED"] = "forced";
     UpdateType["FEATURE"] = "feature";
-  })(UpdateType || (UpdateType = {}));
+  })(UpdateType || (_exports.UpdateType = UpdateType = {}));
 
   var ScrollBehavior;
+  _exports.ScrollBehavior = ScrollBehavior;
 
   (function (ScrollBehavior) {
     ScrollBehavior["AUTO"] = "auto";
     ScrollBehavior["SMOOTH"] = "smooth";
-  })(ScrollBehavior || (ScrollBehavior = {}));
+  })(ScrollBehavior || (_exports.ScrollBehavior = ScrollBehavior = {}));
 
   var FEATURE_NAME$1 = 'buildin:pagination';
   var CACHE_KEY_PROXY$2 = 'prxy';
@@ -1100,6 +1102,6 @@
   }();
 
   _exports.Carousel = Carousel;
-  var version = '0.12.0-5';
+  var version = '0.12.0-6';
   _exports.version = version;
 });

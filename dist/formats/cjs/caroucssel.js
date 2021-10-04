@@ -163,18 +163,18 @@ class Buttons {
     }
 }
 
-var UpdateType;
+exports.UpdateType = void 0;
 (function (UpdateType) {
     UpdateType["SCROLL"] = "scroll";
     UpdateType["RESIZE"] = "resize";
     UpdateType["FORCED"] = "forced";
     UpdateType["FEATURE"] = "feature";
-})(UpdateType || (UpdateType = {}));
-var ScrollBehavior;
+})(exports.UpdateType || (exports.UpdateType = {}));
+exports.ScrollBehavior = void 0;
 (function (ScrollBehavior) {
     ScrollBehavior["AUTO"] = "auto";
     ScrollBehavior["SMOOTH"] = "smooth";
-})(ScrollBehavior || (ScrollBehavior = {}));
+})(exports.ScrollBehavior || (exports.ScrollBehavior = {}));
 
 const FEATURE_NAME$1 = 'buildin:pagination';
 const CACHE_KEY_PROXY$2 = 'prxy';
@@ -218,7 +218,7 @@ class Pagination {
     }
     update(event) {
         switch (event.type) {
-            case UpdateType.SCROLL:
+            case exports.UpdateType.SCROLL:
                 this._update();
                 break;
             default:
@@ -347,8 +347,8 @@ class Mask {
     }
     update(event) {
         switch (event.type) {
-            case UpdateType.RESIZE:
-            case UpdateType.FORCED:
+            case exports.UpdateType.RESIZE:
+            case exports.UpdateType.FORCED:
                 clearCache(this, CACHE_KEY_HEIGHT);
                 this._render();
                 break;
@@ -439,7 +439,7 @@ class Proxy {
             if (feature === sender) {
                 return;
             }
-            feature.update({ type: UpdateType.FEATURE });
+            feature.update({ type: exports.UpdateType.FEATURE });
         });
     }
 }
@@ -479,7 +479,7 @@ const DEFAULTS = {
 };
 class Carousel {
     constructor(el, options = {}) {
-        this.behavior = ScrollBehavior.AUTO;
+        this.behavior = exports.ScrollBehavior.AUTO;
         if (!el || !(el instanceof Element)) {
             throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
         }
@@ -511,7 +511,7 @@ class Carousel {
                 this.index = [options.index];
                 break;
         }
-        this.behavior = ScrollBehavior.SMOOTH;
+        this.behavior = exports.ScrollBehavior.SMOOTH;
         this._onScroll = debounce(this._onScroll.bind(this), 25);
         this._onResize = debounce(this._onResize.bind(this), 25);
         el.addEventListener(EVENT_SCROLL, this._onScroll);
@@ -664,13 +664,13 @@ class Carousel {
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const features = fromCache(this, CACHE_KEY_FEATURES);
-        features.forEach((feature) => feature.update({ type: UpdateType.FORCED }));
+        features.forEach((feature) => feature.update({ type: exports.UpdateType.FORCED }));
     }
     _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const features = fromCache(this, CACHE_KEY_FEATURES);
-        features.forEach((feature) => feature.update({ type: UpdateType.SCROLL }));
+        features.forEach((feature) => feature.update({ type: exports.UpdateType.SCROLL }));
         const { index } = this;
         const configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
         configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
@@ -680,11 +680,11 @@ class Carousel {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
         const features = fromCache(this, CACHE_KEY_FEATURES);
-        features.forEach((feature) => feature.update({ type: UpdateType.RESIZE }));
+        features.forEach((feature) => feature.update({ type: exports.UpdateType.RESIZE }));
     }
 }
 
-const version = '0.12.0-5';
+const version = '0.12.0-6';
 
 exports.Buttons = Buttons;
 exports.Carousel = Carousel;
