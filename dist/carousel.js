@@ -1,80 +1,39 @@
+import { Mask } from './features/mask';
+import { Proxy } from './proxy';
+import { ScrollBehavior, UpdateType } from './types';
 import { clearCache, clearFullCache, fromCache, writeCache } from './utils/cache';
 import { debounce } from './utils/debounce';
-import { render } from './utils/render';
-import { Scrollbar } from './utils/scrollbar';
-// Export all types
-// (is required to expose all types in dist/caroucssel.d.ts)
-export * from './types';
 const ID_NAME = (count) => `caroucssel-${count}`;
 const ID_MATCH = /^caroucssel-[0-9]*$/;
+const EVENT_SCROLL = 'scroll';
+const EVENT_RESIZE = 'resize';
+const CACHE_KEY_ELEMENT = 'element';
+const CACHE_KEY_ID = 'id';
+const CACHE_KEY_CONFIGURATION = 'config';
 const CACHE_KEY_INDEX = 'index';
 const CACHE_KEY_ITEMS = 'items';
 const CACHE_KEY_PAGES = 'pages';
 const CACHE_KEY_PAGE_INDEX = 'page-index';
-const CACHE_KEY_SCROLLBAR = 'scrollbar';
+const CACHE_KEY_MASK = 'mask';
+const CACHE_KEY_PROXY = 'proxy';
+const CACHE_KEY_FEATURES = 'feautres';
 const VISIBILITY_OFFSET = 0.25;
 const INVISIBLE_ELEMENTS = /^(link|meta|noscript|script|style|title)$/i;
-const EVENT_SCROLL = 'scroll';
-const EVENT_RESIZE = 'resize';
-const DEFAULTS_BUTTON_PREVIOUS = {
-    className: 'is-previous',
-    label: 'Previous',
-    title: 'Go to previous',
-};
-const DEFAULTS_BUTTON_NEXT = {
-    className: 'is-next',
-    label: 'Next',
-    title: 'Go to next',
-};
-const DEFAULTS = {
-    // Buttons:
-    hasButtons: false,
-    buttonClassName: 'button',
-    buttonTemplate: ({ className, controls, label, title }) => `
-		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
-			<span>${label}</span>
-		</button>
-	`,
-    buttonPrevious: DEFAULTS_BUTTON_PREVIOUS,
-    buttonNext: DEFAULTS_BUTTON_NEXT,
-    // Pagination:
-    hasPagination: false,
-    paginationClassName: 'pagination',
-    paginationLabel: ({ index }) => `${index + 1}`,
-    paginationTitle: ({ index }) => `Go to ${index + 1}. page`,
-    paginationTemplate: ({ className, controls, pages, label, title }) => `
-		<ul class="${className}">
-			${pages.map((page, index) => {
-        const data = { index, page, pages };
-        const labelStr = label(data);
-        const titleStr = title(data);
-        return `<li>
-					<button type="button" aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
-						<span>${labelStr}</span>
-					</button>
-				</li>`;
-    }).join('')}
-		</ul>
-	`,
-    // Scrollbars, set to true when use default scrolling behaviour
-    hasScrollbars: false,
-    scrollbarsMaskClassName: 'caroucssel-mask',
-    // filter
-    filterItem: () => true,
-    // Hooks:
-    onScroll: () => undefined,
-};
+/**
+ * Export the mask because it's used by default inside the carousel.
+ */
+export { Mask };
 /*
  * Internal counter for created instances. Will be used to create unique IDs.
  */
 let __instanceCount = 0;
-/*
- * Singleton of scrollbar util. Is shared across all instances of carousel to
- * reduce redundant calculations.
- */
-let __scrollbar;
+const DEFAULTS = {
+    features: [],
+    filterItem: () => true,
+    onScroll: () => undefined,
+};
 /**
- * The carousel javascript instance.
+ * The carousel instance.
  */
 export class Carousel {
     /**
@@ -84,33 +43,44 @@ export class Carousel {
      * @param options are the options to configure this instance.
      */
     constructor(el, options = {}) {
-        this._mask = null;
-        this._isSmooth = false;
-        this._previous = null;
-        this._next = null;
-        this._pagination = null;
-        this._paginationButtons = null;
+        /**
+         * Current scroll behavior. Possible values are:
+         * * `'auto'`
+         * * `'smooth'`
+         */
+        this.behavior = ScrollBehavior.AUTO;
         if (!el || !(el instanceof Element)) {
             throw new Error(`Carousel needs a dom element but "${(typeof el)}" was passed.`);
         }
-        this._el = el;
-        // Create a singleton instance of scrollbar for all carousel instances:
-        __scrollbar = __scrollbar || new Scrollbar();
+        writeCache(this, CACHE_KEY_ELEMENT, el);
         // Count all created instances to create unique id, if given dom element
         // has no id-attribute:
         __instanceCount++;
         el.id = el.id || ID_NAME(__instanceCount);
-        this._id = el.id;
-        // Mask will be rendered after scrollbar detection.
-        this._mask = null;
-        // extend options and defaults:
-        const opts = Object.assign(Object.assign({}, DEFAULTS), options);
-        this._conf = opts;
-        // Render:
-        this._addButtons();
-        this._addPagination();
-        this._updateScrollbars();
-        // Set initial index and set smooth scrolling:
+        writeCache(this, CACHE_KEY_ID, el.id);
+        // Extend options and defaults into configuration:
+        const configuration = Object.assign(Object.assign({}, DEFAULTS), options);
+        writeCache(this, CACHE_KEY_CONFIGURATION, configuration);
+        // Detect if there is a "Mask" feature passed as option. Then use this one,
+        // otherwise add a mandatory instance by default. Also ensure that only one
+        // feature of type "Mask" is in the features list.
+        let mask = null;
+        let features = [...configuration.features];
+        const index = configuration.features.findIndex((feature) => feature instanceof Mask);
+        if (index > -1) {
+            // Extract first found instance of "Mask":
+            [mask] = features.splice(index, 1);
+        }
+        mask !== null && mask !== void 0 ? mask : (mask = new Mask());
+        features = features.filter((feature) => !(feature instanceof Mask));
+        features = [mask, ...features];
+        writeCache(this, CACHE_KEY_MASK, mask);
+        // Features: Initialize all features with a single proxy instance inbetween.
+        const proxy = new Proxy(this, features);
+        writeCache(this, CACHE_KEY_PROXY, proxy);
+        writeCache(this, CACHE_KEY_FEATURES, features);
+        features.forEach((feature) => feature.init(proxy));
+        // Set initial index and finally set smooth scrolling to enabled:
         switch (true) {
             // When index is a list:
             case Array.isArray(options.index):
@@ -121,7 +91,7 @@ export class Carousel {
                 this.index = [options.index];
                 break;
         }
-        this._isSmooth = true;
+        this.behavior = ScrollBehavior.SMOOTH;
         // Events:
         //
         // We disable @typescript-eslint/unbound-method here because we already bound
@@ -137,11 +107,13 @@ export class Carousel {
         /* eslint-enable @typescript-eslint/unbound-method */
     }
     /**
-     * This can be used for testing purposes to reset the instance count which is
+     * This will be used for testing purposes to reset the instance count which is
      * used to create unique id's.
      * @internal
      */
     static resetInstanceCount() {
+        /* This should not be part of the coverage report: test util */
+        /* istanbul ignore next */
         if (process.env.NODE_ENV === 'test') {
             __instanceCount = 0;
         }
@@ -153,7 +125,18 @@ export class Carousel {
      * @return the controlled dom element
      */
     get el() {
-        return this._el;
+        return fromCache(this, CACHE_KEY_ELEMENT);
+    }
+    /**
+     * Returns the dom element reference of the mask element that wraps the
+     * carousel element.
+     * @public
+     * @return the mask dom element
+     */
+    get mask() {
+        var _a;
+        const mask = fromCache(this, CACHE_KEY_MASK);
+        return (_a = mask.el) !== null && _a !== void 0 ? _a : null;
     }
     /**
      * Returns the id-attribute value of the carousel.
@@ -161,7 +144,7 @@ export class Carousel {
      * @return the id of the controlled dom element
      */
     get id() {
-        return this._id;
+        return fromCache(this, CACHE_KEY_ID);
     }
     /**
      * Returns the current index of the carousel. The returned index is a list (array)
@@ -204,12 +187,9 @@ export class Carousel {
      * @param values are the upcoming indexes
      */
     set index(values) {
-        const { el, items } = this;
+        const { behavior, el, items } = this;
         const { length } = items;
         if (!Array.isArray(values) || !values.length) {
-            return;
-        }
-        if (length === 0) {
             return;
         }
         let value = values[0] || 0;
@@ -226,7 +206,6 @@ export class Carousel {
             return;
         }
         clearCache(this, CACHE_KEY_INDEX);
-        const behavior = this._isSmooth ? 'smooth' : 'auto';
         el.scrollTo(Object.assign(Object.assign({}, to), { behavior }));
     }
     /**
@@ -236,7 +215,8 @@ export class Carousel {
      */
     get items() {
         return fromCache(this, CACHE_KEY_ITEMS, () => {
-            const { el, _conf: { filterItem } } = this;
+            const { filterItem } = fromCache(this, CACHE_KEY_CONFIGURATION);
+            const { el } = this;
             const children = Array.from(el.children);
             return children
                 .filter((item) => !INVISIBLE_ELEMENTS.test(item.tagName) && !item.hidden)
@@ -368,12 +348,9 @@ export class Carousel {
         const { el } = this;
         // Remove created id if it was created by carousel:
         ID_MATCH.test(el.id) && el.removeAttribute('id');
-        // Remove buttons:
-        this._removeButtons();
-        // Remove pagination:
-        this._removePagination();
-        // Remove scrollbars:
-        this._removeScrollbars();
+        // Destroy attached features:
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.destroy());
         // Remove events:
         //
         // We need to work the the function reference. Using .bind() would create a
@@ -389,191 +366,32 @@ export class Carousel {
     }
     /**
      * Enforces an update of all enabled components of the carousel. This is, for
-     * example, useful when changing the number of items inside the carousel.
+     * example, useful when changing the number of items inside the carousel. This
+     * also forwards an update call to all attached features.
      * @public
      */
     update() {
-        clearFullCache(this);
-        this._updateButtons();
-        this._updatePagination();
-        this._updateScrollbars();
-    }
-    _updateScrollbars() {
-        const { el, _conf: _options } = this;
-        const { hasScrollbars, scrollbarsMaskClassName } = _options;
-        if (hasScrollbars) {
-            return;
-        }
-        let { height } = __scrollbar.dimensions;
-        if (el.scrollWidth <= el.clientWidth) {
-            // If the contents are not scrollable because their width are less
-            // than the container, there will be no visible scrollbar. In this
-            // case, the scrollbar height is 0:
-            height = 0;
-        }
-        this._mask = this._mask || (() => {
-            var _a;
-            const mask = document.createElement('div');
-            mask.className = scrollbarsMaskClassName;
-            mask.style.overflow = 'hidden';
-            mask.style.height = '100%';
-            (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(mask, this.el);
-            mask.appendChild(el);
-            return mask;
-        })();
-        const cachedHeight = fromCache(this, CACHE_KEY_SCROLLBAR, () => undefined);
-        if (height === cachedHeight) {
-            return;
-        }
-        writeCache(this, CACHE_KEY_SCROLLBAR, height);
-        const element = el;
-        element.style.height = `calc(100% + ${height}px)`;
-        element.style.marginBottom = `${height * -1}px`;
-    }
-    _removeScrollbars() {
-        var _a, _b;
-        const { _mask, el } = this;
-        if (!_mask) {
-            return;
-        }
-        (_a = _mask.parentNode) === null || _a === void 0 ? void 0 : _a.insertBefore(el, _mask);
-        (_b = _mask.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(_mask);
-        el.removeAttribute('style');
-        this._mask = null;
-    }
-    _addButtons() {
-        var _a, _b;
-        const { el, id, _conf: _options } = this;
-        if (!_options.hasButtons) {
-            return;
-        }
-        const { buttonTemplate, buttonClassName, buttonPrevious, buttonNext } = _options;
-        const controls = id;
-        // Create button elements:
-        const [previous, next] = [
-            Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_PREVIOUS), buttonPrevious), { controls, className: [buttonClassName, buttonPrevious.className].join(' ') }),
-            Object.assign(Object.assign(Object.assign({}, DEFAULTS_BUTTON_NEXT), buttonNext), { controls, className: [buttonClassName, buttonNext.className].join(' ') }),
-        ].map((params) => render(buttonTemplate, params));
-        if (previous) {
-            const onPrevious = () => {
-                const { pages, pageIndex } = this;
-                const index = pages[pageIndex - 1] || pages[0];
-                this.index = index;
-            };
-            previous.onclick = onPrevious;
-            (_a = el.parentNode) === null || _a === void 0 ? void 0 : _a.appendChild(previous);
-        }
-        this._previous = previous;
-        if (next) {
-            const onNext = () => {
-                const { pages, pageIndex } = this;
-                const index = pages[pageIndex + 1] || pages[pages.length - 1];
-                this.index = index;
-            };
-            next.onclick = onNext;
-            (_b = el.parentNode) === null || _b === void 0 ? void 0 : _b.appendChild(next);
-        }
-        this._next = next;
-        this._updateButtons();
-    }
-    _updateButtons() {
-        const { _conf: _options } = this;
-        if (!_options.hasButtons) {
-            return;
-        }
-        const { pages, pageIndex, _previous, _next } = this;
-        if (_previous) {
-            const firstPage = pages[pageIndex - 1];
-            const isFirstPage = firstPage === undefined;
-            _previous.disabled = isFirstPage;
-        }
-        if (_next) {
-            const lastPage = pages[pageIndex + 1];
-            const isLastPage = lastPage === undefined;
-            _next.disabled = isLastPage;
-        }
-    }
-    _removeButtons() {
-        const { _previous, _next } = this;
-        [_previous, _next].forEach((button) => {
-            var _a;
-            if (!button) {
-                return;
-            }
-            button.onclick = null;
-            (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
-        });
-    }
-    _addPagination() {
-        const { _conf: _options } = this;
-        if (!_options.hasPagination) {
-            return;
-        }
-        const { _mask, el, id, pages } = this;
-        if (pages.length < 2) {
-            return;
-        }
-        const { paginationTemplate, paginationClassName, paginationLabel, paginationTitle } = _options;
-        const pagination = render(paginationTemplate, {
-            pages,
-            controls: id,
-            className: paginationClassName,
-            label: paginationLabel,
-            title: paginationTitle,
-        });
-        if (!pagination) {
-            return;
-        }
-        // @TODO: Add template for buttons:
-        const buttons = Array.from(pagination.querySelectorAll('button'))
-            .map((button, index) => {
-            button.onclick = () => this.index = pages[index];
-            return button;
-        });
-        const target = (_mask || el).parentNode;
-        target === null || target === void 0 ? void 0 : target.appendChild(pagination);
-        this._pagination = pagination;
-        this._paginationButtons = buttons;
-        this._updatePagination();
-    }
-    _updatePagination() {
-        const { _conf: _options } = this;
-        if (!_options.hasPagination) {
-            return;
-        }
-        const { pageIndex, _paginationButtons } = this;
-        if (!_paginationButtons) {
-            return;
-        }
-        _paginationButtons.forEach((button, at) => button.disabled = (at === pageIndex));
-    }
-    _removePagination() {
-        var _a;
-        const { _pagination, _paginationButtons } = this;
-        (_paginationButtons || []).forEach((button) => {
-            var _a;
-            button.onclick = null;
-            (_a = button.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(button);
-        });
-        this._paginationButtons = null;
-        _pagination && ((_a = _pagination.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(_pagination));
-        this._pagination = null;
+        clearCache(this, CACHE_KEY_INDEX);
+        clearCache(this, CACHE_KEY_ITEMS);
+        clearCache(this, CACHE_KEY_PAGES);
+        clearCache(this, CACHE_KEY_PAGE_INDEX);
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ type: UpdateType.FORCED }));
     }
     _onScroll(event) {
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        this._updateButtons();
-        this._updatePagination();
-        const { index, _conf: { onScroll } } = this;
-        onScroll && onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ type: UpdateType.SCROLL }));
+        const { index } = this;
+        const configuration = fromCache(this, CACHE_KEY_CONFIGURATION);
+        configuration.onScroll({ index, type: EVENT_SCROLL, target: this, originalEvent: event });
     }
     _onResize() {
         clearCache(this, CACHE_KEY_PAGES);
         clearCache(this, CACHE_KEY_INDEX);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
-        this._updateButtons();
-        this._removePagination();
-        this._addPagination();
-        this._updateScrollbars();
+        const features = fromCache(this, CACHE_KEY_FEATURES);
+        features.forEach((feature) => feature.update({ type: UpdateType.RESIZE }));
     }
 }

@@ -1,24 +1,39 @@
-import { Configuration, Index, Options, Pages } from './types';
-export * from './types';
+import { Mask } from './features/mask';
+import { FilterItemFn, ICarousel, IFeature, Index, Pages, ScrollBehavior, ScrollHook } from './types';
 /**
- * The carousel javascript instance.
+ * Export the mask because it's used by default inside the carousel.
  */
-export declare class Carousel {
+export { Mask };
+/**
+ * The available options for the carousel.
+ */
+export declare type Options = {
+    index?: Index | number;
+    features?: IFeature[];
+    filterItem?: FilterItemFn;
+    onScroll?: ScrollHook;
+};
+/**
+ * The required configuration of the carousel.
+ * @internal
+ */
+export declare type Configuration = Omit<Required<Options>, 'index'>;
+/**
+ * The carousel instance.
+ */
+export declare class Carousel implements ICarousel {
     /**
-     * This can be used for testing purposes to reset the instance count which is
+     * This will be used for testing purposes to reset the instance count which is
      * used to create unique id's.
      * @internal
      */
     static resetInstanceCount(): void;
-    protected _el: Element;
-    protected _id: string;
-    protected _conf: Configuration;
-    protected _mask: HTMLDivElement | null;
-    protected _isSmooth: boolean;
-    protected _previous: HTMLButtonElement | null;
-    protected _next: HTMLButtonElement | null;
-    protected _pagination: HTMLElement | null;
-    protected _paginationButtons: HTMLButtonElement[] | null;
+    /**
+     * Current scroll behavior. Possible values are:
+     * * `'auto'`
+     * * `'smooth'`
+     */
+    behavior: ScrollBehavior;
     /**
      * Creates an instance.
      * @param el is the dom element to control. This should be a container element
@@ -33,6 +48,13 @@ export declare class Carousel {
      * @return the controlled dom element
      */
     get el(): Element;
+    /**
+     * Returns the dom element reference of the mask element that wraps the
+     * carousel element.
+     * @public
+     * @return the mask dom element
+     */
+    get mask(): Element | null;
     /**
      * Returns the id-attribute value of the carousel.
      * @public
@@ -81,18 +103,11 @@ export declare class Carousel {
     destroy(): void;
     /**
      * Enforces an update of all enabled components of the carousel. This is, for
-     * example, useful when changing the number of items inside the carousel.
+     * example, useful when changing the number of items inside the carousel. This
+     * also forwards an update call to all attached features.
      * @public
      */
     update(): void;
-    protected _updateScrollbars(): void;
-    protected _removeScrollbars(): void;
-    protected _addButtons(): void;
-    protected _updateButtons(): void;
-    protected _removeButtons(): void;
-    protected _addPagination(): void;
-    protected _updatePagination(): void;
-    protected _removePagination(): void;
     protected _onScroll(event: Event): void;
     protected _onResize(): void;
 }

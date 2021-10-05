@@ -1,6 +1,7 @@
 // See: https://codeburst.io/throttling-and-debouncing-in-javascript-b01cad5c8edf
 /**
  * Creates a debounced version for a given function in a given delay (in ms).
+ * @typeParam F is the shape of the function to debounce.
  * @param func the original function
  * @param delay the delay in milliseconds (ms)
  * @returns the debounced function

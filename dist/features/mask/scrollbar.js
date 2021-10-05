@@ -1,14 +1,17 @@
-import { clearCache, fromCache } from './cache';
+import { clearCache, fromCache } from '../../utils/cache';
+const CACHE_KEY_DIMENSIONS = 'dims';
 /**
  * Helper class for scrollbar features.
+ * @internal
  */
 export class Scrollbar {
     /**
      * Creates an instance.
+     * @internal
      */
     constructor() {
         window.addEventListener('resize', () => {
-            clearCache(this, 'dimensions');
+            clearCache(this, CACHE_KEY_DIMENSIONS);
         });
     }
     /**
@@ -20,7 +23,7 @@ export class Scrollbar {
      * @return the dimensions of the scrollar
      */
     get dimensions() {
-        return fromCache(this, 'dimensions', () => {
+        return fromCache(this, CACHE_KEY_DIMENSIONS, () => {
             const inner = document.createElement('div');
             const outer = document.createElement('div');
             document.body.appendChild(outer);
