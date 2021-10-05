@@ -76,6 +76,21 @@ export function triggerClick(element: Element): void {
 }
 
 /**
+ * Triggers a mouse event on a given element
+ * @internal
+ * @param element the element to control
+ */
+export function triggerMouse(
+	element: Element,
+	type: 'mouseDown' | 'mouseMove' | 'mouseUp',
+	clientX: number,
+): void {
+	const event = createEvent[type](element,  { clientX });
+	fireEvent(element, event);
+	jest.runAllTimers();
+}
+
+/**
  * Wrapper to ensure the querySelector() returns an element.
  * @internal
  * @param selector the selector passed into querySelector
