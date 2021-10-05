@@ -1631,7 +1631,279 @@ var Buttons = /*#__PURE__*/function () {
 }();
 
 exports.Buttons = Buttons;
-},{"../../utils/cache":"HKiW","../../utils/render":"D3is"}],"q57n":[function(require,module,exports) {
+},{"../../utils/cache":"HKiW","../../utils/render":"D3is"}],"A9j1":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Mouse = void 0;
+
+var _cache = require("../../utils/cache");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var FEATURE_NAME = 'buildin:mouse';
+var CACHE_KEY_PROXY = 'prxy';
+var CACHE_KEY_CONFIGURATION = 'conf';
+var CACHE_KEY_PAGE_INDEX = 'pgidx';
+var CACHE_KEY_POSITION_X = 'posx';
+var CACHE_KEY_SCROLL_LEFT = 'scrl';
+var CACHE_KEY_TIMEOUT = 'time';
+var CURSOR_GRAB = 'grab';
+var CURSOR_GRABBING = 'grabbing';
+var EVENT_START = 'mousedown';
+var EVENT_DRAG = 'mousemove';
+var EVENT_END = 'mouseup';
+var THRESHOLD_MIN = 100;
+var THRESHOLD_MAX = 250;
+var THRESHOLD_FACTOR = 0.25; // Relative carousel element width
+// We are ignoring this due to this whole feature is only here to make TS happy.
+
+/* istanbul ignore next */
+
+/**
+ * Extracts the client x position from an event depending on the event type.
+ * @internal
+ * @param event the event
+ * @returns the client x position
+ */
+
+function __getPositionX(event) {
+  if (event instanceof MouseEvent) {
+    return event.clientX;
+  }
+
+  return 0;
+}
+
+var DEFAULTS = {
+  indicator: false
+};
+/**
+ * Feature to enable mouse controls
+ */
+
+var Mouse = /*#__PURE__*/function () {
+  /**
+   * Creates an instance of this feature.
+   * @param options are the options to configure this instance
+   */
+  function Mouse() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Mouse);
+
+    (0, _cache.writeCache)(this, CACHE_KEY_CONFIGURATION, Object.assign(Object.assign({}, DEFAULTS), options));
+    this._onStart = this._onStart.bind(this);
+    this._onDrag = this._onDrag.bind(this);
+    this._onEnd = this._onEnd.bind(this);
+  }
+  /**
+   * Returns the name of this feature.
+   */
+
+
+  _createClass(Mouse, [{
+    key: "name",
+    get: function get() {
+      return FEATURE_NAME;
+    }
+    /**
+     * Initializes this feature. This function will be called by the carousel
+     * instance and should not be called manually.
+     * @internal
+     * @param proxy the proxy instance between carousel and feature
+     */
+
+  }, {
+    key: "init",
+    value: function init(proxy) {
+      (0, _cache.writeCache)(this, CACHE_KEY_PROXY, proxy);
+      var config = (0, _cache.fromCache)(this, CACHE_KEY_CONFIGURATION);
+      var el = proxy.el;
+      var element = el;
+      element.style.cursor = config.indicator ? CURSOR_GRAB : ''; // The handler is already bound in the constructor.
+      //
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+
+      el.addEventListener(EVENT_START, this._onStart, {
+        passive: true
+      });
+    }
+    /**
+     * Destroys this feature. This function will be called by the carousel instance
+     * and should not be called manually.
+     * @internal
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      (0, _cache.clearFullCache)(this);
+    }
+    /**
+     * This triggers the feature to update its inner state. This function will be
+     * called by the carousel instance and should not be called manually. The
+     * carousel passes a event object that includes the update reason. This can be
+     * used to selectively/partially update sections of the feature.
+     * @internal
+     */
+
+  }, {
+    key: "update",
+    value: function update() {
+      /* nothing to update yet */
+    }
+    /**
+     * Handles the drag start event.
+     * @internal
+     * @param event the event that triggered the drag start
+     */
+
+  }, {
+    key: "_onStart",
+    value: function _onStart(event) {
+      var _a;
+
+      var timeout = (0, _cache.fromCache)(this, CACHE_KEY_TIMEOUT);
+      clearTimeout(timeout);
+      var config = (0, _cache.fromCache)(this, CACHE_KEY_CONFIGURATION);
+      var proxy = (0, _cache.fromCache)(this, CACHE_KEY_PROXY);
+      var element = proxy.el;
+      (0, _cache.fromCache)(this, CACHE_KEY_SCROLL_LEFT, function () {
+        return element.scrollLeft;
+      });
+      (0, _cache.fromCache)(this, CACHE_KEY_POSITION_X, function () {
+        return __getPositionX(event);
+      });
+      (0, _cache.fromCache)(this, CACHE_KEY_PAGE_INDEX, function () {
+        return proxy.pageIndex;
+      }); // Reset scroll behavior and scroll snapping to emulate regular scrolling.
+      // Prevent user selection while the user drags:
+
+      element.style.userSelect = 'none';
+      element.style.scrollBehavior = 'auto';
+      element.style.scrollSnapType = 'none';
+      element.style.cursor = config.indicator ? CURSOR_GRABBING : ''; // The handlers are already bound in the constructor.
+      //
+
+      /* eslint-disable @typescript-eslint/unbound-method */
+
+      window.addEventListener(EVENT_DRAG, this._onDrag, {
+        passive: true
+      });
+      window.addEventListener(EVENT_END, this._onEnd, {
+        passive: true
+      });
+      /* eslint-enable @typescript-eslint/unbound-method */
+      // Call the hook:
+
+      (_a = config.onStart) === null || _a === void 0 ? void 0 : _a.call(config, {
+        originalEvent: event
+      });
+    }
+    /**
+     * Handles the drag event. Calculates and updates scroll position.
+     * @internal
+     * @param event the event that triggered the dragging
+     */
+
+  }, {
+    key: "_onDrag",
+    value: function _onDrag(event) {
+      var _a;
+
+      var config = (0, _cache.fromCache)(this, CACHE_KEY_CONFIGURATION);
+
+      var _fromCache = (0, _cache.fromCache)(this, CACHE_KEY_PROXY),
+          el = _fromCache.el;
+
+      var left = (0, _cache.fromCache)(this, CACHE_KEY_SCROLL_LEFT);
+      var x = (0, _cache.fromCache)(this, CACHE_KEY_POSITION_X);
+
+      var currentX = __getPositionX(event);
+
+      var deltaX = x - currentX;
+      el.scrollLeft = left + deltaX; // Call the hook:
+
+      (_a = config.onDrag) === null || _a === void 0 ? void 0 : _a.call(config, {
+        originalEvent: event
+      });
+    }
+    /**
+     * Handles the drag end event.
+     * @internal
+     * @param event the event that triggered the drag end
+     */
+
+  }, {
+    key: "_onEnd",
+    value: function _onEnd(event) {
+      var _a, _b;
+
+      var proxy = (0, _cache.fromCache)(this, CACHE_KEY_PROXY);
+      var config = (0, _cache.fromCache)(this, CACHE_KEY_CONFIGURATION);
+      var left = (0, _cache.fromCache)(this, CACHE_KEY_SCROLL_LEFT);
+      var pageIndex = (0, _cache.fromCache)(this, CACHE_KEY_PAGE_INDEX);
+      (0, _cache.clearCache)(this, CACHE_KEY_SCROLL_LEFT);
+      (0, _cache.clearCache)(this, CACHE_KEY_POSITION_X);
+      (0, _cache.clearCache)(this, CACHE_KEY_PAGE_INDEX);
+      var element = proxy.el;
+      var threshold = Math.min(Math.max(THRESHOLD_MIN, element.clientWidth * THRESHOLD_FACTOR), THRESHOLD_MAX);
+      var currentLeft = element.scrollLeft;
+      var distance = currentLeft - left;
+      var offset = Math.abs(distance);
+      element.style.removeProperty('user-select');
+      element.style.removeProperty('scroll-behavior');
+      element.style.cursor = config.indicator ? CURSOR_GRAB : ''; // Apply the index. If the scroll offset is higher that the threshold,
+      // navigate to the next page depending on the drag direction.
+
+      var index = proxy.index;
+
+      if (offset > threshold) {
+        var direction = distance / offset;
+        var at = Math.max(pageIndex + direction, 0);
+        index = (_a = proxy.pages[at]) !== null && _a !== void 0 ? _a : index;
+      } // Apply the index until the styles are rendered to the element. This is
+      // required to have a smooth scroll-behaviour which is disabled during the
+      // mouse dragging.
+
+
+      window.requestAnimationFrame(function () {
+        proxy.index = index;
+      }); // Get around the scroll-snapping. Enable it until the position is already
+      // applied. This will take ~1000ms depending on distance and browser
+      // behaviour.
+
+      var timeout = window.setTimeout(function () {
+        element.style.removeProperty('scroll-snap-type');
+      }, 1000);
+      (0, _cache.writeCache)(this, CACHE_KEY_TIMEOUT, timeout); // The handlers are already bound in the constructor.
+      //
+
+      /* eslint-disable @typescript-eslint/unbound-method */
+
+      window.removeEventListener(EVENT_DRAG, this._onDrag);
+      window.removeEventListener(EVENT_END, this._onEnd);
+      /* eslint-enable @typescript-eslint/unbound-method */
+      // Call the hook:
+
+      (_b = config.onEnd) === null || _b === void 0 ? void 0 : _b.call(config, {
+        originalEvent: event
+      });
+    }
+  }]);
+
+  return Mouse;
+}();
+
+exports.Mouse = Mouse;
+},{"../../utils/cache":"HKiW"}],"q57n":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1657,6 +1929,9 @@ var CACHE_KEY_CONFIGURATION = 'conf';
 var CACHE_KEY_PAGINATION = 'pags';
 var CACHE_KEY_BUTTONS = 'btns';
 var DEFAULTS = {
+  // @TODO: ESLint don't like the nested template literals and loops.
+
+  /* eslint-disable indent */
   template: function template(_ref) {
     var className = _ref.className,
         controls = _ref.controls,
@@ -1674,6 +1949,8 @@ var DEFAULTS = {
       return "<li>\n\t\t\t\t\t<button type=\"button\" aria-controls=\"".concat(controls, "\" aria-label=\"").concat(titleStr, "\" title=\"").concat(titleStr, "\">\n\t\t\t\t\t\t<span>").concat(labelStr, "</span>\n\t\t\t\t\t</button>\n\t\t\t\t</li>");
     }).join(''), "\n\t\t</ul>\n\t");
   },
+
+  /* eslint-enable indent */
   className: 'pagination',
   label: function label(_ref2) {
     var index = _ref2.index;
@@ -1884,29 +2161,47 @@ var Pagination = /*#__PURE__*/function () {
 }();
 
 exports.Pagination = Pagination;
-},{"../../types":"gkAU","../../utils/cache":"HKiW","../../utils/render":"D3is"}],"g4tf":[function(require,module,exports) {
+},{"../../types":"gkAU","../../utils/cache":"HKiW","../../utils/render":"D3is"}],"qcOq":[function(require,module,exports) {
 "use strict";
 
-var _carousel = require("../src/carousel");
+var _carousel = require("../../src/carousel");
 
-var _buttons = require("../src/features/buttons");
+var _buttons = require("../../src/features/buttons");
 
-var _pagination = require("../src/features/pagination");
+var _mouse = require("../../src/features/mouse");
 
-var element = document.querySelector('.caroucssel');
-var items = Array.from(document.querySelectorAll('.item'));
+var _pagination = require("../../src/features/pagination");
 
-if (!element) {
-  throw new Error('Missing element for carousel.');
-}
+var elements = Array.from(document.querySelectorAll('.caroucssel'));
+elements.forEach(function (element) {
+  var _a, _b;
 
-new _carousel.Carousel(element, {
-  features: [new _buttons.Buttons(), new _pagination.Pagination()],
-  onScroll: function onScroll(event) {
-    items.forEach(function (item, index) {
-      item.classList[event.index.includes(index) ? 'add' : 'remove']('is-active');
-    });
-  }
+  var config = ((_b = (_a = element.dataset) === null || _a === void 0 ? void 0 : _a.config) === null || _b === void 0 ? void 0 : _b.split(',').map(function (size) {
+    return size.trim();
+  })) || [];
+  var orders = (element.dataset.order || '').split(',');
+  var offsetsLeft = (element.dataset.offsetLeft || '').split(',');
+  config.forEach(function (width, index) {
+    var item = document.createElement('div');
+    item.className = 'item';
+    item.textContent = 'Item ' + (index + 1);
+    item.style.width = width;
+    item.style.order = orders[index] || '';
+    item.style.marginLeft = offsetsLeft[index] || '';
+    element.appendChild(item);
+    var label = document.createElement('small');
+    label.className = 'item-label';
+    label.textContent = '(index: ' + index + ', width: ' + width + ')';
+    item.appendChild(label);
+  });
+  new _carousel.Carousel(element, {
+    features: [new _buttons.Buttons(), new _pagination.Pagination(), new _mouse.Mouse({
+      indicator: true
+    })],
+    onScroll: function onScroll(event) {// console.log('INDEX', event.index);
+      // console.log('PAGES', event.target.pages);
+    }
+  });
 });
-},{"../src/carousel":"NdLT","../src/features/buttons":"Ii21","../src/features/pagination":"q57n"}]},{},["g4tf"], null)
-//# sourceMappingURL=/caroucssel/script.2360e2d1.js.map
+},{"../../src/carousel":"NdLT","../../src/features/buttons":"Ii21","../../src/features/mouse":"A9j1","../../src/features/pagination":"q57n"}]},{},["qcOq"], null)
+//# sourceMappingURL=/caroucssel/script.648c23dd.js.map
