@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { createEvent, fireEvent } from '@testing-library/dom';
 
 /**
  * Options of the HTML markup.
@@ -35,9 +36,8 @@ export function fixture(amount: number, options: Partial<FixtureOptions> = {}): 
  * @internal
  */
 export function triggerResize(): void {
-	const event = document.createEvent('UIEvents');
-	event.initEvent('resize', true, false);
-	window.dispatchEvent(event);
+	const event = createEvent.resize(window);
+	fireEvent(window, event);
 	jest.runAllTimers();
 }
 
@@ -59,9 +59,8 @@ export function triggerScroll(element: Element, position: Partial<ScrollPosition
 	element.mockedTop = position.top || 0;
 	element.mockedLeft = position.left || 0;
 
-	const event = document.createEvent('Event');
-	event.initEvent('scroll');
-	element.dispatchEvent(event);
+	const event = createEvent.scroll(element);
+	fireEvent(element, event);
 	jest.runAllTimers();
 }
 
@@ -71,9 +70,8 @@ export function triggerScroll(element: Element, position: Partial<ScrollPosition
  * @param element the element to control
  */
 export function triggerClick(element: Element): void {
-	const event = document.createEvent('Event');
-	event.initEvent('click');
-	element.dispatchEvent(event);
+	const event = createEvent.click(element);
+	fireEvent(element, event);
 	jest.runAllTimers();
 }
 
