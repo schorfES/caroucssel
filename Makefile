@@ -113,7 +113,7 @@ release: validate tests web
 	node_modules/.bin/np \
 		--no-yarn \
 		--no-tests \
-		--branch master \
+		--branch main \
 		--contents ./dist \
 		--tag
 
