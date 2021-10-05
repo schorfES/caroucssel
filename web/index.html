@@ -98,10 +98,13 @@
 						</p>
 						<div class="code">
 							<pre>import {Carousel} from 'caroucssel';
+import {Buttons} from 'caroucssel/features/buttons';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	hasButtons: true
+	features: [
+		new Buttons(),
+	],
 });</pre>
 						</div>
 						<p>
@@ -134,10 +137,13 @@ const carousel = new Carousel(el, {
 						<div class="code">
 							<pre>
 import {Carousel} from 'caroucssel';
+import {Pagination} from 'caroucssel/features/pagination';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	hasPagination: true
+	features: [
+		new Pagination(),
+	],
 });</pre>
 
 						</div>
@@ -166,7 +172,7 @@ const carousel = new Carousel(el, {
 
 						<h3>SASS</h3>
 						<div class="code">
-							<pre>@import '~caroucssel/dist/caroucssel';
+							<pre>@import '~caroucssel';
 
 .selector {
 	@include caroucssel();
