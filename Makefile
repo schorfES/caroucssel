@@ -108,8 +108,10 @@ web_pages:
 		--no-minify \
 		--public-url /caroucssel/
 
+	node ./scripts/web_post.js
 
-release: validate tests web
+
+release: validate tests
 	node_modules/.bin/np \
 		--no-yarn \
 		--no-tests \

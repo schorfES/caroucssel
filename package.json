@@ -12,7 +12,7 @@
     "test": "make tests",
     "web": "make web",
     "build": "make build",
-    "version": "make build && git add dist"
+    "version": "make build && git add dist && make web"
   },
   "repository": {
     "type": "git",
