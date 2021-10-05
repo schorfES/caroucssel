@@ -1,12 +1,12 @@
 const config = {
 	preset: 'ts-jest',
-  setupFiles: [
-    './src/__setup__/element.ts',
-  ],
+	setupFiles: [
+		'./src/__setup__/element.ts',
+	],
 	snapshotSerializers: [
 		'jest-serializer-html',
 	],
-  testEnvironment: 'jsdom',
+	testEnvironment: 'jsdom',
 };
 
 export default config;

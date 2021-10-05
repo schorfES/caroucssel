@@ -83,8 +83,9 @@ export type Options = {
  */
 type Configuration = Required<Options>;
 
-
 const DEFAULTS: Configuration = {
+	// @TODO: ESLint don't like the nested template literals and loops.
+	/* eslint-disable indent */
 	template: ({ className, controls, pages, label, title }: Context) => `
 		<ul class="${className}">
 			${pages.map((page, index) => {
@@ -99,6 +100,7 @@ const DEFAULTS: Configuration = {
 			}).join('')}
 		</ul>
 	`,
+	/* eslint-enable indent */
 
 	className: 'pagination',
 	label: ({ index }) => `${index + 1}`,

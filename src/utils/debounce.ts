@@ -25,7 +25,7 @@ export function debounce<F extends Source>(func: F, delay: number): Debounced<F>
 	let timeout: ReturnType<typeof setTimeout> | null = null;
 	const debounced = (...args: Parameters<F>) => {
 		if (timeout !== null) {
-      clearTimeout(timeout);
+			clearTimeout(timeout);
 		}
 
 		timeout = setTimeout(() => func(...args), delay);

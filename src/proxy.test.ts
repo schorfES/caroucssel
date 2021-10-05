@@ -13,7 +13,7 @@ describe('proxy', () => {
 		document.body.innerHTML = fixture(4, { id: 'proxied-carousel' });
 		const el = querySelector('.caroucssel');
 		el.mockedClientWidth = 100;
-			[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
+		[...document.querySelectorAll('.item')].forEach((item) => item.mockedClientWidth = 100);
 		carousel = new Carousel(el);
 	});
 

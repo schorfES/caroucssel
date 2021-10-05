@@ -11,16 +11,16 @@ module.exports = {
 	],
 	rules: {
 		// Specify the alphabetical order of properties within declaration blocks.
-    // https://github.com/hudochenkov/stylelint-order/tree/master/rules/properties-alphabetical-order
-    'order/properties-alphabetical-order': null,
+		// https://github.com/hudochenkov/stylelint-order/tree/master/rules/properties-alphabetical-order
+		'order/properties-alphabetical-order': null,
 
 		// Specify the order of properties within declaration blocks.
-    // https://github.com/hudochenkov/stylelint-order/tree/master/rules/properties-order
-    'order/properties-order': [],
+		// https://github.com/hudochenkov/stylelint-order/tree/master/rules/properties-order
+		'order/properties-order': [],
 
 		// Stylelint config that sorts related property declarations by grouping together.
-    // https://www.npmjs.com/package/stylelint-config-rational-order
-    'plugin/rational-order': true,
+		// https://www.npmjs.com/package/stylelint-config-rational-order
+		'plugin/rational-order': true,
 
 		// Specify lowercase or uppercase for hex colors.
 		// https://stylelint.io/user-guide/rules/list/color-hex-case/
@@ -39,19 +39,19 @@ module.exports = {
 		'max-nesting-depth': 3,
 
 		// Disallow trailing zeros in numbers.
-    // https://stylelint.io/user-guide/rules/number-no-trailing-zeros
-    'number-no-trailing-zeros': true,
+		// https://stylelint.io/user-guide/rules/number-no-trailing-zeros
+		'number-no-trailing-zeros': true,
 
-    // Require or disallow a leading zero for fractional numbers less than 1.
-    // https://stylelint.io/user-guide/rules/number-leading-zero
-    'number-leading-zero': 'always',
+		// Require or disallow a leading zero for fractional numbers less than 1.
+		// https://stylelint.io/user-guide/rules/number-leading-zero
+		'number-leading-zero': 'always',
 
 		// Disallow qualifying a selector by type. Allow attribute selectors qualified by type.
-    // https://stylelint.io/user-guide/rules/selector-no-qualifying-type
-    'selector-no-qualifying-type': [true, { ignore: 'attribute' }],
+		// https://stylelint.io/user-guide/rules/selector-no-qualifying-type
+		'selector-no-qualifying-type': [true, { ignore: 'attribute' }],
 
 		// Strings must always be wrapped with single quotes.
-    // https://stylelint.io/user-guide/rules/string-quotes
-    'string-quotes': 'single',
+		// https://stylelint.io/user-guide/rules/string-quotes
+		'string-quotes': 'single',
 	},
 }

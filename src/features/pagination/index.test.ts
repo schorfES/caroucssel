@@ -119,12 +119,12 @@ describe('Pagination feature', () => {
 
 		const template: jest.Mock<string, [Context]> = jest.fn(
 			({ className, controls, pages, label, title }) =>
-				`<div class="${className}" aria-controls="${controls}">
-					${pages.map((page, index) => `
+				`<div class="${className}" aria-controls="${controls}">${pages
+					.map((page, index) => `
 						<div class="item" aria-label="${title({ index, page, pages })}">
 							${label({ index, page, pages })}
-						</div>`,
-					).join('')}
+						</div>`)
+					.join('')}
 				</div>`,
 		);
 

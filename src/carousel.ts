@@ -138,6 +138,7 @@ export class Carousel implements ICarousel {
 			case Array.isArray(options.index):
 				this.index = options.index as Index;
 				break;
+
 			// When index is a number, transfrom to list:
 			case !isNaN(options.index as number):
 				this.index = [options.index as number];
