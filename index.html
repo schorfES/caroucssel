@@ -8,8 +8,8 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Grand+Hotel|Vollkorn:400,600,700">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-		<link rel="stylesheet" href="/caroucssel/caroucssel.css.28faeef1.css">
-		<link rel="stylesheet" href="/caroucssel/styles.5a5379d3.css">
+		<link rel="stylesheet" href="/caroucssel/caroucssel.css.9f75505f.css">
+		<link rel="stylesheet" href="/caroucssel/styles.02dd6dfc.css">
 
 		<meta name="description" content="A lightweight dependency-free css carousel.">
 
@@ -51,8 +51,16 @@
 				<div class="item item-1">
 					<div>
 						<h1>
-							<em>Carou<span>CSS</span>el</em><span>: </span>
-							A lightweight dependency-free css carousel.
+							<em>
+								Carou<span>CSS</span>el
+								<sup>
+									@0.11.0
+								</sup>
+							</em>
+							<span>: </span>
+							<strong>
+								A lightweight dependency-free css carousel.
+							</strong>
 						</h1>
 						<p>
 							<strong>CSS can scroll, why not use it?</strong>
@@ -86,10 +94,13 @@
 						</p>
 						<div class="code">
 							<pre>import {Carousel} from 'caroucssel';
+import {Buttons} from 'caroucssel/features/buttons';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	hasButtons: true
+	features: [
+		new Buttons(),
+	],
 });</pre>
 						</div>
 						<p>
@@ -112,10 +123,13 @@ const carousel = new Carousel(el, {
 						<div class="code">
 							<pre>
 import {Carousel} from 'caroucssel';
+import {Pagination} from 'caroucssel/features/pagination';
 
 const el = document.querySelector('.carousel');
 const carousel = new Carousel(el, {
-	hasPagination: true
+	features: [
+		new Pagination(),
+	],
 });</pre>
 
 						</div>
@@ -134,7 +148,7 @@ const carousel = new Carousel(el, {
 
 						<h3>SASS</h3>
 						<div class="code">
-							<pre>@import '~caroucssel/dist/caroucssel';
+							<pre>@import '~caroucssel';
 
 .selector {
 	@include caroucssel();
@@ -178,6 +192,6 @@ const carousel = new Carousel(el, {
 			</div>
 		</div>
 		<script type="text/javascript" src="//polyfill.io/v3/polyfill.min.js?features=Array.from%2Csmoothscroll%2CArray.prototype.findIndex"></script>
-		<script type="text/javascript" src="/caroucssel/script.dcc82e4f.js"></script>
+		<script type="text/javascript" src="/caroucssel/script.2360e2d1.js"></script>
 	</body>
 </html>
