@@ -55,6 +55,9 @@ Object.defineProperties(Element.prototype, {
 		get: function(this: Element) {
 			return this.mockedLeft;
 		},
+		set: function(this: Element, value: number) {
+			this.mockedLeft = value;
+		},
 	},
 
 	clientWidth: {

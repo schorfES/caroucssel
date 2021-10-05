@@ -23,6 +23,8 @@ const THRESHOLD_MAX = 250;
 const THRESHOLD_FACTOR = 0.25; // Relative carousel element width
 
 
+// We are ignoring this due to this whole feature is only here to make TS happy.
+/* istanbul ignore next */
 /**
  * Extracts the client x position from an event depending on the event type.
  * @internal
@@ -32,14 +34,6 @@ const THRESHOLD_FACTOR = 0.25; // Relative carousel element width
 function __getPositionX(event: Event): number {
 	if (event instanceof MouseEvent) {
 		return event.clientX;
-	}
-
-	if (event instanceof PointerEvent) {
-		return event.clientX;
-	}
-
-	if (event instanceof TouchEvent) {
-		return event.touches[0].clientX;
 	}
 
 	return 0;
@@ -97,7 +91,7 @@ type Configuration =
 
 
 const DEFAULTS: Configuration = {
-	indicator: true,
+	indicator: false,
 };
 
 
