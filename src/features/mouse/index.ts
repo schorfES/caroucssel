@@ -97,7 +97,6 @@ const DEFAULTS: Configuration = {
 
 /**
  * Feature to enable mouse controls
- * @experimental
  */
 export class Mouse implements IFeature {
 
