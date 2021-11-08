@@ -200,8 +200,8 @@ export class Mouse implements IFeature {
 	private _onDrag(event: Event): void {
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
 		const { el } = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
-		const left = fromCache<number>(this, CACHE_KEY_SCROLL_LEFT) as number;
-		const x = fromCache<number>(this, CACHE_KEY_POSITION_X) as number
+		const left = fromCache<number>(this, CACHE_KEY_SCROLL_LEFT) ?? 0;
+		const x = fromCache<number>(this, CACHE_KEY_POSITION_X) ?? 0;
 		const currentX = __getPositionX(event);
 		const deltaX = x - currentX;
 
@@ -219,8 +219,8 @@ export class Mouse implements IFeature {
 	private _onEnd(event: Event): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
 		const config = fromCache<Configuration>(this, CACHE_KEY_CONFIGURATION) as Configuration;
-		const left = fromCache(this, CACHE_KEY_SCROLL_LEFT) as number;
-		const pageIndex = fromCache(this, CACHE_KEY_PAGE_INDEX) as number;
+		const left = fromCache<number>(this, CACHE_KEY_SCROLL_LEFT) ?? 0;
+		const pageIndex = fromCache<number>(this, CACHE_KEY_PAGE_INDEX) ?? 0;
 		clearCache(this, CACHE_KEY_SCROLL_LEFT);
 		clearCache(this, CACHE_KEY_POSITION_X);
 		clearCache(this, CACHE_KEY_PAGE_INDEX);
