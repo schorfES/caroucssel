@@ -249,9 +249,9 @@ export class Buttons implements IFeature {
 	 * @internal
 	 */
 	private _remove(): void {
-		const buttons = fromCache<Button[]>(this, CACHE_KEY_BUTTONS) as Button[];
+		const buttons = fromCache<Button[]>(this, CACHE_KEY_BUTTONS);
 
-		buttons.forEach((button): void => {
+		buttons?.forEach((button): void => {
 			// The onClick listener is already bound in the constructor.
 			//
 			// eslint-disable-next-line @typescript-eslint/unbound-method
