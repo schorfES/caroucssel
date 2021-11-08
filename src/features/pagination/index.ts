@@ -216,10 +216,10 @@ export class Pagination implements IFeature {
 	 */
 	private _update(): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
-		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS) as HTMLButtonElement[];
+		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 
 		const { pageIndex } = proxy;
-		buttons.forEach((button, at) => button.disabled = (at === pageIndex));
+		buttons?.forEach((button, at) => button.disabled = (at === pageIndex));
 	}
 
 	/**
@@ -252,7 +252,11 @@ export class Pagination implements IFeature {
 	 */
 	private _onClick(event: MouseEvent): void {
 		const proxy = fromCache<IProxy>(this, CACHE_KEY_PROXY) as IProxy;
-		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS) as HTMLButtonElement[];
+		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
+		if (!buttons) {
+			return;
+		}
+
 		const target = event.currentTarget as HTMLButtonElement;
 		const index = buttons.indexOf(target);
 		proxy.index = proxy.pages[index];
