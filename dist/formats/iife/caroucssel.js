@@ -141,7 +141,7 @@ var caroucssel = (function (exports) {
         }
         _remove() {
             const buttons = fromCache(this, CACHE_KEY_BUTTONS$1);
-            buttons.forEach((button) => {
+            buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button) => {
                 var _a;
                 button === null || button === void 0 ? void 0 : button.removeEventListener(EVENT_CLICK, this._onPrev);
                 button === null || button === void 0 ? void 0 : button.removeEventListener(EVENT_CLICK, this._onNext);
@@ -228,22 +228,22 @@ var caroucssel = (function (exports) {
             (_a = config.onStart) === null || _a === void 0 ? void 0 : _a.call(config, { originalEvent: event });
         }
         _onDrag(event) {
-            var _a;
+            var _a, _b, _c;
             const config = fromCache(this, CACHE_KEY_CONFIGURATION$3);
             const { el } = fromCache(this, CACHE_KEY_PROXY$3);
-            const left = fromCache(this, CACHE_KEY_SCROLL_LEFT);
-            const x = fromCache(this, CACHE_KEY_POSITION_X);
+            const left = (_a = fromCache(this, CACHE_KEY_SCROLL_LEFT)) !== null && _a !== void 0 ? _a : 0;
+            const x = (_b = fromCache(this, CACHE_KEY_POSITION_X)) !== null && _b !== void 0 ? _b : 0;
             const currentX = __getPositionX(event);
             const deltaX = x - currentX;
             el.scrollLeft = left + deltaX;
-            (_a = config.onDrag) === null || _a === void 0 ? void 0 : _a.call(config, { originalEvent: event });
+            (_c = config.onDrag) === null || _c === void 0 ? void 0 : _c.call(config, { originalEvent: event });
         }
         _onEnd(event) {
-            var _a, _b;
+            var _a, _b, _c, _d;
             const proxy = fromCache(this, CACHE_KEY_PROXY$3);
             const config = fromCache(this, CACHE_KEY_CONFIGURATION$3);
-            const left = fromCache(this, CACHE_KEY_SCROLL_LEFT);
-            const pageIndex = fromCache(this, CACHE_KEY_PAGE_INDEX$1);
+            const left = (_a = fromCache(this, CACHE_KEY_SCROLL_LEFT)) !== null && _a !== void 0 ? _a : 0;
+            const pageIndex = (_b = fromCache(this, CACHE_KEY_PAGE_INDEX$1)) !== null && _b !== void 0 ? _b : 0;
             clearCache(this, CACHE_KEY_SCROLL_LEFT);
             clearCache(this, CACHE_KEY_POSITION_X);
             clearCache(this, CACHE_KEY_PAGE_INDEX$1);
@@ -259,7 +259,7 @@ var caroucssel = (function (exports) {
             if (offset > threshold) {
                 const direction = distance / offset;
                 const at = Math.max(pageIndex + direction, 0);
-                index = (_a = proxy.pages[at]) !== null && _a !== void 0 ? _a : index;
+                index = (_c = proxy.pages[at]) !== null && _c !== void 0 ? _c : index;
             }
             window.requestAnimationFrame(() => {
                 proxy.index = index;
@@ -270,7 +270,7 @@ var caroucssel = (function (exports) {
             writeCache(this, CACHE_KEY_TIMEOUT, timeout);
             window.removeEventListener(EVENT_DRAG, this._onDrag);
             window.removeEventListener(EVENT_END, this._onEnd);
-            (_b = config.onEnd) === null || _b === void 0 ? void 0 : _b.call(config, { originalEvent: event });
+            (_d = config.onEnd) === null || _d === void 0 ? void 0 : _d.call(config, { originalEvent: event });
         }
     }
 
@@ -366,7 +366,7 @@ var caroucssel = (function (exports) {
             const proxy = fromCache(this, CACHE_KEY_PROXY$2);
             const buttons = fromCache(this, CACHE_KEY_BUTTONS);
             const { pageIndex } = proxy;
-            buttons.forEach((button, at) => button.disabled = (at === pageIndex));
+            buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button, at) => button.disabled = (at === pageIndex));
         }
         _remove() {
             var _a;
@@ -384,6 +384,9 @@ var caroucssel = (function (exports) {
         _onClick(event) {
             const proxy = fromCache(this, CACHE_KEY_PROXY$2);
             const buttons = fromCache(this, CACHE_KEY_BUTTONS);
+            if (!buttons) {
+                return;
+            }
             const target = event.currentTarget;
             const index = buttons.indexOf(target);
             proxy.index = proxy.pages[index];
@@ -795,7 +798,7 @@ var caroucssel = (function (exports) {
         }
     }
 
-    const version = '1.0.0';
+    const version = '1.0.1';
 
     exports.Buttons = Buttons;
     exports.Carousel = Carousel;

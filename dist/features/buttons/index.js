@@ -145,7 +145,7 @@ export class Buttons {
      */
     _remove() {
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
-        buttons.forEach((button) => {
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button) => {
             var _a;
             // The onClick listener is already bound in the constructor.
             //

@@ -245,7 +245,7 @@
         var _this2 = this;
 
         var buttons = fromCache(this, CACHE_KEY_BUTTONS$1);
-        buttons.forEach(function (button) {
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach(function (button) {
           var _a;
 
           button === null || button === void 0 ? void 0 : button.removeEventListener(EVENT_CLICK, _this2._onPrev);
@@ -378,33 +378,33 @@
     }, {
       key: "_onDrag",
       value: function _onDrag(event) {
-        var _a;
+        var _a, _b, _c;
 
         var config = fromCache(this, CACHE_KEY_CONFIGURATION$3);
 
         var _fromCache3 = fromCache(this, CACHE_KEY_PROXY$3),
             el = _fromCache3.el;
 
-        var left = fromCache(this, CACHE_KEY_SCROLL_LEFT);
-        var x = fromCache(this, CACHE_KEY_POSITION_X);
+        var left = (_a = fromCache(this, CACHE_KEY_SCROLL_LEFT)) !== null && _a !== void 0 ? _a : 0;
+        var x = (_b = fromCache(this, CACHE_KEY_POSITION_X)) !== null && _b !== void 0 ? _b : 0;
 
         var currentX = __getPositionX(event);
 
         var deltaX = x - currentX;
         el.scrollLeft = left + deltaX;
-        (_a = config.onDrag) === null || _a === void 0 ? void 0 : _a.call(config, {
+        (_c = config.onDrag) === null || _c === void 0 ? void 0 : _c.call(config, {
           originalEvent: event
         });
       }
     }, {
       key: "_onEnd",
       value: function _onEnd(event) {
-        var _a, _b;
+        var _a, _b, _c, _d;
 
         var proxy = fromCache(this, CACHE_KEY_PROXY$3);
         var config = fromCache(this, CACHE_KEY_CONFIGURATION$3);
-        var left = fromCache(this, CACHE_KEY_SCROLL_LEFT);
-        var pageIndex = fromCache(this, CACHE_KEY_PAGE_INDEX$1);
+        var left = (_a = fromCache(this, CACHE_KEY_SCROLL_LEFT)) !== null && _a !== void 0 ? _a : 0;
+        var pageIndex = (_b = fromCache(this, CACHE_KEY_PAGE_INDEX$1)) !== null && _b !== void 0 ? _b : 0;
         clearCache(this, CACHE_KEY_SCROLL_LEFT);
         clearCache(this, CACHE_KEY_POSITION_X);
         clearCache(this, CACHE_KEY_PAGE_INDEX$1);
@@ -421,7 +421,7 @@
         if (offset > threshold) {
           var direction = distance / offset;
           var at = Math.max(pageIndex + direction, 0);
-          index = (_a = proxy.pages[at]) !== null && _a !== void 0 ? _a : index;
+          index = (_c = proxy.pages[at]) !== null && _c !== void 0 ? _c : index;
         }
 
         window.requestAnimationFrame(function () {
@@ -433,7 +433,7 @@
         writeCache(this, CACHE_KEY_TIMEOUT, timeout);
         window.removeEventListener(EVENT_DRAG, this._onDrag);
         window.removeEventListener(EVENT_END, this._onEnd);
-        (_b = config.onEnd) === null || _b === void 0 ? void 0 : _b.call(config, {
+        (_d = config.onEnd) === null || _d === void 0 ? void 0 : _d.call(config, {
           originalEvent: event
         });
       }
@@ -591,7 +591,7 @@
         var proxy = fromCache(this, CACHE_KEY_PROXY$2);
         var buttons = fromCache(this, CACHE_KEY_BUTTONS);
         var pageIndex = proxy.pageIndex;
-        buttons.forEach(function (button, at) {
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach(function (button, at) {
           return button.disabled = at === pageIndex;
         });
       }
@@ -619,6 +619,11 @@
       value: function _onClick(event) {
         var proxy = fromCache(this, CACHE_KEY_PROXY$2);
         var buttons = fromCache(this, CACHE_KEY_BUTTONS);
+
+        if (!buttons) {
+          return;
+        }
+
         var target = event.currentTarget;
         var index = buttons.indexOf(target);
         proxy.index = proxy.pages[index];
@@ -1268,6 +1273,6 @@
   }();
 
   _exports.Carousel = Carousel;
-  var version = '1.0.0';
+  var version = '1.0.1';
   _exports.version = version;
 });

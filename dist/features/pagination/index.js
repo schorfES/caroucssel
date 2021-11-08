@@ -126,7 +126,7 @@ export class Pagination {
         const proxy = fromCache(this, CACHE_KEY_PROXY);
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
         const { pageIndex } = proxy;
-        buttons.forEach((button, at) => button.disabled = (at === pageIndex));
+        buttons === null || buttons === void 0 ? void 0 : buttons.forEach((button, at) => button.disabled = (at === pageIndex));
     }
     /**
      * Removes the whole pagination element and removes all attached event handlers.
@@ -158,6 +158,9 @@ export class Pagination {
     _onClick(event) {
         const proxy = fromCache(this, CACHE_KEY_PROXY);
         const buttons = fromCache(this, CACHE_KEY_BUTTONS);
+        if (!buttons) {
+            return;
+        }
         const target = event.currentTarget;
         const index = buttons.indexOf(target);
         proxy.index = proxy.pages[index];

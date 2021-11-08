@@ -122,16 +122,16 @@ export class Mouse {
      * @param event the event that triggered the dragging
      */
     _onDrag(event) {
-        var _a;
+        var _a, _b, _c;
         const config = fromCache(this, CACHE_KEY_CONFIGURATION);
         const { el } = fromCache(this, CACHE_KEY_PROXY);
-        const left = fromCache(this, CACHE_KEY_SCROLL_LEFT);
-        const x = fromCache(this, CACHE_KEY_POSITION_X);
+        const left = (_a = fromCache(this, CACHE_KEY_SCROLL_LEFT)) !== null && _a !== void 0 ? _a : 0;
+        const x = (_b = fromCache(this, CACHE_KEY_POSITION_X)) !== null && _b !== void 0 ? _b : 0;
         const currentX = __getPositionX(event);
         const deltaX = x - currentX;
         el.scrollLeft = left + deltaX;
         // Call the hook:
-        (_a = config.onDrag) === null || _a === void 0 ? void 0 : _a.call(config, { originalEvent: event });
+        (_c = config.onDrag) === null || _c === void 0 ? void 0 : _c.call(config, { originalEvent: event });
     }
     /**
      * Handles the drag end event.
@@ -139,11 +139,11 @@ export class Mouse {
      * @param event the event that triggered the drag end
      */
     _onEnd(event) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         const proxy = fromCache(this, CACHE_KEY_PROXY);
         const config = fromCache(this, CACHE_KEY_CONFIGURATION);
-        const left = fromCache(this, CACHE_KEY_SCROLL_LEFT);
-        const pageIndex = fromCache(this, CACHE_KEY_PAGE_INDEX);
+        const left = (_a = fromCache(this, CACHE_KEY_SCROLL_LEFT)) !== null && _a !== void 0 ? _a : 0;
+        const pageIndex = (_b = fromCache(this, CACHE_KEY_PAGE_INDEX)) !== null && _b !== void 0 ? _b : 0;
         clearCache(this, CACHE_KEY_SCROLL_LEFT);
         clearCache(this, CACHE_KEY_POSITION_X);
         clearCache(this, CACHE_KEY_PAGE_INDEX);
@@ -161,7 +161,7 @@ export class Mouse {
         if (offset > threshold) {
             const direction = distance / offset;
             const at = Math.max(pageIndex + direction, 0);
-            index = (_a = proxy.pages[at]) !== null && _a !== void 0 ? _a : index;
+            index = (_c = proxy.pages[at]) !== null && _c !== void 0 ? _c : index;
         }
         // Apply the index until the styles are rendered to the element. This is
         // required to have a smooth scroll-behaviour which is disabled during the
@@ -183,6 +183,6 @@ export class Mouse {
         window.removeEventListener(EVENT_END, this._onEnd);
         /* eslint-enable @typescript-eslint/unbound-method */
         // Call the hook:
-        (_b = config.onEnd) === null || _b === void 0 ? void 0 : _b.call(config, { originalEvent: event });
+        (_d = config.onEnd) === null || _d === void 0 ? void 0 : _d.call(config, { originalEvent: event });
     }
 }
