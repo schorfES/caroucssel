@@ -18,8 +18,7 @@ validate:
 		.
 
 	./node_modules/.bin/stylelint **/*.scss \
-		--config ./stylelint.config.js \
-		"./src/**/*.scss"
+		--config ./stylelint.config.js
 
 
 tests:

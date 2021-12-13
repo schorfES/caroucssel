@@ -2,7 +2,7 @@
 
 @font-face {
 	font-weight: normal;
-	font-family: 'icons';
+	font-family: icons;
 	font-style: normal;
 	src:
 		url('./font/icons.woff2') format('woff2'),
@@ -24,7 +24,7 @@ body {
 	color: #FFFFFF;
 	font-weight: 400;
 	font-size: 14px;
-	font-family: 'Vollkorn', serif;
+	font-family: Vollkorn, serif;
 	line-height: 1.3;
 	text-align: center;
 	background: #2F2F2F;
@@ -46,7 +46,7 @@ h1 {
 		position: relative;
 		display: inline-block;
 		font-size: 2.5rem;
-		font-family: 'Pacifico', cursive;
+		font-family: Pacifico, cursive;
 
 		span {
 			display: inline-block;
@@ -71,7 +71,7 @@ h1 {
 h2 {
 	margin: 0 0 1rem;
 	font-size: 1.75rem;
-	font-family: 'Pacifico', cursive;
+	font-family: Pacifico, cursive;
 }
 
 p {
@@ -215,7 +215,7 @@ a {
 	color: #2F2F2F;
 	font-weight: 400;
 	font-size: 3rem;
-	font-family: 'icons'; // stylelint-disable-line font-family-no-missing-generic-family-keyword
+	font-family: icons; // stylelint-disable-line font-family-no-missing-generic-family-keyword
 	text-shadow: 0 0 0 rgba(#2F2F2F, 0);
 	transform: translate(0, -50%);
 	opacity: 1;
@@ -279,7 +279,7 @@ a {
 		width: 1rem;
 		height: 1rem;
 		color: #2F2F2F;
-		font-family: 'Pacifico', cursive;
+		font-family: Pacifico, cursive;
 		background: #2F2F2F;
 		border-radius: 50%;
 		transition: background 0.3s;
