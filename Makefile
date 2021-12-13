@@ -6,7 +6,7 @@ watch:
 		serve \
 		./web/index.html \
 		./web/demo/index.html \
-		--out-dir public
+		--dist-dir public
 
 
 validate:
@@ -102,9 +102,9 @@ web_pages:
 		build \
 		./web/index.html \
 		./web/demo/index.html \
-		--out-dir public \
+		--dist-dir public \
 		--no-cache \
-		--no-minify \
+		--no-optimize \
 		--public-url /caroucssel/
 
 	node ./scripts/web_post.js
