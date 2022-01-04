@@ -15,6 +15,7 @@ web/
 .gitattributes
 .gitignore
 .nvmrc
+.parcelrc
 .stylelintignore
 codecov.yml
 jest.config.ts
