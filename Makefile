@@ -104,7 +104,7 @@ web_pages:
 		./web/demo/index.html \
 		--dist-dir public \
 		--no-cache \
-		--no-optimize \
+		--no-scope-hoist \
 		--public-url /caroucssel/
 
 	node ./scripts/web_post.js
