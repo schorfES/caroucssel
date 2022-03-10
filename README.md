@@ -70,7 +70,7 @@ yarn add caroucssel
 or in the browser
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/caroucssel@latest/dist/styles/caroucssel.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/caroucssel@latest/styles/caroucssel.min.css" />
 <script src="https://unpkg.com/caroucssel@latest"></script>
 ```
 
