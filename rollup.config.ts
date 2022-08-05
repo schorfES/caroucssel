@@ -107,7 +107,9 @@ export default TYPES.flatMap((type) => {
 			},
 			plugins: [
 				// Typescript plugin
-				typescript(),
+				typescript({
+					declaration: false,
+				}),
 
 				// Replace plugin: update NODE_ENV
 				replace({
