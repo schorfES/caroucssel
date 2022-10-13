@@ -429,7 +429,7 @@ export class CustomFeature {
     // * 'feature' (the carousel.update() function was called from an other feature)
     console.log(event.type);
 
-    // React on the update: take care of the event.reason value, maybe a partial
+    // React on the update: take care of the event.type, maybe a partial
     // update is already enough...
     this.doSomething();
   }
