@@ -32,7 +32,7 @@
     "@parcel/config-default": "^2.0.1",
     "@parcel/transformer-sass": "^2.6.2",
     "@parcel/transformer-typescript-tsc": "^2.0.1",
-    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-babel": "^6.0.2",
     "@rollup/plugin-replace": "^4.0.0",
     "@rollup/plugin-typescript": "^8.2.5",
     "@testing-library/user-event": "^14.2.1",
