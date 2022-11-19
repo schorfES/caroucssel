@@ -6,7 +6,8 @@ watch:
 		serve \
 		./web/index.html \
 		./web/demo/index.html \
-		--dist-dir public
+		--public-url /caroucssel \
+		--dist-dir ./public/
 
 
 validate:
