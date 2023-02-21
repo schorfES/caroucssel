@@ -3,9 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Reference = object;
 
-type Storage = {
-	[key: string]: unknown;
-};
+type Storage = Map<string, unknown>;
 
 const __CACHE = new WeakMap<Reference, Storage>();
 
@@ -32,9 +30,9 @@ export function fromCache<T = unknown>(ref: Reference, key: string): T | undefin
 export function fromCache<T = unknown>(ref: Reference, key: string, factory: () => T): T;
 
 export function fromCache<T = unknown>(ref: Reference, key: string, factory?: () => T): T | undefined {
-	const storage = __CACHE.get(ref) || {};
-	if (key in storage) {
-		return storage[key] as T;
+	const storage = __CACHE.get(ref) || new Map<string, T>();
+	if (storage.has(key)) {
+		return storage.get(key) as T;
 	}
 
 	if (!factory) {
@@ -42,7 +40,7 @@ export function fromCache<T = unknown>(ref: Reference, key: string, factory?: ()
 	}
 
 	const value = factory();
-	storage[key] = value;
+	storage.set(key, value);
 	__CACHE.set(ref, storage);
 	return value;
 }
@@ -55,8 +53,8 @@ export function fromCache<T = unknown>(ref: Reference, key: string, factory?: ()
  * @param value the value
  */
 export function writeCache<T = unknown>(ref: Reference, key: string, value: T): void {
-	const storage = __CACHE.get(ref) || {};
-	storage[key] = value;
+	const storage = __CACHE.get(ref) || new Map<string, T>();
+	storage.set(key, value);
 	__CACHE.set(ref, storage);
 }
 
@@ -67,12 +65,11 @@ export function writeCache<T = unknown>(ref: Reference, key: string, value: T): 
  */
 export function clearCache(ref: Reference, key: string): void {
 	const storage = __CACHE.get(ref);
-	if (!storage) {
+	if (!storage || !storage.has(key)) {
 		return;
 	}
 
-	storage[key] = undefined;
-	delete(storage[key]);
+	storage.delete(key);
 }
 
 /**

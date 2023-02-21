@@ -20,12 +20,12 @@ describe('Cache util', () => {
 			fromCache(ref, 'fourth', () => ({ foo: true, bar: false }));
 
 			const storage = cacheInstance?.get(ref);
-			expect(storage).toEqual({
-				first: 42,
-				second: true,
-				third: [1, 2, 3],
-				fourth: { foo: true, bar: false },
-			});
+			expect(storage).toEqual(new Map<string, unknown>([
+				['first', 42],
+				['second', true],
+				['third', [1, 2, 3]],
+				['fourth', { foo: true, bar: false }],
+			]));
 		});
 
 		it('should call factory when empty', () => {
@@ -143,31 +143,31 @@ describe('Cache util', () => {
 
 		it('should clear entry', () => {
 			const ref = {};
-			const storage = {
-				first: 42,
-				second: 13,
-			};
+			const storage = new Map([
+				['first', 42],
+				['second', 13],
+			]);
 			cacheInstance?.set(ref, storage);
 
 			clearCache(ref, 'first');
-			expect(storage).toEqual({
-				second: 13,
-			});
+			expect(storage).toEqual(new Map([
+				['second', 13],
+			]));
 		});
 
 		it('should clear entry gracefully that doesn\'t exist', () => {
 			const ref = {};
-			const storage = {
-				first: 42,
-				second: 13,
-			};
+			const storage = new Map([
+				['first', 42],
+				['second', 13],
+			]);
 			cacheInstance?.set(ref, storage);
 
 			clearCache(ref, 'third');
-			expect(storage).toEqual({
-				first: 42,
-				second: 13,
-			});
+			expect(storage).toEqual(new Map([
+				['first', 42],
+				['second', 13],
+			]));
 		});
 
 		it('should clear entry gracefully if cache doesn\'t exist', () => {
@@ -184,10 +184,10 @@ describe('Cache util', () => {
 
 		it('should clear entire cache', () => {
 			const ref = {};
-			cacheInstance?.set(ref, {
-				first: 42,
-				second: 13,
-			});
+			cacheInstance?.set(ref, new Map([
+				['first', 42],
+				['second', 13],
+			]));
 
 			clearFullCache(ref);
 
