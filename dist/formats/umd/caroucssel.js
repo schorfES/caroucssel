@@ -27,30 +27,29 @@
   }
   const __CACHE = new WeakMap();
   function fromCache(ref, key, factory) {
-    const storage = __CACHE.get(ref) || {};
-    if (key in storage) {
-      return storage[key];
+    const storage = __CACHE.get(ref) || new Map();
+    if (storage.has(key)) {
+      return storage.get(key);
     }
     if (!factory) {
       return undefined;
     }
     const value = factory();
-    storage[key] = value;
+    storage.set(key, value);
     __CACHE.set(ref, storage);
     return value;
   }
   function writeCache(ref, key, value) {
-    const storage = __CACHE.get(ref) || {};
-    storage[key] = value;
+    const storage = __CACHE.get(ref) || new Map();
+    storage.set(key, value);
     __CACHE.set(ref, storage);
   }
   function clearCache(ref, key) {
     const storage = __CACHE.get(ref);
-    if (!storage) {
+    if (!storage || !storage.has(key)) {
       return;
     }
-    storage[key] = undefined;
-    delete storage[key];
+    storage.delete(key);
   }
   function clearFullCache(ref) {
     __CACHE.delete(ref);
@@ -699,6 +698,7 @@
     onScroll: () => undefined
   };
   class Carousel {
+    static resetInstanceCount() {}
     constructor(el) {
       let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       this.behavior = ScrollBehavior.AUTO;
@@ -734,12 +734,11 @@
           break;
       }
       this.behavior = ScrollBehavior.SMOOTH;
-      this._onScroll = debounce(this._onScroll.bind(this), 25);
+      this._onScroll = debounce(this._onScroll.bind(this), 45);
       this._onResize = debounce(this._onResize.bind(this), 25);
       el.addEventListener(EVENT_SCROLL, this._onScroll);
       window.addEventListener(EVENT_RESIZE, this._onResize);
     }
-    static resetInstanceCount() {}
     get el() {
       return fromCache(this, CACHE_KEY_ELEMENT);
     }
@@ -974,6 +973,6 @@
     }
   }
   _exports.Carousel = Carousel;
-  const version = '1.1.1';
+  const version = '1.1.2';
   _exports.version = version;
 });

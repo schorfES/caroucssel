@@ -7,7 +7,7 @@ export { Mask };
 /**
  * The available options for the carousel.
  */
-export declare type Options = {
+export type Options = {
     index?: Index | number;
     features?: IFeature[];
     filterItem?: FilterItemFn;
@@ -17,7 +17,7 @@ export declare type Options = {
  * The required configuration of the carousel.
  * @internal
  */
-export declare type Configuration = Omit<Required<Options>, 'index'>;
+export type Configuration = Omit<Required<Options>, 'index'>;
 /**
  * The carousel instance.
  */

@@ -1,12 +1,12 @@
 /**
  * Generic function
  */
-export declare type Source = (...args: never[]) => unknown;
+export type Source = (...args: never[]) => unknown;
 /**
  * Debounced function
  * @typeParam F is the shape of the original function.
  */
-export declare type Debounced<F extends Source> = (...args: Parameters<F>) => void;
+export type Debounced<F extends Source> = (...args: Parameters<F>) => void;
 /**
  * Creates a debounced version for a given function in a given delay (in ms).
  * @typeParam F is the shape of the function to debounce.

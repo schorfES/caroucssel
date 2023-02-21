@@ -5,11 +5,11 @@ declare const FEATURE_NAME = "buildin:pagination";
  * @param context the template context containing the required data to render
  * @return the HTML markup
  */
-export declare type Template = (params: Context) => string;
+export type Template = (params: Context) => string;
 /**
  * The template rendering context.
  */
-export declare type Context = {
+export type Context = {
     controls: string;
     className: string;
     label: TextTemplate;
@@ -20,11 +20,11 @@ export declare type Context = {
  * A text template function to render a text node. This will be used for button
  * labels and text-attributes inside the pagination
  */
-export declare type TextTemplate = (params: TextContext) => string;
+export type TextTemplate = (params: TextContext) => string;
 /**
  * The text template rendering context.
  */
-export declare type TextContext = {
+export type TextContext = {
     index: number;
     page: number[];
     pages: number[][];
@@ -32,7 +32,7 @@ export declare type TextContext = {
 /**
  * The options for the pagination feature.
  */
-export declare type Options = {
+export type Options = {
     /**
      * Render function for the pagination elemements.
      */

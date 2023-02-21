@@ -1,14 +1,14 @@
 const __CACHE = new WeakMap();
 export function fromCache(ref, key, factory) {
-    const storage = __CACHE.get(ref) || {};
-    if (key in storage) {
-        return storage[key];
+    const storage = __CACHE.get(ref) || new Map();
+    if (storage.has(key)) {
+        return storage.get(key);
     }
     if (!factory) {
         return undefined;
     }
     const value = factory();
-    storage[key] = value;
+    storage.set(key, value);
     __CACHE.set(ref, storage);
     return value;
 }
@@ -20,8 +20,8 @@ export function fromCache(ref, key, factory) {
  * @param value the value
  */
 export function writeCache(ref, key, value) {
-    const storage = __CACHE.get(ref) || {};
-    storage[key] = value;
+    const storage = __CACHE.get(ref) || new Map();
+    storage.set(key, value);
     __CACHE.set(ref, storage);
 }
 /**
@@ -31,11 +31,10 @@ export function writeCache(ref, key, value) {
  */
 export function clearCache(ref, key) {
     const storage = __CACHE.get(ref);
-    if (!storage) {
+    if (!storage || !storage.has(key)) {
         return;
     }
-    storage[key] = undefined;
-    delete (storage[key]);
+    storage.delete(key);
 }
 /**
  * Clears the full cache by a given reference.

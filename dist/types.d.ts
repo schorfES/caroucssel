@@ -7,7 +7,7 @@
  * inside the dom. The index of these elements inside the dom may not be
  * equivalent to the visual indexes (e.g. css flexbox-ordering or css grids).
  */
-export declare type Index = [number, ...number[]];
+export type Index = [number, ...number[]];
 /**
  * The representation of item indexes grouped into pages. These pages are the
  * available entry points for control features like buttons and pagination.
@@ -26,7 +26,7 @@ export declare type Index = [number, ...number[]];
  *
  * The pages representation would look like: `[[2], [1, 0]]` (see ordering and width)
  */
-export declare type Pages = [Index, ...Index[]];
+export type Pages = [Index, ...Index[]];
 /**
  * The minimal represenation of the carousel control properties.
  * @internal
@@ -88,7 +88,7 @@ export interface IFeature {
 /**
  * The event that is passed into each feature.
  */
-export declare type UpdateEvent = {
+export type UpdateEvent = {
     /**
      * The reason why this update was triggered.
      */
@@ -114,7 +114,7 @@ export declare enum ScrollBehavior {
 /**
  * A function that can be used as callback on scroll events.
  */
-export declare type ScrollHook = <T>(event: {
+export type ScrollHook = <T>(event: {
     index: Index;
     type: 'scroll';
     target: T;
@@ -124,5 +124,5 @@ export declare type ScrollHook = <T>(event: {
  * A filter function to filter specific child elements ({@link Carousel.items | see items})
  * of the carousel.
  */
-export declare type FilterItemFn = ((item: HTMLElement) => boolean) | ((item: HTMLElement, index: number) => boolean) | ((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
+export type FilterItemFn = ((item: HTMLElement) => boolean) | ((item: HTMLElement, index: number) => boolean) | ((item: HTMLElement, index: number, array: HTMLElement[]) => boolean);
 export {};

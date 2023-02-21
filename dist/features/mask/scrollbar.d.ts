@@ -2,7 +2,7 @@
  * Dataset of scrollbar dimensions
  * @internal
  */
-export declare type ScrollbarDimensions = {
+export type ScrollbarDimensions = {
     /**
      * Vertical size of a scrollbar.
      */

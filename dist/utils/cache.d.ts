@@ -1,7 +1,5 @@
-declare type Reference = object;
-declare type Storage = {
-    [key: string]: unknown;
-};
+type Reference = object;
+type Storage = Map<string, unknown>;
 /**
  * Returns the cache entry by a specific key of a given reference. If the cache
  * is not filled and the key doesn't exisit this will retrun undefined.

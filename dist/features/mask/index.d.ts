@@ -3,7 +3,7 @@ declare const FEATURE_NAME = "buildin:mask";
 /**
  * The options for the mask and scrollbar features.
  */
-export declare type Options = {
+export type Options = {
     /**
      * Enables/disables the rendering of the mask to hide (enabled) or show
      * (disabled) the browsers scrollbars.

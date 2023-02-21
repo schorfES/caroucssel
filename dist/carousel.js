@@ -37,6 +37,18 @@ const DEFAULTS = {
  */
 export class Carousel {
     /**
+     * This will be used for testing purposes to reset the instance count which is
+     * used to create unique id's.
+     * @internal
+     */
+    static resetInstanceCount() {
+        /* This should not be part of the coverage report: test util */
+        /* istanbul ignore next */
+        if (process.env.NODE_ENV === 'test') {
+            __instanceCount = 0;
+        }
+    }
+    /**
      * Creates an instance.
      * @param el is the dom element to control. This should be a container element
      * 	that holds child elements that will scroll horizontally.
@@ -92,7 +104,12 @@ export class Carousel {
                 break;
         }
         this.behavior = ScrollBehavior.SMOOTH;
-        // Events:
+        // Debounced events:
+        //
+        // Where do these magic numbers come from? The numbers are the results of
+        // testing the behavior in several browsers and are considered at "best fit"
+        // without visible side effects to the UI. The value for the "scroll" event
+        // correlates with the timing of scroll-behaviour: smooth.
         //
         // We disable @typescript-eslint/unbound-method here because we already bound
         // the functions while creating a debounced version. This would also cause
@@ -100,23 +117,11 @@ export class Carousel {
         // with removeEventListeners() (see: destroy())
         //
         /* eslint-disable @typescript-eslint/unbound-method */
-        this._onScroll = debounce(this._onScroll.bind(this), 25);
+        this._onScroll = debounce(this._onScroll.bind(this), 45);
         this._onResize = debounce(this._onResize.bind(this), 25);
         el.addEventListener(EVENT_SCROLL, this._onScroll);
         window.addEventListener(EVENT_RESIZE, this._onResize);
         /* eslint-enable @typescript-eslint/unbound-method */
-    }
-    /**
-     * This will be used for testing purposes to reset the instance count which is
-     * used to create unique id's.
-     * @internal
-     */
-    static resetInstanceCount() {
-        /* This should not be part of the coverage report: test util */
-        /* istanbul ignore next */
-        if (process.env.NODE_ENV === 'test') {
-            __instanceCount = 0;
-        }
     }
     /**
      * Returns the dom element reference of the carousel which was passed into the

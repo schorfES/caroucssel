@@ -5,4 +5,4 @@ export { Carousel, Mask } from './carousel';
 export * from './types';
 // This will be replaced by the version from the package.json
 // See: scripts/build_post.js
-export const version = '1.1.1';
+export const version = '1.1.2';

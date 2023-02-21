@@ -5,11 +5,11 @@ declare const FEATURE_NAME = "buildin:buttons";
  * @param context the template context containing the required data to render
  * @return the HTML markup
  */
-export declare type Template = (context: Context) => string;
+export type Template = (context: Context) => string;
 /**
  * The template rendering context.
  */
-export declare type Context = {
+export type Context = {
     controls: string;
     className: string;
     label: string;
@@ -18,7 +18,7 @@ export declare type Context = {
 /**
  * The options for the buttons feature.
  */
-export declare type Options = {
+export type Options = {
     /**
      * Render function for a single button.
      */

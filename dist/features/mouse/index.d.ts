@@ -3,7 +3,7 @@ declare const FEATURE_NAME = "buildin:mouse";
 /**
  * The options for the pagination feature.
  */
-export declare type Options = {
+export type Options = {
     /**
      * Show a drag indicator using css cursor properties (grab and grabbing).
      */
@@ -24,7 +24,7 @@ export declare type Options = {
 /**
  * The event object that is passed for each hook.
  */
-export declare type HookEvent = {
+export type HookEvent = {
     originalEvent: Event;
 };
 /**
