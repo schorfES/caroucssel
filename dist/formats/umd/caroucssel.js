@@ -25,6 +25,10 @@
     }
     return t;
   }
+  typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+  };
   const __CACHE = new WeakMap();
   function fromCache(ref, key, factory) {
     const storage = __CACHE.get(ref) || new Map();
@@ -329,7 +333,6 @@
   }
   _exports.Mouse = Mouse;
   var UpdateType;
-  _exports.UpdateType = UpdateType;
   (function (UpdateType) {
     UpdateType["SCROLL"] = "scroll";
     UpdateType["RESIZE"] = "resize";
@@ -337,7 +340,6 @@
     UpdateType["FEATURE"] = "feature";
   })(UpdateType || (_exports.UpdateType = UpdateType = {}));
   var ScrollBehavior;
-  _exports.ScrollBehavior = ScrollBehavior;
   (function (ScrollBehavior) {
     ScrollBehavior["AUTO"] = "auto";
     ScrollBehavior["SMOOTH"] = "smooth";
@@ -973,6 +975,5 @@
     }
   }
   _exports.Carousel = Carousel;
-  const version = '1.1.3';
-  _exports.version = version;
+  const version = _exports.version = '1.1.4';
 });
