@@ -801,7 +801,7 @@ var caroucssel = (function (exports) {
         }
     }
 
-    const version = '1.1.4';
+    const version = '1.1.5';
 
     exports.Buttons = Buttons;
     exports.Carousel = Carousel;
@@ -809,8 +809,6 @@ var caroucssel = (function (exports) {
     exports.Mouse = Mouse;
     exports.Pagination = Pagination;
     exports.version = version;
-
-    Object.defineProperty(exports, '__esModule', { value: true });
 
     return exports;
 

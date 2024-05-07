@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 function __rest(s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -802,7 +800,7 @@ class Carousel {
     }
 }
 
-const version = '1.1.4';
+const version = '1.1.5';
 
 exports.Buttons = Buttons;
 exports.Carousel = Carousel;
