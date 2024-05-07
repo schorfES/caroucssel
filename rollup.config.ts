@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 
 import { getBabelOutputPlugin as babel, RollupBabelOutputPluginOptions as BabelOutputPluginOptions } from '@rollup/plugin-babel';
 import replace from '@rollup/plugin-replace';
@@ -8,6 +8,7 @@ import cleanup from 'rollup-plugin-cleanup';
 
 
 const MODULE_NAME = 'caroucssel';
+const MODULE_SOURCE = './src/index.ts';
 
 const PLUGIN_OPTIONS_BABEL_UMD: BabelOutputPluginOptions = {
 	allowAllFormats: true,
@@ -33,17 +34,17 @@ const TYPES = [
 	// ---------------------------------------------------------------------------
 	{
 		format: 'cjs',
-		dir: path.join(__dirname, 'dist/formats/cjs/'),
+		dir: './dist/formats/cjs/',
 		plugins: [],
 		entries: [
 			{
 				name: 'caroucssel',
-				input: path.join(__dirname, 'src/index.ts'),
+				input: MODULE_SOURCE,
 				plugins: [],
 			},
 			{
 				name: 'caroucssel.min',
-				input: path.join(__dirname, 'src/index.ts'),
+				input: MODULE_SOURCE,
 				plugins: [terser(PLUGIN_OPTIONS_TERSER)],
 			},
 		],
@@ -53,17 +54,17 @@ const TYPES = [
 	// ---------------------------------------------------------------------------
 	{
 		format: 'es',
-		dir: path.join(__dirname, 'dist/formats/umd/'),
+		dir: './dist/formats/umd/',
 		plugins: [babel(PLUGIN_OPTIONS_BABEL_UMD)],
 		entries: [
 			{
 				name: 'caroucssel',
-				input: path.join(__dirname, 'src/index.ts'),
+				input: MODULE_SOURCE,
 				plugins: [],
 			},
 			{
 				name: 'caroucssel.min',
-				input: path.join(__dirname, 'src/index.ts'),
+				input: MODULE_SOURCE,
 				plugins: [terser(PLUGIN_OPTIONS_TERSER)],
 			},
 		],
@@ -73,17 +74,17 @@ const TYPES = [
 	// ---------------------------------------------------------------------------
 	{
 		format: 'iife',
-		dir: path.join(__dirname, 'dist/formats/iife/'),
+		dir: './dist/formats/iife/',
 		plugins: [],
 		entries: [
 			{
 				name: 'caroucssel',
-				input: path.join(__dirname, 'src/index.ts'),
+				input: MODULE_SOURCE,
 				plugins: [],
 			},
 			{
 				name: 'caroucssel.min',
-				input: path.join(__dirname, 'src/index.ts'),
+				input: MODULE_SOURCE,
 				plugins: [terser(PLUGIN_OPTIONS_TERSER)],
 			},
 		],
