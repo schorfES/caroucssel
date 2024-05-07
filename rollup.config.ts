@@ -2,9 +2,9 @@ import path from 'path';
 
 import { getBabelOutputPlugin as babel, RollupBabelOutputPluginOptions as BabelOutputPluginOptions } from '@rollup/plugin-babel';
 import replace from '@rollup/plugin-replace';
+import terser, { Options as TerserInputPluginOptions } from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import cleanup from 'rollup-plugin-cleanup';
-import { terser, Options as TerserInputPluginOptions } from 'rollup-plugin-terser';
 
 
 const MODULE_NAME = 'caroucssel';
