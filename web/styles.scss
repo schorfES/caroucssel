@@ -35,6 +35,7 @@ strong {
 }
 
 h1 {
+	position: relative;
 	margin: 0 0 1rem;
 	font-size: 1.5rem;
 
@@ -43,7 +44,6 @@ h1 {
 	}
 
 	em {
-		position: relative;
 		display: inline-block;
 		font-size: 2.5rem;
 		font-family: Pacifico, cursive;
@@ -53,12 +53,34 @@ h1 {
 			color: #E91E63;
 			animation: skew 6s infinite;
 		}
+
+		@keyframes skew {
+			0% {
+				transform: scale(1) skewX(0);
+			}
+
+			5% {
+				transform: scale(1.5) skewX(-20deg);
+			}
+
+			10% {
+				transform: scale(1.5) skewX(-15deg);
+			}
+
+			15% {
+				transform: scale(1.5) skewX(-25deg);
+			}
+
+			20% {
+				transform: scale(1) skewX(0);
+			}
+		}
 	}
 
 	sup {
 		position: absolute;
 		top: -1em;
-		right: -3em;
+		left: calc(50% + 6.5rem);
 		font-size: 0.8rem;
 	}
 
@@ -137,60 +159,152 @@ a {
 	z-index: -1;
 	width: 20vh;
 	height: 20vh;
-	opacity: 0;
-	transition: transform 0.3s, opacity 0.3s;
 	fill: #2F2F2F;
-
-	.is-active & {
-		opacity: 1;
-	}
 }
 
 .item-1 { // Intro
 	background: transparent;
+	view-timeline: --timeline-item-1;
+	view-timeline-axis: x;
+
+	.title {
+		animation: {
+			name: item-1-title;
+			fill-mode: both;
+			timing-function: linear;
+			timeline: --timeline-item-1;
+			range: contain 50% exit 75%;
+		}
+	}
+
+	@keyframes item-1-title {
+		from {
+			transform: translate(0, 0) scale(1);
+			opacity: 1;
+		}
+
+		to {
+			transform: translate(50vw, 0) scale(20);
+			opacity: 0;
+		}
+	}
+
+	.version {
+		z-index: -1;
+		animation: {
+			name: item-1-version;
+			fill-mode: both;
+			timing-function: linear;
+			timeline: --timeline-item-1;
+			range: contain 50% exit 5%;
+		}
+	}
+
+	@keyframes item-1-version {
+		from {
+			opacity: 1;
+			filter: blur(0);
+		}
+
+		to {
+			opacity: 0;
+			filter: blur(20px);
+		}
+	}
 }
 
 .item-2 { // Scrollbar
 	background-image: linear-gradient(to right, transparent, #00BCD4);
+	view-timeline: --timeline-item-2;
+	view-timeline-axis: x;
 
 	.arrow {
 		bottom: 3rem;
 		left: 35%;
-		transform: rotate(-20deg) scale(0.5);
+		transform: rotate(10deg) scale(1);
 		fill: #FFFFFF;
+		animation: {
+			name: item-2-arrow;
+			fill-mode: both;
+			timing-function: ease-out;
+			timeline: --timeline-item-2;
+			range: entry 90% cover 50%;
+		}
 
-		@at-root .is-active#{&} {
-			transform: rotate(10deg) scale(1);
+		@keyframes item-2-arrow {
+			from {
+				transform: rotate(-20deg) scale(0.5);
+				opacity: 0;
+			}
+
+			to {
+				transform: rotate(10deg) scale(1);
+				opacity: 1;
+			}
 		}
 	}
 }
 
 .item-3 { // Buttons
 	background-image: linear-gradient(to right, #00BCD4, #E91E63);
+	view-timeline: --timeline-item-3;
+	view-timeline-axis: x;
 
 	.arrow {
 		top: 50%;
 		right: 0;
-		transform: rotate(-20deg) scale(-0.5);
+		transform: rotate(10deg) scale(-1);
 		fill: #FFFFFF;
+		animation: {
+			name: item-3-arrow;
+			fill-mode: both;
+			timing-function: ease-out;
+			timeline: --timeline-item-3;
+			range: entry 90% cover 50%;
+		}
 
-		@at-root .is-active#{&} {
-			transform: rotate(10deg) scale(-1);
+		@keyframes item-3-arrow {
+			from {
+				transform: rotate(-20deg) scale(-0.5);
+				opacity: 0;
+			}
+
+			to {
+				transform: rotate(10deg) scale(-1);
+				opacity: 1;
+			}
 		}
 	}
 }
 
 .item-4 { // Pagination
 	background-image: linear-gradient(to right, #E91E63, #CDDC39);
+	view-timeline: --timeline-item-4;
+	view-timeline-axis: x;
 
 	.arrow {
 		top: 4rem;
 		left: 50%;
-		transform: translate(-5vh, 0) rotate(120deg) scale(0.5);
+		transform: translate(-5vh, 0) rotate(140deg) scale(1);
 		fill: #FFFFFF;
+		animation: {
+			name: item-4-arrow;
+			fill-mode: both;
+			timing-function: ease-out;
+			timeline: --timeline-item-4;
+			range: entry 90% cover 50%;
+		}
 
-		@at-root .is-active#{&} {
-			transform: translate(-5vh, 0) rotate(140deg) scale(1);
+		@keyframes item-4-arrow {
+			from {
+				transform: translate(-5vh, 0) rotate(120deg) scale(0.5);
+				opacity: 0;
+			}
+
+			to {
+				transform: translate(-5vh, 0) rotate(140deg) scale(1);
+				opacity: 1;
+			}
 		}
 	}
 }
@@ -206,15 +320,32 @@ a {
 .item-7 { // Installation
 	color: #2F2F2F;
 	background-image: linear-gradient(to right, #E91E63, #FFFFFF, #FFFFFF);
+	view-timeline: --timeline-item-7;
+	view-timeline-axis: x;
 
 	.arrow {
 		bottom: 55%;
 		left: 54%;
-		transform: rotate(-25deg) scale(1);
+		transform: rotate(-5deg) scale(1);
 		fill: #E91E63;
+		animation: {
+			name: item-7-arrow;
+			fill-mode: both;
+			timing-function: ease-out;
+			timeline: --timeline-item-7;
+			range: entry 90% cover 50%;
+		}
 
-		@at-root .is-active#{&} {
-			transform: rotate(-5deg) scale(1);
+		@keyframes item-7-arrow {
+			from {
+				transform: rotate(-25deg) scale(1);
+				opacity: 0;
+			}
+
+			to {
+				transform: rotate(-5deg) scale(1);
+				opacity: 1;
+			}
 		}
 	}
 }
@@ -309,27 +440,5 @@ a {
 				opacity: 1;
 			}
 		}
-	}
-}
-
-@keyframes skew {
-	0% {
-		transform: scale(1) skewX(0);
-	}
-
-	5% {
-		transform: scale(1.5) skewX(-20deg);
-	}
-
-	10% {
-		transform: scale(1.5) skewX(-15deg);
-	}
-
-	15% {
-		transform: scale(1.5) skewX(-25deg);
-	}
-
-	20% {
-		transform: scale(1) skewX(0);
 	}
 }
