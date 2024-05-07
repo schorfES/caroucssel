@@ -4,7 +4,6 @@ import { Mouse } from '../src/features/mouse';
 import { Pagination } from '../src/features/pagination';
 
 var element = document.querySelector('.caroucssel');
-var items = Array.from(document.querySelectorAll('.item'));
 
 if (!element) {
 	throw new Error('Missing element for carousel.');
@@ -16,9 +15,11 @@ new Carousel(element, {
 		new Mouse(),
 		new Pagination(),
 	],
-	onScroll: function(event) {
-		items.forEach(function(item, index) {
-			item.classList[event.index.includes(index) ? 'add' : 'remove']('is-active');
-		});
-	}
 });
+
+// Load polyfill for scroll-timeline that is not supported by polyfill.io (yet)
+if (!window.CSS?.supports?.('animation-timeline: scroll()')) {
+	const script = document.createElement('script');
+	script.src = 'https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js';
+	document.body.appendChild(script);
+}
