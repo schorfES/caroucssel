@@ -1,0 +1,15 @@
+{
+	"minifySvg": {
+			"plugins": [
+					{
+						"cleanupIDs": false
+					},
+					{
+						"removeUselessDefs": false
+					},
+					{
+						"removeUnknownsAndDefaults": false
+					}
+			]
+	}
+}
