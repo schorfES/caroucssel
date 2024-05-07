@@ -14,6 +14,7 @@ web/
 .eslintrc
 .gitattributes
 .gitignore
+.htmlnanorc
 .nvmrc
 .parcelrc
 .stylelintignore
