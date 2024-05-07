@@ -10,6 +10,8 @@
 
 A lightweight dependency-free css carousel. _**CSS can scroll, why not use it?**_
 
+Integrating CarouCSSel with native CSS scroll techniques, including [CSS Scroll-driven Animations](https://scroll-driven-animations.style/), is essentially writing CSS. Acting as a wrapper around CSS scrolling, CarouCSSel simplifies the process, even in complex layouts, by providing controls such as buttons or paginations (see [Features](#features) section). With CarouCSSel, you can effortlessly create dynamic and visually engaging carousels that respond smoothly to user interactions and scrolling events.
+
 * Take a [quick tour](https://schorfes.github.io/caroucssel/)
 * Try the [examples](https://schorfes.github.io/caroucssel/demo/)
 * Read the [docs](https://schorfes.github.io/caroucssel/docs/)
