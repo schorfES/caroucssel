@@ -17,9 +17,3 @@ new Carousel(element, {
 	],
 });
 
-// Load polyfill for scroll-timeline that is not supported by polyfill.io (yet)
-if (!window.CSS?.supports?.('animation-timeline: scroll()')) {
-	const script = document.createElement('script');
-	script.src = 'https://flackr.github.io/scroll-timeline/dist/scroll-timeline.js';
-	document.body.appendChild(script);
-}
