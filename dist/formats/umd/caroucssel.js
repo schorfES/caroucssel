@@ -975,5 +975,5 @@
     }
   }
   _exports.Carousel = Carousel;
-  const version = _exports.version = '1.1.6';
+  const version = _exports.version = '1.1.7';
 });
