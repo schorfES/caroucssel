@@ -84,8 +84,6 @@ export type Options = {
 type Configuration = Required<Options>;
 
 const DEFAULTS: Configuration = {
-	// @TODO: ESLint don't like the nested template literals and loops.
-	/* eslint-disable indent */
 	template: ({ className, controls, pages, label, title }: Context) => `
 		<ul class="${className}">
 			${pages.map((page, index) => {
@@ -100,7 +98,6 @@ const DEFAULTS: Configuration = {
 			}).join('')}
 		</ul>
 	`,
-	/* eslint-enable indent */
 
 	className: 'pagination',
 	label: ({ index }) => `${index + 1}`,
@@ -197,8 +194,6 @@ export class Pagination implements IFeature {
 		const buttons = Array.from(pagination.querySelectorAll<HTMLButtonElement>('button'))
 			.map((button) => {
 				// The onClick listener is already bound in the constructor.
-				//
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				button.addEventListener('click', this._onClick, true);
 				return button;
 			});
@@ -231,9 +226,6 @@ export class Pagination implements IFeature {
 		const buttons = fromCache<HTMLButtonElement[]>(this, CACHE_KEY_BUTTONS);
 
 		buttons?.forEach((button) => {
-			// The onClick listener is already bound in the constructor.
-			//
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			button.removeEventListener('click', this._onClick);
 			button.parentNode?.removeChild(button);
 		});

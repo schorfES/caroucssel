@@ -40,13 +40,13 @@ describe('Carousel', () => {
 
 		it('should throw an error when not passing an element', () => {
 			// Test untyped behaviour of constructor
-			// @ts-ignore
+			// @ts-expect-error test invalid parameters of constructor
 			expect(() => new Carousel())
 				.toThrow(new Error('Carousel needs a dom element but "undefined" was passed.'));
-			// @ts-ignore
+			// @ts-expect-error test invalid parameters of constructor
 			expect(() => new Carousel(true))
 				.toThrow(new Error('Carousel needs a dom element but "boolean" was passed.'));
-			// @ts-ignore
+			// @ts-expect-error test invalid parameters of constructor
 			expect(() => new Carousel({}))
 				.toThrow(new Error('Carousel needs a dom element but "object" was passed.'));
 		});
@@ -214,8 +214,7 @@ describe('Carousel', () => {
 
 			const scrollTo = jest.spyOn(el, 'scrollTo');
 
-			// Test untyped behaviour of constructor
-			// @ts-ignore
+			// @ts-expect-error test untyped behaviour of constructor
 			const carousel = new Carousel(el, { index: [] });
 			expect(carousel.index).toEqual([0]);
 			expect(scrollTo).not.toHaveBeenCalled();
@@ -312,8 +311,7 @@ describe('Carousel', () => {
 
 			const carousel = new Carousel(el);
 
-			// Test untyped behaviour of setter
-			// @ts-ignore
+			// @ts-expect-error test untyped behaviour of setter
 			carousel.index = [];
 			expect(carousel.index).toEqual([0, 1]);
 		});
@@ -326,8 +324,7 @@ describe('Carousel', () => {
 
 			const carousel = new Carousel(el);
 
-			// Test untyped behaviour of setter
-			// @ts-ignore
+			// @ts-expect-error test untyped behaviour of setter
 			carousel.index = 2;
 			expect(carousel.index).toEqual([0, 1]);
 		});
@@ -340,8 +337,7 @@ describe('Carousel', () => {
 
 			const carousel = new Carousel(el);
 
-			// Test untyped behaviour of setter
-			// @ts-ignore
+			// @ts-expect-error test untyped behaviour of setter
 			carousel.index = undefined;
 			expect(carousel.index).toEqual([0, 1]);
 		});
@@ -354,8 +350,7 @@ describe('Carousel', () => {
 
 			const carousel = new Carousel(el);
 
-			// Test untyped behaviour of setter
-			// @ts-ignore
+			// @ts-expect-error test untyped behaviour of setter
 			carousel.index = null;
 			expect(carousel.index).toEqual([0, 1]);
 		});

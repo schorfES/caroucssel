@@ -152,18 +152,10 @@ export class Carousel implements ICarousel {
 		// testing the behavior in several browsers and are considered at "best fit"
 		// without visible side effects to the UI. The value for the "scroll" event
 		// correlates with the timing of scroll-behaviour: smooth.
-		//
-		// We disable @typescript-eslint/unbound-method here because we already bound
-		// the functions while creating a debounced version. This would also cause
-		// reference errors when tying to access these function references when used
-		// with removeEventListeners() (see: destroy())
-		//
-		/* eslint-disable @typescript-eslint/unbound-method */
 		this._onScroll = debounce(this._onScroll.bind(this), 45);
 		this._onResize = debounce(this._onResize.bind(this), 25);
 		el.addEventListener(EVENT_SCROLL, this._onScroll);
 		window.addEventListener(EVENT_RESIZE, this._onResize);
-		/* eslint-enable @typescript-eslint/unbound-method */
 	}
 
 	/**
@@ -440,22 +432,17 @@ export class Carousel implements ICarousel {
 		const { el } = this;
 
 		// Remove created id if it was created by carousel:
-		ID_MATCH.test(el.id) && el.removeAttribute('id');
+		if(ID_MATCH.test(el.id)) {
+			el.removeAttribute('id');
+		}
 
 		// Destroy attached features:
 		const features = fromCache<IFeature[]>(this, CACHE_KEY_FEATURES) as IFeature[];
 		features.forEach((feature) => feature.destroy());
 
 		// Remove events:
-		//
-		// We need to work the the function reference. Using .bind() would create a
-		// new referenced instance of the callback function. We already created a
-		// bound version of these function within the constructor.
-		//
-		/* eslint-disable @typescript-eslint/unbound-method */
 		el.removeEventListener(EVENT_SCROLL, this._onScroll);
 		window.removeEventListener(EVENT_RESIZE, this._onResize);
-		/* eslint-enable @typescript-eslint/unbound-method */
 
 		// Clear cache:
 		clearFullCache(this);

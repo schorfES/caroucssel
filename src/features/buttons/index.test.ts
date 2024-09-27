@@ -114,8 +114,7 @@ describe('Buttons feature', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
 
-		// Test when js custom implementation returns null
-		// @ts-ignore
+		// @ts-expect-error test when js custom implementation returns null
 		const template: jest.Mock<string, []> = jest.fn(() => null);
 
 		new Carousel(el, {
@@ -130,8 +129,7 @@ describe('Buttons feature', () => {
 		document.body.innerHTML = fixture(3);
 		const el = querySelector('.caroucssel');
 
-		// Test when js custom implementation returns undefined
-		// @ts-ignore
+		// @ts-expect-error test when js custom implementation returns undefined
 		const template: jest.Mock<string, [Context]> = jest.fn(() => undefined);
 
 		new Carousel(el, {

@@ -53,17 +53,17 @@ export type Options = {
 	/**
 	 * A hook function that is called when the user stats to drag.
 	 */
-	onStart?: ((event: HookEvent) => void);
+	onStart?: HookEventHandler;
 
 	/**
 	 * A hook function that is called when the user is dragging.
 	 */
-	onDrag?: ((event: HookEvent) => void);
+	onDrag?: HookEventHandler;
 
 	/**
 	 * A hook function that is called when the user stops to drag.
 	 */
-	onEnd?: ((event: HookEvent) => void);
+	onEnd?: HookEventHandler;
 
 };
 
@@ -73,6 +73,11 @@ export type Options = {
 export type HookEvent = {
 	originalEvent: Event,
 };
+
+/**
+ * The shape of an event hander function.
+ */
+export type HookEventHandler = (event: HookEvent) => void;
 
 /**
  * The keys in the options that are hooks.
@@ -131,10 +136,6 @@ export class Mouse implements IFeature {
 		const { el } = proxy;
 		const element = el as HTMLElement;
 		element.style.cursor = config.indicator ? CURSOR_GRAB : '';
-
-		// The handler is already bound in the constructor.
-		//
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		el.addEventListener(EVENT_START, this._onStart, { passive: true });
 	}
 
@@ -181,12 +182,8 @@ export class Mouse implements IFeature {
 		element.style.scrollSnapType = 'none';
 		element.style.cursor = config.indicator ? CURSOR_GRABBING : '';
 
-		// The handlers are already bound in the constructor.
-		//
-		/* eslint-disable @typescript-eslint/unbound-method */
 		window.addEventListener(EVENT_DRAG, this._onDrag, { passive: true });
 		window.addEventListener(EVENT_END, this._onEnd, { passive: true });
-		/* eslint-enable @typescript-eslint/unbound-method */
 
 		// Call the hook:
 		config.onStart?.({ originalEvent: event });
@@ -261,11 +258,8 @@ export class Mouse implements IFeature {
 		writeCache(this, CACHE_KEY_TIMEOUT, timeout);
 
 		// The handlers are already bound in the constructor.
-		//
-		/* eslint-disable @typescript-eslint/unbound-method */
 		window.removeEventListener(EVENT_DRAG, this._onDrag);
 		window.removeEventListener(EVENT_END, this._onEnd);
-		/* eslint-enable @typescript-eslint/unbound-method */
 
 		// Call the hook:
 		config.onEnd?.({ originalEvent: event });
