@@ -201,9 +201,6 @@ export class Buttons implements IFeature {
 						label: nextLabel,
 						title: nextTitle,
 						className: [className, nextClassName].join(' '),
-						// The onClick listener is already bound in the constructor.
-						//
-						// eslint-disable-next-line @typescript-eslint/unbound-method
 						handler: this._onNext,
 					},
 					{
@@ -211,9 +208,6 @@ export class Buttons implements IFeature {
 						label: previousLabel,
 						title: previousTitle,
 						className: [className, previousClassName].join(' '),
-						// The onClick listener is already bound in the constructor.
-						//
-						// eslint-disable-next-line @typescript-eslint/unbound-method
 						handler: this._onPrev,
 					},
 				];
@@ -252,13 +246,7 @@ export class Buttons implements IFeature {
 		const buttons = fromCache<Button[]>(this, CACHE_KEY_BUTTONS);
 
 		buttons?.forEach((button): void => {
-			// The onClick listener is already bound in the constructor.
-			//
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			button?.removeEventListener(EVENT_CLICK, this._onPrev);
-			// The onClick listener is already bound in the constructor.
-			//
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			button?.removeEventListener(EVENT_CLICK, this._onNext);
 			button?.parentNode?.removeChild(button);
 		});

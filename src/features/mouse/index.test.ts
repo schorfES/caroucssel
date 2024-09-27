@@ -1,7 +1,7 @@
 import { fixture, querySelector, triggerMouse } from '../../__setup__/helpers';
 import { Carousel } from '../../carousel';
 
-import { HookEvent, Mouse } from './index';
+import { HookEvent, HookEventHandler, Mouse } from './index';
 
 
 describe('Mouse feature', () => {
@@ -164,9 +164,9 @@ describe('Mouse feature', () => {
 	});
 
 	it('should call hooks', () => {
-		const onStart = jest.fn<void, [HookEvent]>();
-		const onDrag = jest.fn<void, [HookEvent]>();
-		const onEnd = jest.fn<void, [HookEvent]>();
+		const onStart = jest.fn<HookEventHandler, [HookEvent]>();
+		const onDrag = jest.fn<HookEventHandler, [HookEvent]>();
+		const onEnd = jest.fn<HookEventHandler, [HookEvent]>();
 
 		document.body.innerHTML = fixture(4);
 		const el = querySelector('.caroucssel');

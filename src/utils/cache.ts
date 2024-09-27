@@ -1,6 +1,3 @@
-// The key of a WeakMap must be an object. There is no other type that matches
-// or is valid for @typescript-eslint.
-// eslint-disable-next-line @typescript-eslint/ban-types
 type Reference = object;
 
 type Storage = Map<string, unknown>;

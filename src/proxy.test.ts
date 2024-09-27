@@ -79,13 +79,11 @@ describe('proxy', () => {
 		const proxy = new Proxy(carousel, [feat1, feat2, feat3]);
 		proxy.update(feat2);
 
-		/* eslint-disable @typescript-eslint/unbound-method */
 		expect(feat1.update).toHaveBeenCalledTimes(1);
 		expect(feat1.update).toHaveBeenCalledWith({ type: 'feature' });
 		expect(feat2.update).not.toHaveBeenCalled();
 		expect(feat3.update).toHaveBeenCalledTimes(1);
 		expect(feat3.update).toHaveBeenCalledWith({ type: 'feature' });
-		/* eslint-enable @typescript-eslint/unbound-method */
 	});
 
 });
