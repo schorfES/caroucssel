@@ -33,7 +33,7 @@
     "@parcel/transformer-sass": "^2.11.0",
     "@parcel/transformer-typescript-tsc": "^2.11.0",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@testing-library/user-event": "^14.2.1",
