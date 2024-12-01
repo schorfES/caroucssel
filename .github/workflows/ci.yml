@@ -42,7 +42,7 @@ jobs:
         run: make tests
 
       - name: Run coverage report
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
 
       - name: Run validations
         run: make validate
