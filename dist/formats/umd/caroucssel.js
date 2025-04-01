@@ -25,10 +25,6 @@
     }
     return t;
   }
-  typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
-    var e = new Error(message);
-    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
-  };
   const __CACHE = new WeakMap();
   function fromCache(ref, key, factory) {
     const storage = __CACHE.get(ref) || new Map();
@@ -975,5 +971,5 @@
     }
   }
   _exports.Carousel = Carousel;
-  const version = _exports.version = '1.1.7';
+  const version = _exports.version = '1.1.8';
 });

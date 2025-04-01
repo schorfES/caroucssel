@@ -11,10 +11,6 @@ function __rest(s, e) {
         }
     return t;
 }
-typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
-    var e = new Error(message);
-    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
-};
 
 const __CACHE = new WeakMap();
 function fromCache(ref, key, factory) {
@@ -800,7 +796,7 @@ class Carousel {
     }
 }
 
-const version = '1.1.7';
+const version = '1.1.8';
 
 exports.Buttons = Buttons;
 exports.Carousel = Carousel;
