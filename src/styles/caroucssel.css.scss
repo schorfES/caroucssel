@@ -1,9 +1,9 @@
-@import 'caroucssel';
+@use 'caroucssel' as lib;
 
 .caroucssel {
-	@include caroucssel();
+	@include lib.caroucssel();
 
 	&.use-snap {
-		@include caroucssel-snap(100%);
+		@include lib.caroucssel-snap(100%);
 	}
 }

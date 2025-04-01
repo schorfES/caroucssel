@@ -100,14 +100,14 @@ The prebuild CSS-file only contains selectors for basic usage. It's recommended 
 The SCSS gives the freedom to choose your own selectors, which should have a carousel feature. It also allows you to easily customize the behavior depending on media queries.
 
 ```scss
-@import '~caroucssel';
+@use '~caroucssel' as lib;
 
 .my-carousel {
-  @include caroucssel();
-  @include caroucssel-snap($at: 100%);
+  @include lib.caroucssel();
+  @include lib.caroucssel-snap($at: 100%);
 
   @media screen and (min-width: 700px) {
-    @include caroucssel-snap($at: 50%);
+    @include lib.caroucssel-snap($at: 50%);
   }
 }
 ```

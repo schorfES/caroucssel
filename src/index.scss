@@ -1,6 +1,1 @@
-/* The @import rule for sass fails and is treated as css import. On a build,
- * using `url(...)` notation, the mixin will not be found. We are disabling the
- * styling rule for now:
- *
- * stylelint-disable-line import-notation */
-@import './styles/index'; // stylelint-disable-line import-notation
+@use './styles/index';
