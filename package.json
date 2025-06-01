@@ -41,7 +41,7 @@
     "@types/node": "^22.10.3",
     "@types/rollup": "^0.54.0",
     "@types/smoothscroll-polyfill": "^0.3.4",
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.0",
     "@typescript-eslint/parser": "^7.8.0",
     "doctoc": "^2.1.0",
     "eslint": "^8.4.0",
