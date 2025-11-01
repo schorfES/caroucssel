@@ -64,7 +64,7 @@
     "stylelint-config-standard": "^36.0.0",
     "stylelint-order": "^6.0.4",
     "stylelint-scss": "^6.0.0",
-    "svgo": "^3.3.2",
+    "svgo": "^4.0.0",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
     "typedoc": "^0.26.3",
