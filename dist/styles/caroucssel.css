@@ -10,12 +10,14 @@
   scroll-behavior: smooth;
   -ms-overflow-style: -ms-autohiding-scrollbar;
   -webkit-overflow-scrolling: touch;
-  /* browsers with scrollbars that only appear on scrolling */
 }
 .caroucssel > * {
   flex: 0 0 auto;
   white-space: normal;
   outline: none;
+}
+.caroucssel {
+  /* browsers with scrollbars that only appear on scrolling */
 }
 .caroucssel[style*="margin-bottom: 0px"] {
   scrollbar-width: none;

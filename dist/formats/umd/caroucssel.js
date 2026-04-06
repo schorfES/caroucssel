@@ -25,6 +25,10 @@
     }
     return t;
   }
+  typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+  };
   const __CACHE = new WeakMap();
   function fromCache(ref, key, factory) {
     const storage = __CACHE.get(ref) || new Map();
@@ -69,19 +73,16 @@
   const CACHE_KEY_BUTTONS$1 = 'btns';
   const EVENT_CLICK = 'click';
   const DEFAULTS$4 = {
-    template: _ref => {
-      let {
-        className,
-        controls,
-        label,
-        title
-      } = _ref;
-      return `
+    template: ({
+      className,
+      controls,
+      label,
+      title
+    }) => `
 		<button type="button" class="${className}" aria-label="${label}" title="${title}" aria-controls="${controls}">
 			<span>${label}</span>
 		</button>
-	`;
-    },
+	`,
     className: 'button',
     nextClassName: 'is-next',
     nextLabel: 'Next',
@@ -91,8 +92,7 @@
     previousTitle: 'Go to previous'
   };
   class Buttons {
-    constructor() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    constructor(options = {}) {
       writeCache(this, CACHE_KEY_CONFIGURATION$4, Object.assign(Object.assign({}, DEFAULTS$4), options));
       this._onPrev = this._onPrev.bind(this);
       this._onNext = this._onNext.bind(this);
@@ -225,8 +225,7 @@
     indicator: false
   };
   class Mouse {
-    constructor() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    constructor(options = {}) {
       writeCache(this, CACHE_KEY_CONFIGURATION$3, Object.assign(Object.assign({}, DEFAULTS$3), options));
       this._onStart = this._onStart.bind(this);
       this._onDrag = this._onDrag.bind(this);
@@ -346,50 +345,40 @@
   const CACHE_KEY_PAGINATION = 'pags';
   const CACHE_KEY_BUTTONS = 'btns';
   const DEFAULTS$2 = {
-    template: _ref2 => {
-      let {
-        className,
-        controls,
-        pages,
-        label,
-        title
-      } = _ref2;
-      return `
+    template: ({
+      className,
+      controls,
+      pages,
+      label,
+      title
+    }) => `
 		<ul class="${className}">
 			${pages.map((page, index) => {
-        const data = {
-          index,
-          page,
-          pages
-        };
-        const labelStr = label(data);
-        const titleStr = title(data);
-        return `<li>
+      const data = {
+        index,
+        page,
+        pages
+      };
+      const labelStr = label(data);
+      const titleStr = title(data);
+      return `<li>
 					<button type="button" aria-controls="${controls}" aria-label="${titleStr}" title="${titleStr}">
 						<span>${labelStr}</span>
 					</button>
 				</li>`;
-      }).join('')}
+    }).join('')}
 		</ul>
-	`;
-    },
+	`,
     className: 'pagination',
-    label: _ref3 => {
-      let {
-        index
-      } = _ref3;
-      return `${index + 1}`;
-    },
-    title: _ref4 => {
-      let {
-        index
-      } = _ref4;
-      return `Go to ${index + 1}. page`;
-    }
+    label: ({
+      index
+    }) => `${index + 1}`,
+    title: ({
+      index
+    }) => `Go to ${index + 1}. page`
   };
   class Pagination {
-    constructor() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    constructor(options = {}) {
       writeCache(this, CACHE_KEY_CONFIGURATION$2, Object.assign(Object.assign({}, DEFAULTS$2), options));
       this._onClick = this._onClick.bind(this);
     }
@@ -532,8 +521,7 @@
     tagName: 'div'
   };
   class Mask {
-    constructor() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    constructor(options = {}) {
       writeCache(this, CACHE_KEY_CONFIGURATION$1, Object.assign(Object.assign({}, DEFAULTS$1), options));
     }
     get name() {
@@ -662,10 +650,7 @@
   }
   function debounce(func, delay) {
     let timeout = null;
-    const debounced = function () {
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
+    const debounced = (...args) => {
       if (timeout !== null) {
         clearTimeout(timeout);
       }
@@ -697,8 +682,7 @@
   };
   class Carousel {
     static resetInstanceCount() {}
-    constructor(el) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    constructor(el, options = {}) {
       this.behavior = ScrollBehavior.AUTO;
       if (!el || !(el instanceof Element)) {
         throw new Error(`Carousel needs a dom element but "${typeof el}" was passed.`);
@@ -875,12 +859,9 @@
           page.push(item);
         });
         pages = pages.filter(page => page.length !== 0);
-        return pages.map(page => page.map(_ref5 => {
-          let {
-            index
-          } = _ref5;
-          return index;
-        }));
+        return pages.map(page => page.map(({
+          index
+        }) => index));
       });
     }
     get pageIndex() {
@@ -971,5 +952,5 @@
     }
   }
   _exports.Carousel = Carousel;
-  const version = _exports.version = '1.1.8';
+  const version = _exports.version = '1.1.9';
 });
